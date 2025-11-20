@@ -1,0 +1,638 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C68060982ECE6C0500154DC5 /* KopiCupApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060972ECE6C0500154DC5 /* KopiCupApp.swift */; };
+		C680609C2ECE6C0600154DC5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C680609B2ECE6C0600154DC5 /* Assets.xcassets */; };
+		C680609F2ECE6C0600154DC5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C680609E2ECE6C0600154DC5 /* Preview Assets.xcassets */; };
+		C68060A92ECE6C0700154DC5 /* KopiCupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060A82ECE6C0700154DC5 /* KopiCupTests.swift */; };
+		C68060B32ECE6C0700154DC5 /* KopiCupUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060B22ECE6C0700154DC5 /* KopiCupUITests.swift */; };
+		C68060B52ECE6C0700154DC5 /* KopiCupUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060B42ECE6C0700154DC5 /* KopiCupUITestsLaunchTests.swift */; };
+		C68060C52ECEA8F300154DC5 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060C42ECEA8F300154DC5 /* AuthView.swift */; };
+		C68060C72ECEA90E00154DC5 /* RegView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060C62ECEA90E00154DC5 /* RegView.swift */; };
+		C68060C92ECEA93800154DC5 /* LoadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060C82ECEA93800154DC5 /* LoadView.swift */; };
+		C68060CB2ECEA96D00154DC5 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060CA2ECEA96D00154DC5 /* CardView.swift */; };
+		C68060CD2ECEA99800154DC5 /* UserStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060CC2ECEA99800154DC5 /* UserStorage.swift */; };
+		C68060CF2ECEA9E600154DC5 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060CE2ECEA9E600154DC5 /* MainTabView.swift */; };
+		C68060D12ECEB33100154DC5 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060D02ECEB33100154DC5 /* HomeView.swift */; };
+		C68060D32ECEB34100154DC5 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060D22ECEB34100154DC5 /* SettingsView.swift */; };
+		C68060D52ECEB34E00154DC5 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060D42ECEB34E00154DC5 /* StatsView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C68060A52ECE6C0700154DC5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C680608C2ECE6C0500154DC5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C68060932ECE6C0500154DC5;
+			remoteInfo = KopiCup;
+		};
+		C68060AF2ECE6C0700154DC5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C680608C2ECE6C0500154DC5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C68060932ECE6C0500154DC5;
+			remoteInfo = KopiCup;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		C68060942ECE6C0500154DC5 /* KopiCup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KopiCup.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C68060972ECE6C0500154DC5 /* KopiCupApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KopiCupApp.swift; sourceTree = "<group>"; };
+		C680609B2ECE6C0600154DC5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C680609E2ECE6C0600154DC5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		C68060A42ECE6C0700154DC5 /* KopiCupTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KopiCupTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C68060A82ECE6C0700154DC5 /* KopiCupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KopiCupTests.swift; sourceTree = "<group>"; };
+		C68060AE2ECE6C0700154DC5 /* KopiCupUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KopiCupUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C68060B22ECE6C0700154DC5 /* KopiCupUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KopiCupUITests.swift; sourceTree = "<group>"; };
+		C68060B42ECE6C0700154DC5 /* KopiCupUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KopiCupUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		C68060C42ECEA8F300154DC5 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		C68060C62ECEA90E00154DC5 /* RegView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegView.swift; sourceTree = "<group>"; };
+		C68060C82ECEA93800154DC5 /* LoadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadView.swift; sourceTree = "<group>"; };
+		C68060CA2ECEA96D00154DC5 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
+		C68060CC2ECEA99800154DC5 /* UserStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStorage.swift; sourceTree = "<group>"; };
+		C68060CE2ECEA9E600154DC5 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		C68060D02ECEB33100154DC5 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		C68060D22ECEB34100154DC5 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		C68060D42ECEB34E00154DC5 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C68060912ECE6C0500154DC5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C68060A12ECE6C0700154DC5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C68060AB2ECE6C0700154DC5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C680608B2ECE6C0500154DC5 = {
+			isa = PBXGroup;
+			children = (
+				C68060962ECE6C0500154DC5 /* KopiCup */,
+				C68060A72ECE6C0700154DC5 /* KopiCupTests */,
+				C68060B12ECE6C0700154DC5 /* KopiCupUITests */,
+				C68060952ECE6C0500154DC5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C68060952ECE6C0500154DC5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C68060942ECE6C0500154DC5 /* KopiCup.app */,
+				C68060A42ECE6C0700154DC5 /* KopiCupTests.xctest */,
+				C68060AE2ECE6C0700154DC5 /* KopiCupUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C68060962ECE6C0500154DC5 /* KopiCup */ = {
+			isa = PBXGroup;
+			children = (
+				C68060C32ECEA8B200154DC5 /* Managers */,
+				C68060C22ECEA8A500154DC5 /* Screens */,
+				C68060C12ECEA89200154DC5 /* App */,
+				C680609B2ECE6C0600154DC5 /* Assets.xcassets */,
+				C680609D2ECE6C0600154DC5 /* Preview Content */,
+			);
+			path = KopiCup;
+			sourceTree = "<group>";
+		};
+		C680609D2ECE6C0600154DC5 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				C680609E2ECE6C0600154DC5 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		C68060A72ECE6C0700154DC5 /* KopiCupTests */ = {
+			isa = PBXGroup;
+			children = (
+				C68060A82ECE6C0700154DC5 /* KopiCupTests.swift */,
+			);
+			path = KopiCupTests;
+			sourceTree = "<group>";
+		};
+		C68060B12ECE6C0700154DC5 /* KopiCupUITests */ = {
+			isa = PBXGroup;
+			children = (
+				C68060B22ECE6C0700154DC5 /* KopiCupUITests.swift */,
+				C68060B42ECE6C0700154DC5 /* KopiCupUITestsLaunchTests.swift */,
+			);
+			path = KopiCupUITests;
+			sourceTree = "<group>";
+		};
+		C68060C12ECEA89200154DC5 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				C68060C82ECEA93800154DC5 /* LoadView.swift */,
+				C68060972ECE6C0500154DC5 /* KopiCupApp.swift */,
+				C68060CE2ECEA9E600154DC5 /* MainTabView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		C68060C22ECEA8A500154DC5 /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				C68060C42ECEA8F300154DC5 /* AuthView.swift */,
+				C68060C62ECEA90E00154DC5 /* RegView.swift */,
+				C68060CA2ECEA96D00154DC5 /* CardView.swift */,
+				C68060D02ECEB33100154DC5 /* HomeView.swift */,
+				C68060D22ECEB34100154DC5 /* SettingsView.swift */,
+				C68060D42ECEB34E00154DC5 /* StatsView.swift */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+		C68060C32ECEA8B200154DC5 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				C68060CC2ECEA99800154DC5 /* UserStorage.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C68060932ECE6C0500154DC5 /* KopiCup */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C68060B82ECE6C0700154DC5 /* Build configuration list for PBXNativeTarget "KopiCup" */;
+			buildPhases = (
+				C68060902ECE6C0500154DC5 /* Sources */,
+				C68060912ECE6C0500154DC5 /* Frameworks */,
+				C68060922ECE6C0500154DC5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KopiCup;
+			productName = KopiCup;
+			productReference = C68060942ECE6C0500154DC5 /* KopiCup.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C68060A32ECE6C0700154DC5 /* KopiCupTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C68060BB2ECE6C0700154DC5 /* Build configuration list for PBXNativeTarget "KopiCupTests" */;
+			buildPhases = (
+				C68060A02ECE6C0700154DC5 /* Sources */,
+				C68060A12ECE6C0700154DC5 /* Frameworks */,
+				C68060A22ECE6C0700154DC5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C68060A62ECE6C0700154DC5 /* PBXTargetDependency */,
+			);
+			name = KopiCupTests;
+			productName = KopiCupTests;
+			productReference = C68060A42ECE6C0700154DC5 /* KopiCupTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		C68060AD2ECE6C0700154DC5 /* KopiCupUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C68060BE2ECE6C0700154DC5 /* Build configuration list for PBXNativeTarget "KopiCupUITests" */;
+			buildPhases = (
+				C68060AA2ECE6C0700154DC5 /* Sources */,
+				C68060AB2ECE6C0700154DC5 /* Frameworks */,
+				C68060AC2ECE6C0700154DC5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C68060B02ECE6C0700154DC5 /* PBXTargetDependency */,
+			);
+			name = KopiCupUITests;
+			productName = KopiCupUITests;
+			productReference = C68060AE2ECE6C0700154DC5 /* KopiCupUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C680608C2ECE6C0500154DC5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1420;
+				LastUpgradeCheck = 1420;
+				TargetAttributes = {
+					C68060932ECE6C0500154DC5 = {
+						CreatedOnToolsVersion = 14.2;
+					};
+					C68060A32ECE6C0700154DC5 = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = C68060932ECE6C0500154DC5;
+					};
+					C68060AD2ECE6C0700154DC5 = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = C68060932ECE6C0500154DC5;
+					};
+				};
+			};
+			buildConfigurationList = C680608F2ECE6C0500154DC5 /* Build configuration list for PBXProject "KopiCup" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C680608B2ECE6C0500154DC5;
+			productRefGroup = C68060952ECE6C0500154DC5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C68060932ECE6C0500154DC5 /* KopiCup */,
+				C68060A32ECE6C0700154DC5 /* KopiCupTests */,
+				C68060AD2ECE6C0700154DC5 /* KopiCupUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C68060922ECE6C0500154DC5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C680609F2ECE6C0600154DC5 /* Preview Assets.xcassets in Resources */,
+				C680609C2ECE6C0600154DC5 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C68060A22ECE6C0700154DC5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C68060AC2ECE6C0700154DC5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C68060902ECE6C0500154DC5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C68060C92ECEA93800154DC5 /* LoadView.swift in Sources */,
+				C68060CF2ECEA9E600154DC5 /* MainTabView.swift in Sources */,
+				C68060C72ECEA90E00154DC5 /* RegView.swift in Sources */,
+				C68060D32ECEB34100154DC5 /* SettingsView.swift in Sources */,
+				C68060982ECE6C0500154DC5 /* KopiCupApp.swift in Sources */,
+				C68060CD2ECEA99800154DC5 /* UserStorage.swift in Sources */,
+				C68060D52ECEB34E00154DC5 /* StatsView.swift in Sources */,
+				C68060D12ECEB33100154DC5 /* HomeView.swift in Sources */,
+				C68060CB2ECEA96D00154DC5 /* CardView.swift in Sources */,
+				C68060C52ECEA8F300154DC5 /* AuthView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C68060A02ECE6C0700154DC5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C68060A92ECE6C0700154DC5 /* KopiCupTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C68060AA2ECE6C0700154DC5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C68060B52ECE6C0700154DC5 /* KopiCupUITestsLaunchTests.swift in Sources */,
+				C68060B32ECE6C0700154DC5 /* KopiCupUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C68060A62ECE6C0700154DC5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C68060932ECE6C0500154DC5 /* KopiCup */;
+			targetProxy = C68060A52ECE6C0700154DC5 /* PBXContainerItemProxy */;
+		};
+		C68060B02ECE6C0700154DC5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C68060932ECE6C0500154DC5 /* KopiCup */;
+			targetProxy = C68060AF2ECE6C0700154DC5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		C68060B62ECE6C0700154DC5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		C68060B72ECE6C0700154DC5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C68060B92ECE6C0700154DC5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"KopiCup/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = VK.MVD.KopiCup;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C68060BA2ECE6C0700154DC5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"KopiCup/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = VK.MVD.KopiCup;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		C68060BC2ECE6C0700154DC5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = VK.MVD.KopiCupTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KopiCup.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KopiCup";
+			};
+			name = Debug;
+		};
+		C68060BD2ECE6C0700154DC5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = VK.MVD.KopiCupTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KopiCup.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KopiCup";
+			};
+			name = Release;
+		};
+		C68060BF2ECE6C0700154DC5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = VK.MVD.KopiCupUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = KopiCup;
+			};
+			name = Debug;
+		};
+		C68060C02ECE6C0700154DC5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = VK.MVD.KopiCupUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = KopiCup;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C680608F2ECE6C0500154DC5 /* Build configuration list for PBXProject "KopiCup" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C68060B62ECE6C0700154DC5 /* Debug */,
+				C68060B72ECE6C0700154DC5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C68060B82ECE6C0700154DC5 /* Build configuration list for PBXNativeTarget "KopiCup" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C68060B92ECE6C0700154DC5 /* Debug */,
+				C68060BA2ECE6C0700154DC5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C68060BB2ECE6C0700154DC5 /* Build configuration list for PBXNativeTarget "KopiCupTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C68060BC2ECE6C0700154DC5 /* Debug */,
+				C68060BD2ECE6C0700154DC5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C68060BE2ECE6C0700154DC5 /* Build configuration list for PBXNativeTarget "KopiCupUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C68060BF2ECE6C0700154DC5 /* Debug */,
+				C68060C02ECE6C0700154DC5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C680608C2ECE6C0500154DC5 /* Project object */;
+}
