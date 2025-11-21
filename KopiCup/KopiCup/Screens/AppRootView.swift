@@ -1,14 +1,14 @@
 import SwiftUI
 
 struct AppRootView: View {
-    @State private var isAuthorized = false
+    @State private var isRegistrated = false
 
     var body: some View {
-        if isAuthorized {
+        if isRegistrated {
             MainTabView()
         } else {
             NavigationStack {
-                AuthView(onAuthSuccess: { isAuthorized = true })
+                RegView(onRegSuccess: { isRegistrated = true })
             }
         }
     }
