@@ -5,8 +5,8 @@ struct AuthView: View {
     
     @State private var email: String = ""
     @State private var password: String = ""
-    @State private var confirmedPassword: String = ""
     @State private var didTapSubmit: Bool = false
+    @State private var rememberMe: Bool = false
     
     var emailError: String? {
         let trimmed = email.trimmingCharacters(in: .whitespaces)
@@ -40,37 +40,14 @@ struct AuthView: View {
         passwordError == nil
     }
     
-    var confirmedPasswordError: String? {
-        if password != confirmedPassword {
-            return "х Пароли не совпадают"
-        }
-        return nil
-    }
-    
-    var isConfirmedPasswordValid: Bool {
-        confirmedPasswordError == nil
-    }
-    
     var isFormFilled: Bool {
-        !email.isEmpty && !password.isEmpty && !confirmedPassword.isEmpty
+        !email.isEmpty && !password.isEmpty
     }
 
     var isFormValid: Bool {
-        isEmailValid && isPasswordValid && isConfirmedPasswordValid
+        isEmailValid && isPasswordValid
     }
     
-    var shouldShowEmailError: Bool {
-        didTapSubmit && emailError != nil
-    }
-
-    var shouldShowPasswordError: Bool {
-        didTapSubmit && passwordError != nil
-    }
-
-    var shouldShowConfirmedPasswordError: Bool {
-        didTapSubmit && confirmedPasswordError != nil
-    }
-
     var body: some View {
         ZStack {
             Image("background")
@@ -103,11 +80,11 @@ struct AuthView: View {
                             RoundedRectangle(cornerRadius: 16)
                         )
                 }
-                
-                Text("Создайте свою копилку мечты!")
+
+                Text("С возвращением к твоей цели!")
                     .font(.system(size: 18, design: .rounded))
                     .bold()
-                Text("Ваша цель ждет - начните копить уже сегодня")
+                Text("Подтверди твои намерения")
                     .multilineTextAlignment(.center)
                     .font(.system(size: 13, design: .rounded))
                     .bold()
@@ -124,9 +101,11 @@ struct AuthView: View {
             .padding(.horizontal, 36)
             .padding(.vertical, 16)
         }
+        .navigationBarBackButtonHidden(true)
     }
+    
     private var formFields: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 20) {
             LabeledTextField(
                 title: "Email",
                 placeholder: "email@example.com",
@@ -136,27 +115,30 @@ struct AuthView: View {
             )
             
             LabeledSecureField(
-                title: "Придумайте пароль",
-                placeholder: "Создайте надежный пароль",
+                title: "Пароль",
+                placeholder: "Введите пароль",
                 iconName: "lock",
                 text: $password,
                 error: didTapSubmit ? passwordError : nil
             )
             
-            LabeledSecureField(
-                title: "Подтверждение пароля",
-                placeholder: "Повторите пароль",
-                iconName: "checkmark.circle",
-                text: $confirmedPassword,
-                error: didTapSubmit ? confirmedPasswordError : nil
-            )
+            HStack {
+
+                Checkbox(isOn: $rememberMe, label: "Запомнить меня")
+                Spacer()
+                NavigationLink("Забыли пароль?") {
+                    // логика для восстановления пароля
+                }
+                    .font(.system(size: 14, design: .rounded)).bold()
+                
+            }
             
-            GreenButton(title: "Старт к мечте!", isDisabled: !isFormFilled) {
+            GreenButton(title: "Начать копить", isDisabled: !isFormFilled) {
                 didTapSubmit = true
 
                 if isFormValid {
-                    // место для регистрации пользователя
-                    print("Можно регистрировать пользователя")
+                    // место для авторизации пользователя
+                    print("Можно авторизовать пользователя")
                     onAuthSuccess()
                 }
             }
@@ -193,7 +175,7 @@ struct AuthView: View {
             
             HStack(spacing: 12) {
                 Button(action: {
-                    // место для регистрации через Google
+                    // место для авторизации через Google
                     print("Регистрация через Google")
                 }) {
                     HStack(spacing: 8) {
@@ -216,7 +198,7 @@ struct AuthView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
                 Button(action: {
-                    // место для регистрации через VK ID
+                    // место для авторизации через VK ID
                     print("Регистрация через VK ID")
                 }) {
                     HStack(spacing: 8) {
@@ -240,7 +222,7 @@ struct AuthView: View {
                 }
                 
                 Button(action: {
-                    // место для регистрации через Apple
+                    // место для авторизации через Apple
                     print("Регистрация через Apple")
                 }) {
                     HStack(spacing: 8) {
@@ -264,9 +246,9 @@ struct AuthView: View {
                 }
             }
             HStack {
-                Text("Уже есть аккаунт?")
-                NavigationLink("Войти") {
-                    RegView()
+                Text("Нет аккаунта?")
+                NavigationLink("Зарегистрироваться") {
+                    RegView(onRegSuccess: {})
                 }
                 
             }
@@ -277,143 +259,27 @@ struct AuthView: View {
 
 }
 
-struct LabeledTextField: View {
-    let title: String
-    let placeholder: String
-    let iconName: String?
-    @Binding var text: String
-    let error: String?
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.system(size: 14, design: .rounded))
-                .bold()
-            
-            Label {
-                TextField(
-                    "",
-                    text: $text,
-                    prompt: Text(placeholder)
-                        .foregroundColor(.gray.opacity(0.6))
-                )
-                .textInputAutocapitalization(.never)
-            } icon: {
-                if let iconName = iconName {
-                    Image(systemName: iconName)
-                        .foregroundColor(.secondary)
-                }
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(
-                        error == nil ? Color.secondary : Color.red,
-                        lineWidth: 2
-                    )
-            )
-            
-            if let error = error {
-                Text(error)
-                    .font(.system(size: 11, design: .rounded))
-                    .foregroundColor(.red)
-            }
-        }
-    }
-}
-
-struct LabeledSecureField: View {
-    let title: String
-    let placeholder: String
-    let iconName: String?
-    @Binding var text: String
-    let error: String?
-    
-    @State private var isSecure: Bool = true
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.system(size: 14, design: .rounded))
-                .bold()
-            
-            HStack {
-                if let iconName = iconName {
-                    Image(systemName: iconName)
-                        .foregroundColor(.secondary)
-                }
-                
-                Group {
-                    if isSecure {
-                        SecureField(placeholder, text: $text)
-                    } else {
-                        TextField(placeholder, text: $text)
-                    }
-                }
-                .textInputAutocapitalization(.never)
-                .textContentType(.password)
-                
-                Button(action: {
-                    isSecure.toggle()
-                }) {
-                    Image(systemName: isSecure ? "eye.slash" : "eye")
-                        .foregroundColor(.secondary)
-                }
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(
-                        error == nil ? Color.secondary : Color.red,
-                        lineWidth: 2
-                    )
-            )
-            
-            if let error = error {
-                Text(error)
-                    .font(.system(size: 11, design: .rounded))
-                    .foregroundColor(.red)
-            }
-        }
-    }
-}
-
-struct GreenButton: View {
-    let title: String
-    let isDisabled: Bool
-    let action: () -> Void
+struct Checkbox: View {
+    @Binding var isOn: Bool
+    var label: String
 
     var body: some View {
-        Button(action: action) {
-            ZStack(alignment: .top) {
+        Button {
+            isOn.toggle()
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: isOn ? "checkmark.square.fill" : "square")
+                    .font(.system(size: 20))
+                    .foregroundColor(.secondary)
 
-                if !isDisabled {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(red: 78/255, green: 146/255, blue: 0))
-                        .frame(height: 48)
-                        .offset(y: 5)
-                }
-
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(
-                        isDisabled
-                        ? Color(red: 102/255, green: 190/255, blue: 0).opacity(0.5)
-                        : Color(red: 102/255, green: 190/255, blue: 0)
-                    )
-                    .frame(height: 48)
-                    .overlay(
-                        Text(title)
-                            .foregroundColor(.white.opacity(1.0))
-                            .bold()
-                    )
+                Text(label)
+                    .foregroundColor(.primary)
+                    .font(.system(size: 14, design: .rounded)).bold()
             }
         }
-        .disabled(isDisabled)
+        .buttonStyle(.plain)
     }
 }
-
 
 struct AuthView_Previews: PreviewProvider {
     static var previews: some View {
