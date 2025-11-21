@@ -59,18 +59,6 @@ struct RegView: View {
         isEmailValid && isPasswordValid && isConfirmedPasswordValid
     }
     
-    var shouldShowEmailError: Bool {
-        didTapSubmit && emailError != nil
-    }
-
-    var shouldShowPasswordError: Bool {
-        didTapSubmit && passwordError != nil
-    }
-
-    var shouldShowConfirmedPasswordError: Bool {
-        didTapSubmit && confirmedPasswordError != nil
-    }
-
     var body: some View {
         ZStack {
             Image("background")
