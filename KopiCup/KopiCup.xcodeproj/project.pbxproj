@@ -22,6 +22,10 @@
 		C68060D12ECEB33100154DC5 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060D02ECEB33100154DC5 /* HomeView.swift */; };
 		C68060D32ECEB34100154DC5 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060D22ECEB34100154DC5 /* SettingsView.swift */; };
 		C68060D52ECEB34E00154DC5 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060D42ECEB34E00154DC5 /* StatsView.swift */; };
+		C68060D72ECFAB6A00154DC5 /* GoalCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060D62ECFAB6A00154DC5 /* GoalCardView.swift */; };
+		C68060D92ECFB17100154DC5 /* SeriesCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060D82ECFB17000154DC5 /* SeriesCardView.swift */; };
+		C68060DB2ECFB2ED00154DC5 /* ChallengeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060DA2ECFB2ED00154DC5 /* ChallengeCardView.swift */; };
+		C68060E32ED0023600154DC5 /* CardDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060E22ED0023600154DC5 /* CardDetailsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +64,10 @@
 		C68060D02ECEB33100154DC5 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		C68060D22ECEB34100154DC5 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C68060D42ECEB34E00154DC5 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		C68060D62ECFAB6A00154DC5 /* GoalCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalCardView.swift; sourceTree = "<group>"; };
+		C68060D82ECFB17000154DC5 /* SeriesCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesCardView.swift; sourceTree = "<group>"; };
+		C68060DA2ECFB2ED00154DC5 /* ChallengeCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeCardView.swift; sourceTree = "<group>"; };
+		C68060E22ED0023600154DC5 /* CardDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,9 +155,13 @@
 		C68060C12ECEA89200154DC5 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				C68060D62ECFAB6A00154DC5 /* GoalCardView.swift */,
+				C68060CA2ECEA96D00154DC5 /* CardView.swift */,
 				C68060C82ECEA93800154DC5 /* LoadView.swift */,
 				C68060972ECE6C0500154DC5 /* KopiCupApp.swift */,
 				C68060CE2ECEA9E600154DC5 /* MainTabView.swift */,
+				C68060D82ECFB17000154DC5 /* SeriesCardView.swift */,
+				C68060DA2ECFB2ED00154DC5 /* ChallengeCardView.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -159,10 +171,10 @@
 			children = (
 				C68060C42ECEA8F300154DC5 /* AuthView.swift */,
 				C68060C62ECEA90E00154DC5 /* RegView.swift */,
-				C68060CA2ECEA96D00154DC5 /* CardView.swift */,
 				C68060D02ECEB33100154DC5 /* HomeView.swift */,
 				C68060D22ECEB34100154DC5 /* SettingsView.swift */,
 				C68060D42ECEB34E00154DC5 /* StatsView.swift */,
+				C68060E22ED0023600154DC5 /* CardDetailsView.swift */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -306,15 +318,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				C68060C92ECEA93800154DC5 /* LoadView.swift in Sources */,
+				C68060D72ECFAB6A00154DC5 /* GoalCardView.swift in Sources */,
 				C68060CF2ECEA9E600154DC5 /* MainTabView.swift in Sources */,
 				C68060C72ECEA90E00154DC5 /* RegView.swift in Sources */,
 				C68060D32ECEB34100154DC5 /* SettingsView.swift in Sources */,
 				C68060982ECE6C0500154DC5 /* KopiCupApp.swift in Sources */,
+				C68060DB2ECFB2ED00154DC5 /* ChallengeCardView.swift in Sources */,
 				C68060CD2ECEA99800154DC5 /* UserStorage.swift in Sources */,
+				C68060E32ED0023600154DC5 /* CardDetailsView.swift in Sources */,
 				C68060D52ECEB34E00154DC5 /* StatsView.swift in Sources */,
 				C68060D12ECEB33100154DC5 /* HomeView.swift in Sources */,
 				C68060CB2ECEA96D00154DC5 /* CardView.swift in Sources */,
 				C68060C52ECEA8F300154DC5 /* AuthView.swift in Sources */,
+				C68060D92ECFB17100154DC5 /* SeriesCardView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
