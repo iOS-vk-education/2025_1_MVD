@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5E1CA85B2ED0633500EDA556 /* AppRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1CA85A2ED0633100EDA556 /* AppRootView.swift */; };
 		C68060982ECE6C0500154DC5 /* KopiCupApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060972ECE6C0500154DC5 /* KopiCupApp.swift */; };
 		C680609C2ECE6C0600154DC5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C680609B2ECE6C0600154DC5 /* Assets.xcassets */; };
 		C680609F2ECE6C0600154DC5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C680609E2ECE6C0600154DC5 /* Preview Assets.xcassets */; };
@@ -42,6 +43,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5E1CA85A2ED0633100EDA556 /* AppRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRootView.swift; sourceTree = "<group>"; };
 		C68060942ECE6C0500154DC5 /* KopiCup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KopiCup.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C68060972ECE6C0500154DC5 /* KopiCupApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KopiCupApp.swift; sourceTree = "<group>"; };
 		C680609B2ECE6C0600154DC5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 		C68060C22ECEA8A500154DC5 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				5E1CA85A2ED0633100EDA556 /* AppRootView.swift */,
 				C68060C42ECEA8F300154DC5 /* AuthView.swift */,
 				C68060C62ECEA90E00154DC5 /* RegView.swift */,
 				C68060CA2ECEA96D00154DC5 /* CardView.swift */,
@@ -239,7 +242,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1420;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1640;
 				TargetAttributes = {
 					C68060932ECE6C0500154DC5 = {
 						CreatedOnToolsVersion = 14.2;
@@ -308,6 +311,7 @@
 				C68060C92ECEA93800154DC5 /* LoadView.swift in Sources */,
 				C68060CF2ECEA9E600154DC5 /* MainTabView.swift in Sources */,
 				C68060C72ECEA90E00154DC5 /* RegView.swift in Sources */,
+				5E1CA85B2ED0633500EDA556 /* AppRootView.swift in Sources */,
 				C68060D32ECEB34100154DC5 /* SettingsView.swift in Sources */,
 				C68060982ECE6C0500154DC5 /* KopiCupApp.swift in Sources */,
 				C68060CD2ECEA99800154DC5 /* UserStorage.swift in Sources */,
@@ -387,6 +391,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -447,6 +452,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -524,7 +530,6 @@
 		C68060BC2ECE6C0700154DC5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -543,7 +548,6 @@
 		C68060BD2ECE6C0700154DC5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -562,7 +566,6 @@
 		C68060BF2ECE6C0700154DC5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -579,7 +582,6 @@
 		C68060C02ECE6C0700154DC5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
