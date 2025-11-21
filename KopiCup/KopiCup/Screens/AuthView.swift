@@ -260,6 +260,15 @@ struct AuthView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
             }
+            HStack {
+                Text("Нет аккаута?")
+                NavigationLink("Зарегистрироваться") {
+                    RegView()
+                }
+                
+            }
+            .font(.system(size: 14, design: .rounded)).bold()
+            .padding(.top, 12)
         }
     }
 
@@ -405,6 +414,8 @@ struct GreenButton: View {
 
 struct AuthView_Previews: PreviewProvider {
     static var previews: some View {
-        AuthView()
+        NavigationStack {
+            AuthView()
+        }
     }
 }
