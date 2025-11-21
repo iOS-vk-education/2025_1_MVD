@@ -3,7 +3,9 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var userStorage = UserStorage()
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text("Настройки")
+            .font(.title)
+            .fontWeight(.bold)
     }
 }
 
