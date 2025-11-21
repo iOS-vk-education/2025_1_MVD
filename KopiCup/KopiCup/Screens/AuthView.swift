@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct AuthView: View {
+    let onAuthSuccess: () -> Void
+    
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var confirmedPassword: String = ""
@@ -155,6 +157,7 @@ struct AuthView: View {
                 if isFormValid {
                     // место для регистрации пользователя
                     print("Можно регистрировать пользователя")
+                    onAuthSuccess()
                 }
             }
             .padding(.top, 8)
@@ -261,8 +264,8 @@ struct AuthView: View {
                 }
             }
             HStack {
-                Text("Нет аккаута?")
-                NavigationLink("Зарегистрироваться") {
+                Text("Уже есть аккаунт?")
+                NavigationLink("Войти") {
                     RegView()
                 }
                 
@@ -415,7 +418,7 @@ struct GreenButton: View {
 struct AuthView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            AuthView()
+            AuthView(onAuthSuccess: {})
         }
     }
 }
