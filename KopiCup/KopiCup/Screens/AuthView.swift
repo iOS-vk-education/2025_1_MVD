@@ -235,6 +235,30 @@ struct AuthView: View {
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
+                
+                Button(action: {
+                    // место для регистрации через Apple
+                    print("Регистрация через Apple")
+                }) {
+                    HStack(spacing: 8) {
+                        Image("Apple")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 20, height: 20)
+                        Text("Apple")
+                    }
+                    .font(.system(size: 14, design: .rounded))
+                    .foregroundColor(.black)
+                    .bold()
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(Color.white)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.secondary, lineWidth: 2)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
             }
         }
     }
