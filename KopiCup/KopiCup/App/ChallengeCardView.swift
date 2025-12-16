@@ -1,8 +1,9 @@
 import SwiftUI
 
 struct ChallengeCardView: View {
-    let challengeName: String
-    let difficulty: Int
+    let challenge: Challenge
+    let onDecline: () -> Void
+    
     @State private var isAccepted = false
     @State private var isCompleted = false
     @State private var isHidden = false
@@ -10,34 +11,37 @@ struct ChallengeCardView: View {
     var body: some View {
         if !isHidden {
             CardView(
-                cardName: "Карточка челленджа",
-                mainText: isAccepted ? challengeName : "Челлендж недели",
-                subtitle: isAccepted ? "Отмечай свои успехи!" : challengeName,
-                
+                viewModel: CardViewModel(
+                    cardName: "Карточка челленджа",
+                    mainText: isAccepted ? challenge.name : "Челлендж недели",
+                    subtitle: isAccepted ? "Отмечай свои успехи!" : challenge.name,
+                    backgroundColor: isAccepted ? .blue : .white,
+                    foregroundColor: isAccepted ? .white : .blue,
+                    borderColor: isAccepted ? .clear : .blue,
+                    hasBorder: !isAccepted
+                ),
                 content: {
                     if isAccepted {
                         HStack {
                             Spacer()
                             Button(action: {
                                 withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                                        isCompleted.toggle()
-                                    }
+                                    isCompleted.toggle()
+                                }
                                 withAnimation(.easeInOut(duration: 0.8).delay(0.7)) {
-                                        isHidden = true
-                                    }
+                                    isHidden = true
+                                }
                             }) {
                                 HStack  {
                                     Image(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
                                         .font(.largeTitle)
                                         .foregroundColor(isCompleted ? .green : .white)
-                                    
                                 }
                             }
                             Spacer()
                         }
                         .padding(.vertical, 4)
                     } else {
-                        
                         HStack(alignment: .bottom, spacing: 12) {
                             Button("Принять") {
                                 withAnimation {
@@ -55,7 +59,8 @@ struct ChallengeCardView: View {
                             
                             Button("Откажусь") {
                                 withAnimation {
-                                    isHidden = true
+                                    // Вместо скрытия вызываем смену челленджа
+                                    onDecline()
                                 }
                             }
                             .font(.subheadline)
@@ -76,18 +81,13 @@ struct ChallengeCardView: View {
                 },
                 imageContent: {
                     VStack(spacing: 4) {
-                            ForEach(0..<difficulty, id: \.self) { _ in
-                                Image(systemName: "bolt.fill")
-                                    .font(.title)
-                                    .foregroundColor(.orange)
-                            }
+                        ForEach(0..<challenge.difficulty, id: \.self) { _ in
+                            Image(systemName: "bolt.fill")
+                                .font(.title)
+                                .foregroundColor(.orange)
                         }
-                },
-                
-                backgroundColor: isAccepted ? .blue : .white,
-                foregroundColor: isAccepted ? .white : .blue,
-                borderColor: isAccepted ? .clear : .blue,
-                hasBorder: !isAccepted
+                    }
+                }
             )
         }
     }

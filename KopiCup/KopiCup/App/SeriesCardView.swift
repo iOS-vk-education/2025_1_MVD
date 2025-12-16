@@ -15,9 +15,13 @@ struct SeriesCardView: View {
     
     var body: some View {
         CardView(
-            cardName: "Карточка серии",
-            mainText: "На этой неделе накопили \(formatCurrency(weeklySavings))",
-            subtitle: "Осталось всего \(formatCurrency(remainingAmount))",
+            viewModel: CardViewModel(
+                cardName: "Карточка серии",
+                mainText: "На этой неделе накопили \(weeklySavings.formatted(.rub()))",
+                subtitle: "Осталось всего \(remainingAmount.formatted(.rub()))",
+                borderColor: .orange,
+                hasBorder: true
+            ),
             content: {
                 HStack(spacing: 8) {
                     ForEach(0..<7, id: \.self) { day in
@@ -44,16 +48,7 @@ struct SeriesCardView: View {
                         .foregroundColor(.orange)
                         .fontWeight(.medium)
                 }
-            },
-            borderColor: .orange,
-            hasBorder: true
+            }
         )
-    }
-    
-    private func formatCurrency(_ amount: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.locale = Locale(identifier: "ru_RU")
-        return formatter.string(from: NSNumber(value: amount)) ?? "\(amount) ₽"
     }
 }

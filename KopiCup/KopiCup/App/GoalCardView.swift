@@ -22,41 +22,33 @@ struct GoalCardView: View {
     }
     
     var body: some View {
-            CardView(
+        CardView(
+            viewModel: CardViewModel(
                 cardName: "Карточка цели",
                 mainText: goalName,
-                subtitle: "Осталось: \(formatCurrency(remainingAmount))",
-                content: {
-                    VStack(alignment: .leading, spacing: 16) {
-                        
-                        ProgressView(value: progress)
-                            .progressViewStyle(LinearProgressViewStyle(tint: .blue))
-                            .frame(maxWidth: 170)
-                            .scaleEffect(y:4)
-                            .overlay(
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .stroke(Color.blue, lineWidth: 0.3)
-                                        .scaleEffect(y:4)
-                                )
-                        
-                    }
-                    Spacer()
-                },
-                imageContent: {
-                    Image(systemName: goalImageName)
-                        .font(.title)
-                        .foregroundColor(.white)
-                },
+                subtitle: "Осталось: \(remainingAmount.formatted(.rub()))",
                 backgroundColor: .green,
                 foregroundColor: .white
-            )
-    }
-    
-    private func formatCurrency(_ amount: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.locale = Locale(identifier: "ru_RU")
-        return formatter.string(from: NSNumber(value: amount)) ?? "\(amount) ₽"
+            ),
+            content: {
+                VStack(alignment: .leading, spacing: 16) {
+                    ProgressView(value: progress)
+                        .progressViewStyle(LinearProgressViewStyle(tint: .blue))
+                        .frame(maxWidth: 170)
+                        .scaleEffect(y: 4)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 4)
+                                .stroke(Color.blue, lineWidth: 0.3)
+                                .scaleEffect(y: 4)
+                        )
+                }
+                Spacer()
+            },
+            imageContent: {
+                Image(systemName: goalImageName)
+                    .font(.title)
+                    .foregroundColor(.white)
+            }
+        )
     }
 }
-

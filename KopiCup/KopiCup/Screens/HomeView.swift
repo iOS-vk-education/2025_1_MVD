@@ -2,7 +2,8 @@ import SwiftUI
 
 struct HomeView: View {
     @ObservedObject var userStorage = UserStorage()
-    @State private var hasGoal = false // ← Состояние наличия цели
+    @StateObject private var challengeManager = ChallengeManager()
+    @State private var hasGoal = false
     
     var body: some View {
         NavigationView {
@@ -14,7 +15,6 @@ struct HomeView: View {
                 
                 VStack(spacing: 25) {
                     if hasGoal {
-                        // РЕЖИМ С ВЫБРАННОЙ ЦЕЛЬЮ
                         GoalCardView(
                             goalName: "Новый автомобиль",
                             targetAmount: 1_500_000,
@@ -27,20 +27,25 @@ struct HomeView: View {
                             streakDays: 5,
                             weekProgress: [true, true, true, true, true, false, false]
                         )
-                        ChallengeCardView(
-                            challengeName: "Без кофе на этой неделе",
-                            difficulty: 2
-                        )
-                    } else {
-                        // РЕЖИМ ПЕРВОГО ЗАХОДА (НЕТ ЦЕЛИ)
                         
-                        // Карточка цели (серая, без цели)
+                        if let challenge = challengeManager.currentChallenge {
+                            ChallengeCardView(
+                                challenge: challenge,
+                                onDecline: {
+                                    challengeManager.nextChallenge()
+                                }
+                            )
+                        }
+                    } else {
                         CardView(
-                            cardName: "Пустая цель",
-                            mainText: "У вас пока нет цели",
-                            subtitle: "Самое время ее добавить",
+                            viewModel: CardViewModel(
+                                cardName: "Пустая цель",
+                                mainText: "У вас пока нет цели",
+                                subtitle: "Самое время ее добавить",
+                                backgroundColor: Color.gray.opacity(0.1),
+                                foregroundColor: .blue
+                            ),
                             content: {
-                                // Пустой контент или прогресс 0%
                                 ProgressView(value: 0)
                                     .progressViewStyle(LinearProgressViewStyle(tint: .gray))
                                     .frame(maxWidth: 170)
@@ -51,16 +56,18 @@ struct HomeView: View {
                                 Image(systemName: "trophy")
                                     .font(.title2)
                                     .foregroundColor(.gray)
-                            },
-                            backgroundColor: .gray.opacity(0.1),
-                            foregroundColor: .blue
+                            }
                         )
                         
-                        // Карточка серии (нулевая)
                         CardView(
-                            cardName: "Начало серии",
-                            mainText: "Вот-вот начнем! Выбери цель",
-                            subtitle: nil,
+                            viewModel: CardViewModel(
+                                cardName: "Начало серии",
+                                mainText: "Вот-вот начнем! Выбери цель",
+                                subtitle: nil,
+                                foregroundColor: .blue,
+                                borderColor: .orange,
+                                hasBorder: true
+                            ),
                             content: {
                                 HStack(spacing: 8) {
                                     ForEach(0..<7, id: \.self) { day in
@@ -86,21 +93,23 @@ struct HomeView: View {
                                         .font(.title)
                                         .foregroundColor(.white)
                                 }
-                            },
-                            foregroundColor: .blue,
-                            borderColor: .orange,
-                            hasBorder: true
+                            }
                         )
                         
-                        // Карточка добавления цели вместо челленджа
                         CardView(
-                            cardName: "Добавление цели",
-                            mainText: "О чем ты сейчас мечтаешь?",
-                            subtitle: "Иди к твоей цели",
+                            viewModel: CardViewModel(
+                                cardName: "Добавление цели",
+                                mainText: "О чем ты сейчас мечтаешь?",
+                                subtitle: "Иди к твоей цели",
+                                backgroundColor: .white,
+                                foregroundColor: .blue,
+                                borderColor: .blue,
+                                hasBorder: true
+                            ),
                             content: {
                                 Button("Начать копить") {
                                     withAnimation {
-                                        hasGoal = true // ← Переключаем на режим с целью
+                                        hasGoal = true
                                     }
                                 }
                                 .font(.subheadline)
@@ -116,11 +125,7 @@ struct HomeView: View {
                                 Image(systemName: "banknote")
                                     .font(.title2)
                                     .foregroundColor(.blue)
-                            },
-                            backgroundColor: .white,
-                            foregroundColor: .blue,
-                            borderColor: .blue,
-                            hasBorder: true
+                            }
                         )
                     }
                 }
@@ -128,6 +133,22 @@ struct HomeView: View {
                 .navigationTitle("Привет, \(userStorage.name)!")
             }
         }
+        .onAppear {
+                    print("✅ HomeView появился, hasGoal = \(hasGoal)")
+                    if hasGoal {
+                        print("🔄 Загружаем челленджи...")
+                        challengeManager.loadChallenges()
+                    }
+                }
+                .onChange(of: hasGoal) { newValue in
+                    print("🎯 hasGoal изменился на: \(newValue)")
+                    if newValue {
+                        print("🔄 Загружаем челленджи при изменении...")
+                        challengeManager.loadChallenges()
+                    } else {
+                        challengeManager.currentChallenge = nil
+                    }
+                }
     }
 }
 

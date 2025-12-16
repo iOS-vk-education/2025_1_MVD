@@ -38,9 +38,3 @@ struct CardDetailsView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
-
-struct CardDetailsView_Previews: PreviewProvider {
-    static var previews: some View {
-        CardDetailsView(cardName: "Карточка")
-    }
-}

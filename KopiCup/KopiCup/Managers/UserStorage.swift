@@ -1,7 +1,8 @@
 import Combine
 
 final class UserStorage: ObservableObject {
-    var name: String = "Guest"
-    var isLoggedIn: Bool = false
-    var userToken: String = ""
+    // TODO(#200): Заменить временные поля на реальные данные пользователя из бэкенда
+    @Published var name: String = "Guest"
+    @Published var isLoggedIn: Bool = false
+    @Published var userToken: String = ""
 }

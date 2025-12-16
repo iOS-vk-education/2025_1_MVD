@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BEE412252EDF7059005D1D49 /* CurrencyFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE412242EDF7059005D1D49 /* CurrencyFormatting.swift */; };
+		BEE412272EDF7B3B005D1D49 /* AuthFormModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE412262EDF7B3B005D1D49 /* AuthFormModel.swift */; };
+		BEE412292EDF7B3D005D1D49 /* RegFormModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE412282EDF7B3D005D1D49 /* RegFormModel.swift */; };
 		C68060982ECE6C0500154DC5 /* KopiCupApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060972ECE6C0500154DC5 /* KopiCupApp.swift */; };
 		C680609C2ECE6C0600154DC5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C680609B2ECE6C0600154DC5 /* Assets.xcassets */; };
 		C680609F2ECE6C0600154DC5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C680609E2ECE6C0600154DC5 /* Preview Assets.xcassets */; };
@@ -26,6 +29,15 @@
 		C68060D92ECFB17100154DC5 /* SeriesCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060D82ECFB17000154DC5 /* SeriesCardView.swift */; };
 		C68060DB2ECFB2ED00154DC5 /* ChallengeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060DA2ECFB2ED00154DC5 /* ChallengeCardView.swift */; };
 		C68060E32ED0023600154DC5 /* CardDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060E22ED0023600154DC5 /* CardDetailsView.swift */; };
+		C68060E52ED0A34000154DC5 /* AppRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68060E42ED0A34000154DC5 /* AppRootView.swift */; };
+		C6A22CFD2EF1BAF100A2865B /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C6A22CFC2EF1BAF100A2865B /* FirebaseAnalytics */; };
+		C6A22CFF2EF1BAF100A2865B /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C6A22CFE2EF1BAF100A2865B /* FirebaseAuth */; };
+		C6A22D012EF1BAF100A2865B /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = C6A22D002EF1BAF100A2865B /* FirebaseDatabase */; };
+		C6A22D032EF1BAF100A2865B /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C6A22D022EF1BAF100A2865B /* FirebaseFirestore */; };
+		C6A22D072EF1BCEA00A2865B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A22D062EF1BCEA00A2865B /* SceneDelegate.swift */; };
+		C6A22D092EF1BF9C00A2865B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C6A22D082EF1BF9C00A2865B /* GoogleService-Info.plist */; };
+		C6A22D0B2EF1C5D100A2865B /* ResetPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A22D0A2EF1C5D100A2865B /* ResetPasswordView.swift */; };
+		C6A22D0D2EF1CC4900A2865B /* ChallengeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A22D0C2EF1CC4900A2865B /* ChallengeManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +58,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		BEE412242EDF7059005D1D49 /* CurrencyFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyFormatting.swift; sourceTree = "<group>"; };
+		BEE412262EDF7B3B005D1D49 /* AuthFormModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFormModel.swift; sourceTree = "<group>"; };
+		BEE412282EDF7B3D005D1D49 /* RegFormModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegFormModel.swift; sourceTree = "<group>"; };
 		C68060942ECE6C0500154DC5 /* KopiCup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KopiCup.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C68060972ECE6C0500154DC5 /* KopiCupApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KopiCupApp.swift; sourceTree = "<group>"; };
 		C680609B2ECE6C0600154DC5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -68,6 +83,11 @@
 		C68060D82ECFB17000154DC5 /* SeriesCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesCardView.swift; sourceTree = "<group>"; };
 		C68060DA2ECFB2ED00154DC5 /* ChallengeCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeCardView.swift; sourceTree = "<group>"; };
 		C68060E22ED0023600154DC5 /* CardDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailsView.swift; sourceTree = "<group>"; };
+		C68060E42ED0A34000154DC5 /* AppRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRootView.swift; sourceTree = "<group>"; };
+		C6A22D062EF1BCEA00A2865B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		C6A22D082EF1BF9C00A2865B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C6A22D0A2EF1C5D100A2865B /* ResetPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordView.swift; sourceTree = "<group>"; };
+		C6A22D0C2EF1CC4900A2865B /* ChallengeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +95,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6A22D012EF1BAF100A2865B /* FirebaseDatabase in Frameworks */,
+				C6A22D032EF1BAF100A2865B /* FirebaseFirestore in Frameworks */,
+				C6A22CFD2EF1BAF100A2865B /* FirebaseAnalytics in Frameworks */,
+				C6A22CFF2EF1BAF100A2865B /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -123,6 +147,8 @@
 				C68060C12ECEA89200154DC5 /* App */,
 				C680609B2ECE6C0600154DC5 /* Assets.xcassets */,
 				C680609D2ECE6C0600154DC5 /* Preview Content */,
+				C6A22D062EF1BCEA00A2865B /* SceneDelegate.swift */,
+				C6A22D082EF1BF9C00A2865B /* GoogleService-Info.plist */,
 			);
 			path = KopiCup;
 			sourceTree = "<group>";
@@ -162,6 +188,9 @@
 				C68060CE2ECEA9E600154DC5 /* MainTabView.swift */,
 				C68060D82ECFB17000154DC5 /* SeriesCardView.swift */,
 				C68060DA2ECFB2ED00154DC5 /* ChallengeCardView.swift */,
+				BEE412242EDF7059005D1D49 /* CurrencyFormatting.swift */,
+				BEE412262EDF7B3B005D1D49 /* AuthFormModel.swift */,
+				BEE412282EDF7B3D005D1D49 /* RegFormModel.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -175,6 +204,8 @@
 				C68060D22ECEB34100154DC5 /* SettingsView.swift */,
 				C68060D42ECEB34E00154DC5 /* StatsView.swift */,
 				C68060E22ED0023600154DC5 /* CardDetailsView.swift */,
+				C68060E42ED0A34000154DC5 /* AppRootView.swift */,
+				C6A22D0A2EF1C5D100A2865B /* ResetPasswordView.swift */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -183,6 +214,7 @@
 			isa = PBXGroup;
 			children = (
 				C68060CC2ECEA99800154DC5 /* UserStorage.swift */,
+				C6A22D0C2EF1CC4900A2865B /* ChallengeManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -203,6 +235,12 @@
 			dependencies = (
 			);
 			name = KopiCup;
+			packageProductDependencies = (
+				C6A22CFC2EF1BAF100A2865B /* FirebaseAnalytics */,
+				C6A22CFE2EF1BAF100A2865B /* FirebaseAuth */,
+				C6A22D002EF1BAF100A2865B /* FirebaseDatabase */,
+				C6A22D022EF1BAF100A2865B /* FirebaseFirestore */,
+			);
 			productName = KopiCup;
 			productReference = C68060942ECE6C0500154DC5 /* KopiCup.app */;
 			productType = "com.apple.product-type.application";
@@ -275,6 +313,9 @@
 				Base,
 			);
 			mainGroup = C680608B2ECE6C0500154DC5;
+			packageReferences = (
+				C6A22CFB2EF1BAF100A2865B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = C68060952ECE6C0500154DC5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -293,6 +334,7 @@
 			files = (
 				C680609F2ECE6C0600154DC5 /* Preview Assets.xcassets in Resources */,
 				C680609C2ECE6C0600154DC5 /* Assets.xcassets in Resources */,
+				C6A22D092EF1BF9C00A2865B /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,16 +360,23 @@
 			buildActionMask = 2147483647;
 			files = (
 				C68060C92ECEA93800154DC5 /* LoadView.swift in Sources */,
+				C68060E52ED0A34000154DC5 /* AppRootView.swift in Sources */,
 				C68060D72ECFAB6A00154DC5 /* GoalCardView.swift in Sources */,
 				C68060CF2ECEA9E600154DC5 /* MainTabView.swift in Sources */,
+				BEE412292EDF7B3D005D1D49 /* RegFormModel.swift in Sources */,
 				C68060C72ECEA90E00154DC5 /* RegView.swift in Sources */,
 				C68060D32ECEB34100154DC5 /* SettingsView.swift in Sources */,
+				C6A22D0B2EF1C5D100A2865B /* ResetPasswordView.swift in Sources */,
 				C68060982ECE6C0500154DC5 /* KopiCupApp.swift in Sources */,
+				C6A22D0D2EF1CC4900A2865B /* ChallengeManager.swift in Sources */,
 				C68060DB2ECFB2ED00154DC5 /* ChallengeCardView.swift in Sources */,
 				C68060CD2ECEA99800154DC5 /* UserStorage.swift in Sources */,
+				BEE412252EDF7059005D1D49 /* CurrencyFormatting.swift in Sources */,
 				C68060E32ED0023600154DC5 /* CardDetailsView.swift in Sources */,
+				BEE412272EDF7B3B005D1D49 /* AuthFormModel.swift in Sources */,
 				C68060D52ECEB34E00154DC5 /* StatsView.swift in Sources */,
 				C68060D12ECEB33100154DC5 /* HomeView.swift in Sources */,
+				C6A22D072EF1BCEA00A2865B /* SceneDelegate.swift in Sources */,
 				C68060CB2ECEA96D00154DC5 /* CardView.swift in Sources */,
 				C68060C52ECEA8F300154DC5 /* AuthView.swift in Sources */,
 				C68060D92ECFB17100154DC5 /* SeriesCardView.swift in Sources */,
@@ -649,6 +698,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C6A22CFB2EF1BAF100A2865B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C6A22CFC2EF1BAF100A2865B /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C6A22CFB2EF1BAF100A2865B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		C6A22CFE2EF1BAF100A2865B /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C6A22CFB2EF1BAF100A2865B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		C6A22D002EF1BAF100A2865B /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C6A22CFB2EF1BAF100A2865B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		C6A22D022EF1BAF100A2865B /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C6A22CFB2EF1BAF100A2865B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C680608C2ECE6C0500154DC5 /* Project object */;
 }
