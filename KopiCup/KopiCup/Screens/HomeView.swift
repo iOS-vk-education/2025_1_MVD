@@ -134,16 +134,12 @@ struct HomeView: View {
             }
         }
         .onAppear {
-                    print("✅ HomeView появился, hasGoal = \(hasGoal)")
                     if hasGoal {
-                        print("🔄 Загружаем челленджи...")
                         challengeManager.loadChallenges()
                     }
                 }
                 .onChange(of: hasGoal) { newValue in
-                    print("🎯 hasGoal изменился на: \(newValue)")
                     if newValue {
-                        print("🔄 Загружаем челленджи при изменении...")
                         challengeManager.loadChallenges()
                     } else {
                         challengeManager.currentChallenge = nil

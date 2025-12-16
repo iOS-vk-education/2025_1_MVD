@@ -20,7 +20,6 @@ struct ResetPasswordView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 24) {
-                // Заголовок и описание
                 VStack(spacing: 12) {
                     Image(systemName: "key.fill")
                         .font(.system(size: 50))
@@ -37,7 +36,6 @@ struct ResetPasswordView: View {
                 }
                 .padding(.top, 20)
                 
-                // Поле email
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Email")
                         .font(.headline)
@@ -52,7 +50,6 @@ struct ResetPasswordView: View {
                 }
                 .padding(.horizontal, 24)
                 
-                // Кнопка отправки
                 Button(action: resetPassword) {
                     HStack {
                         Spacer()
@@ -75,7 +72,6 @@ struct ResetPasswordView: View {
                 
                 Spacer()
                 
-                // Информационное сообщение
                 if let successMessage = successMessage {
                     VStack(spacing: 8) {
                         Image(systemName: "checkmark.circle.fill")
@@ -117,7 +113,6 @@ struct ResetPasswordView: View {
     private func resetPassword() {
         let trimmedEmail = email.trimmingCharacters(in: .whitespaces)
         
-        // Базовая валидация email
         guard !trimmedEmail.isEmpty else {
             errorMessage = "Введите email"
             showAlert = true
@@ -139,7 +134,6 @@ struct ResetPasswordView: View {
                 successMessage = "Ссылка для восстановления пароля отправлена на \(trimmedEmail)"
                 errorMessage = nil
                 
-                // Автоматическое закрытие через 3 секунды после успеха
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                     dismiss()
                 }
