@@ -1,12 +1,10 @@
 import SwiftUI
 import FirebaseAuth
 
-
-
 struct AuthView: View {
     let onAuthSuccess: () -> Void
     
-    @StateObject private var form = AuthFormModel()
+    @StateObject private var authForm = AuthFormModel()
     @State private var isRegViewPresented = false
     @State private var isMainTabPresented = false
     @State private var showResetPassword = false
@@ -55,12 +53,12 @@ struct AuthView: View {
                         .foregroundColor(Color.secondary)
                     formFields
                     
-                    if form.isLoading {
+                    if authForm.isLoading {
                         ProgressView()
                             .padding(.top, 20)
                     }
                     
-                    if let firebaseError = form.firebaseError,
+                    if let firebaseError = authForm.firebaseError,
                        !firebaseError.contains("email") &&
                        !firebaseError.contains("пароль") &&
                        !firebaseError.contains("пользователь") &&
@@ -97,20 +95,20 @@ struct AuthView: View {
                 title: "Email",
                 placeholder: "email@example.com",
                 iconName: "at",
-                text: $form.email,
-                error: form.didTapSubmit ? form.displayErrorForEmail : nil
+                text: $authForm.email,
+                error: authForm.didTapSubmit ? authForm.displayErrorForEmail : nil
             )
             
             LabeledSecureField(
                 title: "Пароль",
                 placeholder: "Введите пароль",
                 iconName: "lock",
-                text: $form.password,
-                error: form.didTapSubmit ? form.displayErrorForPassword : nil
+                text: $authForm.password,
+                error: authForm.didTapSubmit ? authForm.displayErrorForPassword : nil
             )
             
             HStack {
-                Checkbox(isOn: $form.rememberMe, label: "Запомнить меня")
+                Checkbox(isOn: $authForm.rememberMe, label: "Запомнить меня")
                 Spacer()
                 Button("Забыли пароль?") {
                     showResetPassword = true
@@ -121,8 +119,8 @@ struct AuthView: View {
             }
             
             GreenButton(
-                title: form.isLoading ? "Вход..." : "Начать копить",
-                isDisabled: !form.isFormFilled || form.isLoading
+                title: authForm.isLoading ? "Вход..." : "Начать копить",
+                isDisabled: !authForm.isFormFilled || authForm.isLoading
             ) {
                 signInWithFirebase()
             }
@@ -244,24 +242,24 @@ struct AuthView: View {
     }
     
     private func signInWithFirebase() {
-        form.didTapSubmit = true
-        form.firebaseError = nil
+        authForm.didTapSubmit = true
+        authForm.firebaseError = nil
         
-        if form.hasLocalValidationErrors {
+        if authForm.hasLocalValidationErrors {
             return
         }
         
-        form.isLoading = true
+        authForm.isLoading = true
         
-        Auth.auth().signIn(withEmail: form.email.trimmingCharacters(in: .whitespaces),
-                          password: form.password) { result, error in
-            form.isLoading = false
+        Auth.auth().signIn(withEmail: authForm.email.trimmingCharacters(in: .whitespaces),
+                          password: authForm.password) { result, error in
+            authForm.isLoading = false
             
             if let error = error {
                 let russianError = convertFirebaseError(error)
-                form.firebaseError = russianError
+                authForm.firebaseError = russianError
             } else {
-                print("Пользователь авторизован: \(form.email)")
+                print("Пользователь авторизован: \(authForm.email)")
                 onAuthSuccess()
                 isMainTabPresented = true
             }

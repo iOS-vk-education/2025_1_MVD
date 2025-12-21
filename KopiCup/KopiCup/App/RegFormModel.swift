@@ -24,7 +24,7 @@ final class RegFormModel: ObservableObject {
         return nil
     }
 
-    var isEmailValid: Bool {
+    private var isEmailValid: Bool {
         emailError == nil
     }
 
@@ -37,7 +37,7 @@ final class RegFormModel: ObservableObject {
         return nil
     }
 
-    var isPasswordValid: Bool {
+    private var isPasswordValid: Bool {
         passwordError == nil
     }
 
@@ -48,7 +48,7 @@ final class RegFormModel: ObservableObject {
         return nil
     }
 
-    var isConfirmedPasswordValid: Bool {
+    private var isConfirmedPasswordValid: Bool {
         confirmedPasswordError == nil
     }
 
