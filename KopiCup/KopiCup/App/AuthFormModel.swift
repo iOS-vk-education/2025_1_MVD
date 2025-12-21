@@ -9,22 +9,23 @@ final class AuthFormModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var firebaseError: String? = nil
     
-    var emailValidationError: String? {
+    private func validateEmailError() -> String? {
         let trimmed = email.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else {
             return "х Пожалуйста, введите Email"
         }
-        
+
         let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
-        let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailRegex)
-        if !emailPredicate.evaluate(with: trimmed) {
+        let predicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+
+        guard predicate.evaluate(with: trimmed) else {
             return "х Пожалуйста, введите корректный Email"
         }
-        
+
         return nil
     }
-    
-    var passwordValidationError: String? {
+
+    private func validatePasswordError() -> String? {
         guard !password.isEmpty else {
             return "х Пожалуйста, введите пароль"
         }
@@ -32,7 +33,7 @@ final class AuthFormModel: ObservableObject {
     }
     
     var hasLocalValidationErrors: Bool {
-        emailValidationError != nil || passwordValidationError != nil
+        validateEmailError() != nil || validatePasswordError() != nil
     }
     
     var isFormFilled: Bool {
@@ -44,13 +45,13 @@ final class AuthFormModel: ObservableObject {
         if let firebaseError = firebaseError, firebaseError.contains("email") || firebaseError.contains("пользователь") {
             return firebaseError
         }
-        return emailValidationError
+        return validateEmailError()
     }
     
     var displayErrorForPassword: String? {
         if let firebaseError = firebaseError, firebaseError.contains("пароль") || firebaseError.contains("password") {
             return firebaseError
         }
-        return passwordValidationError
+        return validatePasswordError()
     }
 }
