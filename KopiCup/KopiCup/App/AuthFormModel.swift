@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import FirebaseAuth
 
 final class AuthFormModel: ObservableObject {
     @Published var email: String = ""
@@ -53,5 +54,27 @@ final class AuthFormModel: ObservableObject {
             return firebaseError
         }
         return validatePasswordError()
+    }
+    
+    func signIn(onSuccess: @escaping () -> Void) {
+        didTapSubmit = true
+        firebaseError = nil
+
+        if hasLocalValidationErrors { return }
+
+        isLoading = true
+
+        Auth.auth().signIn(
+            withEmail: email.trimmingCharacters(in: .whitespaces),
+            password: password
+        ) { _, error in
+            self.isLoading = false
+
+            if let error {
+                self.firebaseError = error.localizedDescription
+            } else {
+                onSuccess()
+            }
+        }
     }
 }

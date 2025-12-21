@@ -122,7 +122,10 @@ struct AuthView: View {
                 title: authForm.isLoading ? "Вход..." : "Начать копить",
                 isDisabled: !authForm.isFormFilled || authForm.isLoading
             ) {
-                signInWithFirebase()
+                authForm.signIn {
+                    onAuthSuccess()
+                    isMainTabPresented = true
+                }
             }
             .padding(.top, 8)
 
@@ -239,35 +242,6 @@ struct AuthView: View {
             .font(.system(size: 14, design: .rounded)).bold()
             .padding(.top, 12)
         }
-    }
-    
-    private func signInWithFirebase() {
-        authForm.didTapSubmit = true
-        authForm.firebaseError = nil
-        
-        if authForm.hasLocalValidationErrors {
-            return
-        }
-        
-        authForm.isLoading = true
-        
-        Auth.auth().signIn(withEmail: authForm.email.trimmingCharacters(in: .whitespaces),
-                          password: authForm.password) { result, error in
-            authForm.isLoading = false
-            
-            if let error = error {
-                let russianError = convertFirebaseError(error)
-                authForm.firebaseError = russianError
-            } else {
-                print("Пользователь авторизован: \(authForm.email)")
-                onAuthSuccess()
-                isMainTabPresented = true
-            }
-        }
-    }
-    
-    private func convertFirebaseError(_ error: Error) -> String {
-        return "Ошибка"
     }
 }
 
