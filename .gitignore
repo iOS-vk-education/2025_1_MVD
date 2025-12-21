@@ -3,3 +3,7 @@
 build/
 .swiftpm/
 Pods/
+KopiCup.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+xcuserdata/
+*.xcuserdata
+
