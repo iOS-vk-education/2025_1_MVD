@@ -1,5 +1,6 @@
 import SwiftUI
 import FirebaseAuth
+import AuthenticationServices
 
 struct AuthView: View {
     let onAuthSuccess: () -> Void
@@ -58,15 +59,6 @@ struct AuthView: View {
                         ProgressView()
                             .padding(.top, 20)
                     }
-                    
-//                    if let firebaseError = authForm.firebaseError {
-//                        Text(firebaseError)
-//                            .font(.system(size: 11, design: .rounded))
-//                            .foregroundColor(.red)
-//                            .multilineTextAlignment(.center)
-//                            .padding(.horizontal, 16)
-//                            .padding(.top, 8)
-//                    }
                 }
                 .onChange(of: authForm.firebaseError) { showAuthError = ($0 != nil) }
                 .alert("Ошибка входа", isPresented: $showAuthError) {
@@ -161,7 +153,7 @@ struct AuthView: View {
                 Button(action: {
                     // TODO: Интегрировать вход через Google
                 }) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 4) {
                         Image("Google")
                             .resizable()
                             .scaledToFit()
@@ -169,7 +161,7 @@ struct AuthView: View {
                         Text("Google")
                     }
                     .foregroundColor(.black)
-                    .font(.system(size: 14, design: .rounded))
+                    .font(.system(size: 11))
                     .bold()
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
@@ -183,14 +175,14 @@ struct AuthView: View {
                 Button(action: {
                     // TODO: Реализовать авторизацию через VK ID
                 }) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 4) {
                         Image("VK")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 20, height: 20)
                         Text("VK ID")
                     }
-                    .font(.system(size: 14, design: .rounded))
+                    .font(.system(size: 11))
                     .foregroundColor(.black)
                     .bold()
                     .frame(maxWidth: .infinity)
@@ -203,28 +195,30 @@ struct AuthView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
                 
-                Button(action: {
-                    // TODO: Sign in with Apple
-                }) {
-                    HStack(spacing: 8) {
-                        Image("Apple")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 20, height: 20)
-                        Text("Apple")
+                SignInWithAppleButton(
+                    .signIn,
+                    onRequest: { request in
+                        request.requestedScopes = [.fullName, .email]
+                    },
+                    onCompletion: { result in
+                        Task {
+                            do {
+                                try await AuthManager.shared.signInWithApple(result: result)
+                            } catch {
+                                print("Apple error:", error)
+                            }
+                        }
                     }
-                    .font(.system(size: 14, design: .rounded))
-                    .foregroundColor(.black)
-                    .bold()
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
-                    .background(Color.white)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.secondary, lineWidth: 2)
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                }
+                )
+                .signInWithAppleButtonStyle(.white)
+                .frame(height: 44)
+                .background(Color.white)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.secondary, lineWidth: 1)
+                )
+
             }
             HStack {
                 Text("Нет аккаунта?")
