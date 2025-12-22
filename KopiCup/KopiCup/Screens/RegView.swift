@@ -78,13 +78,13 @@ struct RegView: View {
                 .padding(.horizontal, 36)
                 .padding(.vertical, 16)
             }
+            .onChange(of: form.errorMessage) { msg in
+                showFirebaseError = (msg != nil)
+            }
             .alert("Ошибка регистрации", isPresented: $showFirebaseError) {
-                Button("OK", role: .cancel) { }
+                Button("OK", role: .cancel) { form.errorMessage = nil }
             } message: {
                 Text(form.errorMessage ?? "Неизвестная ошибка")
-            }
-            .fullScreenCover(isPresented: $isMainTabPresented) {
-                MainTabView()
             }
         }
     }
@@ -119,12 +119,11 @@ struct RegView: View {
                 title: form.isLoading ? "Регистрация..." : "Старт к мечте!",
                 isDisabled: !form.isFormFilled || form.isLoading
             ) {
-                form.didTapSubmit = true
-
-                if form.isFormValid {
-                    registerWithFirebase()
+                form.signUp {
+                    onRegSuccess()
                 }
             }
+            .padding(.top, 8)
             .padding(.top, 8)
 
             
@@ -230,55 +229,12 @@ struct RegView: View {
             HStack {
                 Text("Уже есть аккаунт?")
                 NavigationLink("Войти") {
-                    AuthView(onAuthSuccess: {
-                        // TODO: Обработка успешного входа
-                    })
+                    AuthView(onAuthSuccess: {})
                 }
             }
             .font(.system(size: 14, design: .rounded))
             .bold()
             .padding(.top, 12)
-        }
-    }
-    
-    private func registerWithFirebase() {
-        guard form.password == form.confirmedPassword else {
-            form.errorMessage = "Пароли не совпадают"
-            showFirebaseError = true
-            return
-        }
-        
-        form.isLoading = true
-        
-        Auth.auth().createUser(withEmail: form.email.trimmingCharacters(in: .whitespaces),
-                              password: form.password) { result, error in
-            form.isLoading = false
-            
-            if let error = error {
-                let russianError = convertFirebaseError(error)
-                form.errorMessage = russianError
-                showFirebaseError = true
-            } else {
-                print("✅ Пользователь зарегистрирован: \(form.email)")
-                onRegSuccess()
-                isMainTabPresented = true
-            }
-        }
-    }
-    
-    private func convertFirebaseError(_ error: Error) -> String {
-        let nsError = error as NSError
-        switch nsError.code {
-        case AuthErrorCode.emailAlreadyInUse.rawValue:
-            return "Этот email уже используется"
-        case AuthErrorCode.invalidEmail.rawValue:
-            return "Неверный формат email"
-        case AuthErrorCode.weakPassword.rawValue:
-            return "Слишком слабый пароль. Используйте минимум 8 символов с цифрами и заглавными буквами"
-        case AuthErrorCode.networkError.rawValue:
-            return "Проблемы с сетью. Проверьте подключение к интернету"
-        default:
-            return error.localizedDescription
         }
     }
 }

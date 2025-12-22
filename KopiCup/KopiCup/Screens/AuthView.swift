@@ -8,6 +8,7 @@ struct AuthView: View {
     @State private var isRegViewPresented = false
     @State private var isMainTabPresented = false
     @State private var showResetPassword = false
+    @State private var showAuthError = false
     
     var body: some View {
         NavigationStack {
@@ -58,18 +59,20 @@ struct AuthView: View {
                             .padding(.top, 20)
                     }
                     
-                    if let firebaseError = authForm.firebaseError,
-                       !firebaseError.contains("email") &&
-                       !firebaseError.contains("пароль") &&
-                       !firebaseError.contains("пользователь") &&
-                       !firebaseError.contains("password") {
-                        Text(firebaseError)
-                            .font(.system(size: 11, design: .rounded))
-                            .foregroundColor(.red)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 16)
-                            .padding(.top, 8)
-                    }
+//                    if let firebaseError = authForm.firebaseError {
+//                        Text(firebaseError)
+//                            .font(.system(size: 11, design: .rounded))
+//                            .foregroundColor(.red)
+//                            .multilineTextAlignment(.center)
+//                            .padding(.horizontal, 16)
+//                            .padding(.top, 8)
+//                    }
+                }
+                .onChange(of: authForm.firebaseError) { showAuthError = ($0 != nil) }
+                .alert("Ошибка входа", isPresented: $showAuthError) {
+                    Button("OK", role: .cancel) { authForm.firebaseError = nil }
+                } message: {
+                    Text(authForm.firebaseError ?? "Неизвестная ошибка")
                 }
                 .padding()
                 .background(.white)
@@ -78,9 +81,6 @@ struct AuthView: View {
                 )
                 .padding(.horizontal, 36)
                 .padding(.vertical, 16)
-            }
-            .fullScreenCover(isPresented: $isMainTabPresented) {
-                MainTabView()
             }
             .sheet(isPresented: $showResetPassword) {
                 ResetPasswordView()
@@ -124,7 +124,6 @@ struct AuthView: View {
             ) {
                 authForm.signIn {
                     onAuthSuccess()
-                    isMainTabPresented = true
                 }
             }
             .padding(.top, 8)

@@ -2,6 +2,7 @@ import Foundation
 import Combine
 import FirebaseAuth
 
+@MainActor
 final class AuthFormModel: ObservableObject {
     @Published var email: String = ""
     @Published var password: String = ""
@@ -42,18 +43,11 @@ final class AuthFormModel: ObservableObject {
     }
     
     var displayErrorForEmail: String? {
-        // Если есть ошибка Firebase, показываем её
-        if let firebaseError = firebaseError, firebaseError.contains("email") || firebaseError.contains("пользователь") {
-            return firebaseError
-        }
-        return validateEmailError()
+        validateEmailError()
     }
-    
+
     var displayErrorForPassword: String? {
-        if let firebaseError = firebaseError, firebaseError.contains("пароль") || firebaseError.contains("password") {
-            return firebaseError
-        }
-        return validatePasswordError()
+        validatePasswordError()
     }
     
     func signIn(onSuccess: @escaping () -> Void) {
@@ -63,18 +57,44 @@ final class AuthFormModel: ObservableObject {
         if hasLocalValidationErrors { return }
 
         isLoading = true
+        let trimmedEmail = email.trimmingCharacters(in: .whitespaces)
 
-        Auth.auth().signIn(
-            withEmail: email.trimmingCharacters(in: .whitespaces),
-            password: password
-        ) { _, error in
-            self.isLoading = false
-
-            if let error {
-                self.firebaseError = error.localizedDescription
-            } else {
+        Task {
+            do {
+                _ = try await Auth.auth().signIn(withEmail: trimmedEmail, password: password)
+                isLoading = false
                 onSuccess()
+            } catch {
+                isLoading = false
+                firebaseError = Self.humanAuthError(error)
             }
         }
     }
+    
+    private static func humanAuthError(_ error: Error) -> String {
+        let ns = error as NSError
+        let code = AuthErrorCode(_nsError: ns).code
+
+        switch code {
+        case .invalidEmail:
+            return "Некорректный email."
+        case .invalidCredential:
+            return "Неверный email или пароль."
+        case .userNotFound:
+            return "Пользователь не найден."
+        case .wrongPassword:
+            return "Неверный пароль."
+        case .userDisabled:
+            return "Аккаунт отключён."
+        case .operationNotAllowed:
+            return "Вход по email/паролю не включён в Firebase."
+        case .networkError:
+            return "Проблемы с интернетом."
+        case .tooManyRequests:
+            return "Слишком много попыток. Попробуйте позже."
+        default:
+            return "Не удалось войти. Проверьте данные и попробуйте ещё раз."
+        }
+    }
+
 }

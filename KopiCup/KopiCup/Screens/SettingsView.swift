@@ -3,9 +3,19 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var userStorage = UserStorage()
     var body: some View {
-        Text("Настройки")
-            .font(.title)
-            .fontWeight(.bold)
+        VStack() {
+            Text("Настройки")
+                .font(.title)
+                .fontWeight(.bold)
+            Button(role: .destructive) {
+                do { try AuthManager.shared.signOut() }
+                catch { print(error) }
+            } label: {
+                Text("Выйти")
+            }
+            .foregroundColor(.red)
+            .padding()
+        }
     }
 }
 
