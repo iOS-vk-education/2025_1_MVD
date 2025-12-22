@@ -11,9 +11,9 @@ struct MainTabView: View {
                 .tabItem{
                     Label("Stats", systemImage: "star")
                 }
-            SettingsView()
-                .tabItem{
-                    Label("Settings", systemImage: "gear")
+            ProfileView()
+                .tabItem {
+                    Label("Profile", systemImage:    "person.circle")
                 }
         }
     }

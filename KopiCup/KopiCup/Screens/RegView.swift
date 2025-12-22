@@ -7,6 +7,7 @@ struct RegView: View {
     @StateObject private var form = RegFormModel()
     @State private var isMainTabPresented = false
     @State private var showFirebaseError = false
+    @EnvironmentObject private var userStorage: UserStorage
     
     var shouldShowEmailError: Bool {
         form.didTapSubmit && form.emailError != nil
@@ -233,6 +234,7 @@ struct RegView: View {
                     AuthView(onAuthSuccess: {
                         // TODO: Обработка успешного входа
                     })
+                    .environmentObject(userStorage)
                 }
             }
             .font(.system(size: 14, design: .rounded))
@@ -260,6 +262,11 @@ struct RegView: View {
                 showFirebaseError = true
             } else {
                 print("✅ Пользователь зарегистрирован: \(form.email)")
+                // Устанавливаем дату регистрации из Firebase (обычно равна текущей дате)
+                if let creationDate = Auth.auth().currentUser?.metadata.creationDate {
+                    userStorage.registrationDate = creationDate
+                }
+                userStorage.loginSucceeded()
                 onRegSuccess()
                 isMainTabPresented = true
             }
@@ -423,6 +430,7 @@ struct RegView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
             RegView(onRegSuccess: {})
+                .environmentObject(UserStorage())
         }
     }
 }

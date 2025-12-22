@@ -8,6 +8,7 @@ struct AuthView: View {
     @State private var isRegViewPresented = false
     @State private var isMainTabPresented = false
     @State private var showResetPassword = false
+    @EnvironmentObject private var userStorage: UserStorage
     
     var body: some View {
         NavigationStack {
@@ -123,6 +124,11 @@ struct AuthView: View {
                 isDisabled: !authForm.isFormFilled || authForm.isLoading
             ) {
                 authForm.signIn {
+                    // Устанавливаем дату регистрации из Firebase (если доступна)
+                    if let creationDate = Auth.auth().currentUser?.metadata.creationDate {
+                        userStorage.registrationDate = creationDate
+                    }
+                    userStorage.loginSucceeded()
                     onAuthSuccess()
                     isMainTabPresented = true
                 }
@@ -236,6 +242,7 @@ struct AuthView: View {
                     RegView(onRegSuccess: {
                         isMainTabPresented = true
                     })
+                    .environmentObject(userStorage)
                 }
                 
             }
@@ -272,6 +279,7 @@ struct AuthView_Previews: PreviewProvider {
         #if DEBUG
         NavigationStack {
             AuthView(onAuthSuccess: {})
+                .environmentObject(UserStorage())
         }
         #endif
     }

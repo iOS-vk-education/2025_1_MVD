@@ -1,3 +1,4 @@
+import Foundation
 import Combine
 
 final class UserStorage: ObservableObject {
@@ -5,6 +6,7 @@ final class UserStorage: ObservableObject {
     @Published var name: String = "Guest"
     @Published var userToken: String = ""
     @Published private(set) var isLoggedIn: Bool = false
+    @Published var registrationDate: Date? = nil
 
     func loginSucceeded() {
         isLoggedIn = true
