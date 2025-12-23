@@ -124,7 +124,6 @@ struct AuthView: View {
                 isDisabled: !authForm.isFormFilled || authForm.isLoading
             ) {
                 authForm.signIn {
-                    // Устанавливаем дату регистрации из Firebase (если доступна)
                     if let creationDate = Auth.auth().currentUser?.metadata.creationDate {
                         userStorage.registrationDate = creationDate
                     }

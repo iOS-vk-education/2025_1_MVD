@@ -2,7 +2,6 @@ import SwiftUI
 import UIKit
 
 struct ProfileView: View {
-    @ObservedObject var userStorage = UserStorage()
     @EnvironmentObject private var appUserStorage: UserStorage
     
     @AppStorage("settings.theme.darkMode") private var isDarkMode: Bool = false
@@ -31,6 +30,13 @@ struct ProfileView: View {
     @State private var showLogoutConfirm = false
     
     private var achievedCount: Int { achievements.filter { $0.achieved }.count }
+    private var displayName: String {
+        let nameFromStore = appUserStorage.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !nameFromStore.isEmpty { return nameFromStore }
+        let fromAppStorage = storedName.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !fromAppStorage.isEmpty { return fromAppStorage }
+        return "Guest"
+    }
     
     var body: some View {
         NavigationStack {
@@ -59,20 +65,20 @@ struct ProfileView: View {
             if !avatarData.isEmpty, let img = UIImage(data: avatarData) {
                 self.avatarImage = img
             }
-            if !storedName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                userStorage.name = storedName
-                appUserStorage.name = storedName
+            let trimmedStored = storedName.trimmingCharacters(in: .whitespacesAndNewlines)
+            if appUserStorage.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+               !trimmedStored.isEmpty {
+                appUserStorage.name = trimmedStored
             }
         }
         .preferredColorScheme(isDarkMode ? .dark : .light)
         .sheet(isPresented: $showEditSheet) {
             EditNameSheet(
-                currentName: userStorage.name,
+                currentName: displayName,
                 onCancel: { showEditSheet = false },
                 onSave: { newName in
                     let trimmed = newName.trimmingCharacters(in: .whitespacesAndNewlines)
                     guard !trimmed.isEmpty else { return }
-                    userStorage.name = trimmed
                     appUserStorage.name = trimmed
                     storedName = trimmed
                     showEditSheet = false
@@ -115,7 +121,7 @@ struct ProfileView: View {
                         .frame(width: 56, height: 56)
                         .clipShape(Circle())
                 } else {
-                    Text(initials(from: userStorage.name))
+                    Text(initials(from: displayName))
                         .font(.system(size: 22, weight: .bold, design: .rounded))
                 }
             }
@@ -139,7 +145,7 @@ struct ProfileView: View {
             }
             
             VStack(alignment: .leading, spacing: 2) {
-                Text(userStorage.name.isEmpty ? "Анна Дегтярева" : userStorage.name)
+                Text(displayName.isEmpty ? "Анна Дегтярева" : displayName)
                     .font(.system(size: 20, weight: .semibold, design: .rounded))
                     .foregroundColor(.primary)
                 Text("Копит с \(sinceText)")
@@ -186,7 +192,7 @@ struct ProfileView: View {
     }
     
     private var sinceText: String {
-        let date = appUserStorage.registrationDate ?? userStorage.registrationDate
+        let date = appUserStorage.registrationDate
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ru_RU")
         formatter.dateFormat = "LLLL yyyy"
@@ -273,7 +279,6 @@ struct ProfileView: View {
                 Button("English") { languageCode = "en" }
             }
             
-            // Кнопка выхода
             Button(role: .destructive) {
                 showLogoutConfirm = true
             } label: {
@@ -345,7 +350,6 @@ struct ProfileView: View {
     }
     
     private func performLogout() {
-        userStorage.logout()
         appUserStorage.logout()
     }
 }

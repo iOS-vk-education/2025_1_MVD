@@ -262,7 +262,6 @@ struct RegView: View {
                 showFirebaseError = true
             } else {
                 print("✅ Пользователь зарегистрирован: \(form.email)")
-                // Устанавливаем дату регистрации из Firebase (обычно равна текущей дате)
                 if let creationDate = Auth.auth().currentUser?.metadata.creationDate {
                     userStorage.registrationDate = creationDate
                 }
