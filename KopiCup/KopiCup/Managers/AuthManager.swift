@@ -9,10 +9,18 @@ final class AuthManager {
 
     func signUp(email: String, password: String) async throws {
         _ = try await Auth.auth().createUser(withEmail: email, password: password)
+
+        if let uid = Auth.auth().currentUser?.uid {
+            try await UserProfileService.shared.ensureProfileExists(uid: uid)
+        }
     }
 
     func signIn(email: String, password: String) async throws {
         _ = try await Auth.auth().signIn(withEmail: email, password: password)
+
+        if let uid = Auth.auth().currentUser?.uid {
+            try await UserProfileService.shared.ensureProfileExists(uid: uid)
+        }
     }
 
     func signOut() throws {
@@ -36,6 +44,8 @@ final class AuthManager {
             fullName: appleIDCredential.fullName
         )
 
-        _ = try await Auth.auth().signIn(with: credential)
+        let authResult = try await Auth.auth().signIn(with: credential)
+
+        try await UserProfileService.shared.ensureProfileExists(uid: authResult.user.uid)
     }
 }
