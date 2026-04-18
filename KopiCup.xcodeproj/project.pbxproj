@@ -17,8 +17,12 @@
 		5E7E8BF32F59EA3700A5263C /* UserChallengeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7E8BF22F59EA3200A5263C /* UserChallengeState.swift */; };
 		5EC333492F5AF90E00F1D39F /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 5EC333482F5AF90E00F1D39F /* DGCharts */; };
 		BE1C7D6A2F5194D400FF7C17 /* AboutGoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1C7D692F5194D400FF7C17 /* AboutGoalView.swift */; };
+		BE2954342F92A20A00D2DF3E /* DifficultyBoltsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2954332F92A20A00D2DF3E /* DifficultyBoltsView.swift */; };
 		BEAD190A2F5080F700CB8650 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEAD19092F5080F700CB8650 /* GoogleService-Info.plist */; };
 		BEF8A6C62F51FD4500270768 /* EditGoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF8A6C52F51FD4500270768 /* EditGoalView.swift */; };
+		BEFA284B2F93BE5D00FAA581 /* PiggyModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFA284A2F93BE5D00FAA581 /* PiggyModalView.swift */; };
+		BEFA284D2F93CD2F00FAA581 /* EconomyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFA284C2F93CD2F00FAA581 /* EconomyStore.swift */; };
+		BEFA284F2F93CD3500FAA581 /* LocalEconomyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFA284E2F93CD3500FAA581 /* LocalEconomyStore.swift */; };
 		C63DCEDD2EFA1549006E630E /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C63DCEDC2EFA1549006E630E /* DateFormatter.swift */; };
 		C63DCEDF2EFA156A006E630E /* Number+CurrencyFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C63DCEDE2EFA156A006E630E /* Number+CurrencyFormatter.swift */; };
 		C63DCEE72EFA1610006E630E /* Goal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C63DCEE62EFA1610006E630E /* Goal.swift */; };
@@ -103,8 +107,12 @@
 		5E181C122EFACF32000B2357 /* GoalsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsRepository.swift; sourceTree = "<group>"; };
 		5E7E8BF22F59EA3200A5263C /* UserChallengeState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserChallengeState.swift; sourceTree = "<group>"; };
 		BE1C7D692F5194D400FF7C17 /* AboutGoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutGoalView.swift; sourceTree = "<group>"; };
+		BE2954332F92A20A00D2DF3E /* DifficultyBoltsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DifficultyBoltsView.swift; sourceTree = "<group>"; };
 		BEAD19092F5080F700CB8650 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BEF8A6C52F51FD4500270768 /* EditGoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditGoalView.swift; sourceTree = "<group>"; };
+		BEFA284A2F93BE5D00FAA581 /* PiggyModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiggyModalView.swift; sourceTree = "<group>"; };
+		BEFA284C2F93CD2F00FAA581 /* EconomyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EconomyStore.swift; sourceTree = "<group>"; };
+		BEFA284E2F93CD3500FAA581 /* LocalEconomyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalEconomyStore.swift; sourceTree = "<group>"; };
 		C63DCEDC2EFA1549006E630E /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
 		C63DCEDE2EFA156A006E630E /* Number+CurrencyFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Number+CurrencyFormatter.swift"; sourceTree = "<group>"; };
 		C63DCEE62EFA1610006E630E /* Goal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Goal.swift; sourceTree = "<group>"; };
@@ -283,6 +291,9 @@
 				C68060D02ECEB33100154DC5 /* HomeView.swift */,
 				C63DCF082EFA180C006E630E /* HomeViewModel.swift */,
 				C63DCF0B2EFA192D006E630E /* HeaderView.swift */,
+				BEFA284A2F93BE5D00FAA581 /* PiggyModalView.swift */,
+				BEFA284C2F93CD2F00FAA581 /* EconomyStore.swift */,
+				BEFA284E2F93CD3500FAA581 /* LocalEconomyStore.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -318,6 +329,7 @@
 				C6F4C6092EFA003F005DEBAB /* ChallengeDetailsView.swift */,
 				C63DCF002EFA1777006E630E /* ChallengeViewModel.swift */,
 				C63DCF172EFA1B74006E630E /* UserChallengeViewModel.swift */,
+				BE2954332F92A20A00D2DF3E /* DifficultyBoltsView.swift */,
 			);
 			path = Challenge;
 			sourceTree = "<group>";
@@ -613,6 +625,7 @@
 				C68060D72ECFAB6A00154DC5 /* GoalCardView.swift in Sources */,
 				5E05664A2EFAE5EE0071387F /* UIComponents.swift in Sources */,
 				C68060CF2ECEA9E600154DC5 /* MainTabView.swift in Sources */,
+				BEFA284D2F93CD2F00FAA581 /* EconomyStore.swift in Sources */,
 				C63DCEEF2EFA1655006E630E /* ChallengeService.swift in Sources */,
 				C6F4C5E72EF86123005DEBAB /* CardAppearance.swift in Sources */,
 				C63DCF2C2EFA36E1006E630E /* MockUserService.swift in Sources */,
@@ -635,6 +648,7 @@
 				C63DCEDF2EFA156A006E630E /* Number+CurrencyFormatter.swift in Sources */,
 				C63DCEFF2EFA173A006E630E /* FirebaseUserService.swift in Sources */,
 				C6F4C5F82EF8BFFC005DEBAB /* HexColorHelper.swift in Sources */,
+				BE2954342F92A20A00D2DF3E /* DifficultyBoltsView.swift in Sources */,
 				C63DCF382EFAB003006E630E /* ImagePickerView.swift in Sources */,
 				C63DCF2E2EFA370D006E630E /* MockGoalService.swift in Sources */,
 				BEF8A6C62F51FD4500270768 /* EditGoalView.swift in Sources */,
@@ -655,6 +669,8 @@
 				C63DCEF32EFA167A006E630E /* GoalService.swift in Sources */,
 				C6A22D072EF1BCEA00A2865B /* SceneDelegate.swift in Sources */,
 				C63DCEEB2EFA1631006E630E /* Series.swift in Sources */,
+				BEFA284F2F93CD3500FAA581 /* LocalEconomyStore.swift in Sources */,
+				BEFA284B2F93BE5D00FAA581 /* PiggyModalView.swift in Sources */,
 				C63DCF1F2EFA1C5A006E630E /* LoadState.swift in Sources */,
 				C6F4C5EB2EF86236005DEBAB /* ActionButtonStyle.swift in Sources */,
 				C68060C52ECEA8F300154DC5 /* AuthView.swift in Sources */,

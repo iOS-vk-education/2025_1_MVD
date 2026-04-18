@@ -14,6 +14,14 @@ struct HomeView: View {
     @State private var activeModal: HomeModal?
     @State private var goalSnapshot: Goal?
 
+    // Новый стейт для окна деталей челленджа
+    @State private var showChallengeDetails: Bool = false
+
+    // Новый стейт для модалки по кнопке со свиньёй
+    @State private var showPigModal: Bool = false
+
+    @EnvironmentObject private var economy: EconomyStore
+
     private var isGoalDetailsPresented: Binding<Bool> {
         Binding(
             get: { activeModal == .goalDetails },
@@ -33,11 +41,45 @@ struct HomeView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    Text("Чудесный день, чтобы начать копить!")
-                        .font(.title3)
-                        .fontWeight(.medium)
-                        .padding(.horizontal, 20)
+                VStack(alignment: .leading, spacing: 16) {
+
+                    // Верхняя зелёная панель со счётчиками и подарком
+                    topEconomyBar
+                        .padding(.horizontal, 0)
+
+                    // Заголовок с круглой зелёной кнопкой слева и приветствием
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack(alignment: .center, spacing: 12) {
+                            // Кнопка с копилкой/свиньёй (текущий выбранный наряд)
+                            Button {
+                                showPigModal = true
+                            } label: {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color(red: 102/255, green: 190/255, blue: 0))
+                                        .frame(width: 60, height: 60)
+                                    Image(economy.selectedOutfitImageName)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 70, height: 80)
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("Открыть копилку")
+
+                            // Тексты: приветствие и подзаголовок
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("Привет, \(viewModel.userName)!")
+                                    .font(.system(size: 30, weight: .bold, design: .rounded))
+                                    .foregroundColor(Color(red: 102/255, green: 190/255, blue: 0))
+                                
+                                Text("Продолжай в том же духе!")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 20)
 
                     VStack(spacing: 16) {
 
@@ -58,17 +100,23 @@ struct HomeView: View {
                         }
 
                         if viewModel.challengeVM.displayedChallenge != nil {
-                            ChallengeCardView(viewModel: viewModel.challengeVM)
-                                .onTapGesture {
-                                    activeModal = .challengeDetails
-                                }
+                            ChallengeCardView(
+                                viewModel: viewModel.challengeVM,
+                                onAccept: { showChallengeDetails = true },
+                                onTrackToday: { showChallengeDetails = true }
+                            )
                         }
                     }
                     .padding(.horizontal, 20)
                 }
-                .padding(.top, 20)
+                .padding(.top, 12)
             }
-            .navigationTitle("Привет, \(viewModel.userName)!")
+            // Модалка по кнопке со свиньёй
+            .sheet(isPresented: $showPigModal) {
+                PiggyModalView(isPresented: $showPigModal)
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.hidden)
+            }
             // Первый лист — для всех модалок, КРОМЕ goalDetails
             .sheet(item: nonGoalDetailsModal) { modal in
                 switch modal {
@@ -102,6 +150,16 @@ struct HomeView: View {
                     EmptyView()
                 }
             }
+            // Отдельный лист для деталей челленджа, открывается ТОЛЬКО по кнопке "Принимаю" (и "Отмечайте свои успехи сегодня")
+            .sheet(isPresented: $showChallengeDetails) {
+                ChallengeDetailView(
+                    isPresented: $showChallengeDetails,
+                    viewModel: viewModel.challengeVM
+                )
+                .presentationDetents([.height(520)])     // уменьшенная высота
+                .presentationDragIndicator(.hidden)         // по желанию, убрать “ползунок”
+            }
+            // Отдельный лист для деталей цели
             .sheet(isPresented: isGoalDetailsPresented) {
                 ZStack {
                     Color(UIColor.systemBackground).ignoresSafeArea()
@@ -163,6 +221,53 @@ struct HomeView: View {
             viewModel.loadData()
         }
     }
+
+    // MARK: - Top bar with counters and gift
+
+    private var topEconomyBar: some View {
+        HStack(spacing: 12) {
+            counterChip(systemName: "dollarsign.circle.fill", value: economy.coins)
+            counterChip(systemName: "trophy.fill", value: economy.trophies)
+
+            Spacer()
+
+            Button {
+                let _ = economy.collectDailyGift()
+            } label: {
+                Image(systemName: "gift.fill")
+                    .foregroundColor(.white)
+                    .font(.system(size: 18, weight: .bold))
+                    .padding(8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color.white.opacity(economy.isGiftAvailableToday ? 0.2 : 0.1))
+                    )
+            }
+            .disabled(!economy.isGiftAvailableToday)
+            .buttonStyle(.plain)
+            .accessibilityLabel("Ежедневный подарок")
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(
+            Color(red: 102/255, green: 190/255, blue: 0)
+                .ignoresSafeArea(edges: .horizontal)
+        )
+    }
+
+    private func counterChip(systemName: String, value: Int) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: systemName)
+                .foregroundColor(.white)
+            Text("\(value)")
+                .foregroundColor(.white)
+                .fontWeight(.semibold)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(Color.white.opacity(0.15))
+        .clipShape(Capsule())
+    }
 }
 
 private struct PresentationCornerRadiusCompat: ViewModifier {
@@ -196,6 +301,6 @@ struct HomeView_Previews: PreviewProvider {
                 challengeService: MockChallengeService()
             )
         )
+        .environmentObject(EconomyStore())
     }
 }
-
