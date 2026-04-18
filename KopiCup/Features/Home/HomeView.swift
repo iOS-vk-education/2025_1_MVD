@@ -100,6 +100,8 @@ struct HomeView: View {
                         }
 
                         if viewModel.challengeVM.displayedChallenge != nil {
+                            // ВАЖНО: убираем onTapGesture с карточки челленджа,
+                            // и используем колбэки из ChallengeCardView
                             ChallengeCardView(
                                 viewModel: viewModel.challengeVM,
                                 onAccept: { showChallengeDetails = true },
@@ -141,6 +143,7 @@ struct HomeView: View {
                     }
 
                 case .challengeDetails:
+                    // Больше не используем через activeModal — управляем отдельным стейтом showChallengeDetails
                     ChallengeDetailView(
                         isPresented: .constant(true),
                         viewModel: viewModel.challengeVM
