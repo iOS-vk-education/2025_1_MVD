@@ -2,51 +2,106 @@ import SwiftUI
 
 struct ChallengeCardView: View {
     @ObservedObject var viewModel: ChallengeViewModel
-    
+
+    // Родитель показывает ChallengeDetailView по этим колбэкам
+    var onAccept: (() -> Void)? = nil
+    var onTrackToday: (() -> Void)? = nil
+
+    private let maxDifficulty = 3
+
     var body: some View {
         VStack(spacing: 12) {
             HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    HStack {
-                        Text(viewModel.displayedChallenge?.name ?? "Нет челленджа").font(.headline).fontWeight(.semibold)
-                        if !viewModel.isAccepted, let diff = viewModel.displayedChallenge?.difficulty {
-                            HStack(spacing: 2) {
-                                ForEach(0..<diff, id: \.self) { _ in Image(systemName: "bolt.fill").font(.headline).foregroundColor(.blue) }
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text(viewModel.displayedChallenge?.name ?? "Нет челленджа")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(viewModel.isAccepted ? .white : .primary)
+
+                        let diff = clampDifficulty(viewModel.displayedChallenge?.difficulty ?? 0)
+                        HStack(spacing: 2) {
+                            ForEach(0..<maxDifficulty, id: \.self) { i in
+                                Image(systemName: i < diff ? "bolt.fill" : "bolt")
+                                    .font(.headline)
+                                    .foregroundColor((viewModel.isAccepted ? Color.white : Color.blue).opacity(i < diff ? 1.0 : 0.35))
                             }
                         }
+                        .accessibilityLabel("Сложность: \(diff) из \(maxDifficulty)")
                     }
-                    Text(viewModel.displayedChallenge?.description ?? "").font(.subheadline)
+
+                    // Подзаголовок/описание
+                    Text(viewModel.displayedChallenge?.description ?? "")
+                        .font(.subheadline)
+                        .foregroundColor(viewModel.isAccepted ? Color.white.opacity(0.9) : .secondary)
                 }
                 Spacer()
             }
-            Spacer()
-            
+
             if viewModel.isAccepted {
-                VStack(spacing: 4) {
-                    HStack(spacing: 4) {
-                        ForEach(0..<7, id: \.self) { day in
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(viewModel.progressColors.indices.contains(day) ? viewModel.progressColors[day] : Color.gray.opacity(0.3))
-                                .frame(height: 8)
-                        }
+                // Прогресс
+                HStack(spacing: 6) {
+                    ForEach(0..<7, id: \.self) { day in
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(
+                                viewModel.progressColors.indices.contains(day)
+                                ? viewModel.progressColors[day]
+                                : Color.gray.opacity(0.6)                             )
+                            .frame(height: 8)
                     }
-                    Button("Подробнее") { viewModel.showDetailModal = true }
-                        .font(.caption).foregroundColor(.white).padding(.horizontal, 12).padding(.vertical, 4)
-                        .background(Color.blue.opacity(0.7)).cornerRadius(12).padding(.top, 4)
                 }
+
+                // “Отмечайте свои успехи сегодня”
+                Button(action: { onTrackToday?() }) {
+                    HStack(spacing: 10) {
+                        Image(systemName: "checkmark.circle")
+                            .font(.headline)
+                        Text("Отмечайте свои успехи сегодня")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                    }
+                    .foregroundColor(.blue)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .stroke(Color.white.opacity(0.9), lineWidth: 1.5)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    .fill(Color.white.opacity(0.95))
+                            )
+                    )
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 2)
             } else {
                 HStack(spacing: 12) {
-                    Button("Принимаю") { viewModel.acceptChallenge() }
-                        .buttonStyle(ActionButtonStyle(variant: .primary))
+                    Button("Принимаю") {
+                        onAccept?()
+                    }
+                    .buttonStyle(ActionButtonStyle(variant: .primary))
+
                     Button(action: { withAnimation { viewModel.nextChallenge() } }) {
-                        HStack(spacing: 4) { Text("Другой"); Image(systemName: "arrow.clockwise") }
+                        HStack(spacing: 4) {
+                            Text("Другой")
+                            Image(systemName: "arrow.clockwise")
+                        }
                     }
                     .buttonStyle(ActionButtonStyle(variant: .secondary))
                 }
+                .padding(.top, 2)
             }
         }
-        .cardStyle(viewModel.isAccepted ? .default.with(backgroundColor: .blue, foregroundColor: .white) : .default.with(foregroundColor: .blue, borderColor: .blue, borderWidth: 5))
+        .padding(.vertical, 12)
+        .cardStyle(
+            viewModel.isAccepted
+            ? .default.with(backgroundColor: .blue, foregroundColor: .white)
+            : .default.with(foregroundColor: .blue, borderColor: .blue, borderWidth: 5)
+        )
+    }
+
+    private func clampDifficulty(_ value: Int) -> Int {
+        max(0, min(value, maxDifficulty))
     }
 }
-
-

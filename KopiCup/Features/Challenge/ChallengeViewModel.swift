@@ -48,9 +48,8 @@ final class ChallengeViewModel: ObservableObject {
         displayedChallenge = availableChallenges[currentIndex]
     }
     
+    // Не стартуем челлендж здесь — только сигнализируем, что нужно открыть окно деталей (если используется).
     func acceptChallenge() {
-        guard let c = displayedChallenge else { return }
-        challengeService.startChallenge(c)
         showDetailModal = true
     }
     
@@ -59,15 +58,18 @@ final class ChallengeViewModel: ObservableObject {
         showDetailModal = false
     }
     
+    // Если челлендж еще не начат — сначала стартуем его, затем отмечаем сегодняшний день.
     func markToday() {
+        if activeChallenge == nil, let c = displayedChallenge {
+            challengeService.startChallenge(c)
+        }
         challengeService.markDayComplete()
     }
     
+    // Ярче «серый» для незавершенных дней
     var progressColors: [Color] {
         guard let uc = activeChallenge else { return [] }
-        return uc.progress.map { $0 ? Color.green : Color.gray.opacity(0.3) }
+        return uc.progress.map { $0 ? Color.green : Color.gray.opacity(0.6) }
     }
 }
-
-
 

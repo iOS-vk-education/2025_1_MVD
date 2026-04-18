@@ -17,6 +17,7 @@
 		5E7E8BF32F59EA3700A5263C /* UserChallengeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7E8BF22F59EA3200A5263C /* UserChallengeState.swift */; };
 		5EC333492F5AF90E00F1D39F /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 5EC333482F5AF90E00F1D39F /* DGCharts */; };
 		BE1C7D6A2F5194D400FF7C17 /* AboutGoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1C7D692F5194D400FF7C17 /* AboutGoalView.swift */; };
+		BE2954342F92A20A00D2DF3E /* DifficultyBoltsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2954332F92A20A00D2DF3E /* DifficultyBoltsView.swift */; };
 		BEAD190A2F5080F700CB8650 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEAD19092F5080F700CB8650 /* GoogleService-Info.plist */; };
 		BEF8A6C62F51FD4500270768 /* EditGoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF8A6C52F51FD4500270768 /* EditGoalView.swift */; };
 		C63DCEDD2EFA1549006E630E /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C63DCEDC2EFA1549006E630E /* DateFormatter.swift */; };
@@ -103,6 +104,7 @@
 		5E181C122EFACF32000B2357 /* GoalsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsRepository.swift; sourceTree = "<group>"; };
 		5E7E8BF22F59EA3200A5263C /* UserChallengeState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserChallengeState.swift; sourceTree = "<group>"; };
 		BE1C7D692F5194D400FF7C17 /* AboutGoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutGoalView.swift; sourceTree = "<group>"; };
+		BE2954332F92A20A00D2DF3E /* DifficultyBoltsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DifficultyBoltsView.swift; sourceTree = "<group>"; };
 		BEAD19092F5080F700CB8650 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BEF8A6C52F51FD4500270768 /* EditGoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditGoalView.swift; sourceTree = "<group>"; };
 		C63DCEDC2EFA1549006E630E /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
@@ -318,6 +320,7 @@
 				C6F4C6092EFA003F005DEBAB /* ChallengeDetailsView.swift */,
 				C63DCF002EFA1777006E630E /* ChallengeViewModel.swift */,
 				C63DCF172EFA1B74006E630E /* UserChallengeViewModel.swift */,
+				BE2954332F92A20A00D2DF3E /* DifficultyBoltsView.swift */,
 			);
 			path = Challenge;
 			sourceTree = "<group>";
@@ -635,6 +638,7 @@
 				C63DCEDF2EFA156A006E630E /* Number+CurrencyFormatter.swift in Sources */,
 				C63DCEFF2EFA173A006E630E /* FirebaseUserService.swift in Sources */,
 				C6F4C5F82EF8BFFC005DEBAB /* HexColorHelper.swift in Sources */,
+				BE2954342F92A20A00D2DF3E /* DifficultyBoltsView.swift in Sources */,
 				C63DCF382EFAB003006E630E /* ImagePickerView.swift in Sources */,
 				C63DCF2E2EFA370D006E630E /* MockGoalService.swift in Sources */,
 				BEF8A6C62F51FD4500270768 /* EditGoalView.swift in Sources */,
