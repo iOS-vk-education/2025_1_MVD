@@ -25,7 +25,7 @@ final class UserStorage: ObservableObject {
             let local = LocalUserService()
             local.setActive(uid: user?.uid)
             LocalChallengeStore.shared.setActive(uid: user?.uid)
-
+            LocalEconomyStore.shared.setActive(uid: user?.uid)
 
             if user != nil {
                 let profile = local.fetchProfile()
@@ -47,6 +47,7 @@ final class UserStorage: ObservableObject {
         local.setActive(uid: nil)
 
         LocalChallengeStore.shared.setActive(uid: nil)
+        LocalEconomyStore.shared.setActive(uid: nil)
 
         name = "Гость"
         registrationDate = nil
