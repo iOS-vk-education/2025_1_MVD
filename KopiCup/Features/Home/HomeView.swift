@@ -14,6 +14,9 @@ struct HomeView: View {
     @State private var activeModal: HomeModal?
     @State private var goalSnapshot: Goal?
 
+    // Новый стейт для окна деталей челленджа
+    @State private var showChallengeDetails: Bool = false
+
     private var isGoalDetailsPresented: Binding<Bool> {
         Binding(
             get: { activeModal == .goalDetails },
@@ -58,10 +61,13 @@ struct HomeView: View {
                         }
 
                         if viewModel.challengeVM.displayedChallenge != nil {
-                            ChallengeCardView(viewModel: viewModel.challengeVM)
-                                .onTapGesture {
-                                    activeModal = .challengeDetails
-                                }
+                            // ВАЖНО: убираем onTapGesture с карточки челленджа,
+                            // и используем колбэки из ChallengeCardView
+                            ChallengeCardView(
+                                viewModel: viewModel.challengeVM,
+                                onAccept: { showChallengeDetails = true },
+                                onTrackToday: { showChallengeDetails = true }
+                            )
                         }
                     }
                     .padding(.horizontal, 20)
@@ -93,6 +99,7 @@ struct HomeView: View {
                     }
 
                 case .challengeDetails:
+                    // Больше не используем через activeModal — управляем отдельным стейтом showChallengeDetails
                     ChallengeDetailView(
                         isPresented: .constant(true),
                         viewModel: viewModel.challengeVM
@@ -102,6 +109,16 @@ struct HomeView: View {
                     EmptyView()
                 }
             }
+            // Отдельный лист для деталей челленджа, открывается ТОЛЬКО по кнопке "Принимаю" (и "Отмечайте свои успехи сегодня")
+            .sheet(isPresented: $showChallengeDetails) {
+                ChallengeDetailView(
+                    isPresented: $showChallengeDetails,
+                    viewModel: viewModel.challengeVM
+                )
+                .presentationDetents([.height(520)])     // уменьшенная высота
+                .presentationDragIndicator(.hidden)         // по желанию, убрать “ползунок”
+            }
+            // Отдельный лист для деталей цели
             .sheet(isPresented: isGoalDetailsPresented) {
                 ZStack {
                     Color(UIColor.systemBackground).ignoresSafeArea()
@@ -198,4 +215,3 @@ struct HomeView_Previews: PreviewProvider {
         )
     }
 }
-
