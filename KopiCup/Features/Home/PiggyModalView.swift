@@ -6,7 +6,6 @@ struct PiggyModalView: View {
     @State private var selectedOutfitId: String
     @State private var showAlert = false
 
-
     init(isPresented: Binding<Bool>) {
         self._isPresented = isPresented
         self._selectedOutfitId = State(initialValue: "piggy_cool")
@@ -17,7 +16,6 @@ struct PiggyModalView: View {
             topEconomyBar
 
             VStack(spacing: 0) {
-                // Большая свинья
                 Image(selectedOutfit?.imageName ?? "piggy_cool")
                     .resizable()
                     .scaledToFit()
@@ -45,10 +43,12 @@ struct PiggyModalView: View {
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .onAppear {
-            self.selectedOutfitId = economy.selectedOutfitId
+            selectedOutfitId = economy.selectedOutfitId
         }
         .alert("Недостаточно средств", isPresented: $showAlert) {
-            Button("OK", role: .cancel) { showAlert = false }
+            Button("OK", role: .cancel) {
+                showAlert = false
+            }
         } message: {
             Text("У вас недостаточно средств для покупки этого наряда.")
         }
@@ -58,14 +58,17 @@ struct PiggyModalView: View {
         economy.catalog.first(where: { $0.id == selectedOutfitId })
     }
 
-    // MARK: - Верхний зелёный бар
     private var topEconomyBar: some View {
         HStack(spacing: 18) {
             counterChip(systemName: "dollarsign.circle.fill", value: economy.coins)
             counterChip(systemName: "trophy.fill", value: economy.trophies)
+
             Spacer()
+
             Button {
-                let _ = economy.collectDailyGift()
+                Task {
+                    let _ = await economy.collectDailyGift()
+                }
             } label: {
                 Image(systemName: "gift.fill")
                     .foregroundColor(.white)
@@ -104,6 +107,7 @@ struct PiggyModalView: View {
         HStack(spacing: 6) {
             Image(systemName: systemName)
                 .foregroundColor(.white)
+
             Text("\(value)")
                 .foregroundColor(.white)
                 .fontWeight(.semibold)
@@ -114,10 +118,10 @@ struct PiggyModalView: View {
         .clipShape(Capsule())
     }
 
-    // MARK: - Сетка нарядов
     private var outfitGrid: some View {
         let outfits = economy.catalog
         let columns = [GridItem(.flexible()), GridItem(.flexible())]
+
         return LazyVGrid(columns: columns, alignment: .center, spacing: 26) {
             ForEach(outfits) { outfit in
                 OutfitCard(
@@ -136,7 +140,6 @@ struct PiggyModalView: View {
         .padding(.bottom, 10)
     }
 
-    // MARK: - Нижняя кнопка
     private var bottomAction: AnyView {
         let isOwned = economy.ownedOutfitIds.contains(selectedOutfitId)
         let isActive = selectedOutfitId != economy.selectedOutfitId && isOwned
@@ -146,8 +149,10 @@ struct PiggyModalView: View {
         if isOwned {
             return AnyView(
                 Button {
-                    if isActive, let outfit = currentOutfit {
-                        economy.select(outfit)
+                    guard isActive, let outfit = currentOutfit else { return }
+
+                    Task {
+                        await economy.select(outfit)
                         isPresented = false
                     }
                 } label: {
@@ -158,6 +163,7 @@ struct PiggyModalView: View {
                                 .frame(height: 54)
                                 .offset(y: 5)
                         }
+
                         RoundedRectangle(cornerRadius: 12)
                             .fill(
                                 isActive
@@ -178,12 +184,17 @@ struct PiggyModalView: View {
         } else if let outfit = currentOutfit {
             return AnyView(
                 Button {
-                    if canBuy {
-                        if economy.buy(outfit) {
-                            selectedOutfitId = outfit.id
-                        }
-                    } else {
+                    if !canBuy {
                         showAlert = true
+                        return
+                    }
+
+                    Task {
+                        if await economy.buy(outfit) {
+                            selectedOutfitId = outfit.id
+                        } else {
+                            showAlert = true
+                        }
                     }
                 } label: {
                     ZStack(alignment: .top) {
@@ -194,10 +205,12 @@ struct PiggyModalView: View {
                                 .offset(y: 5)
                                 .opacity(0.3)
                         }
+
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(canBuy
-                                  ? Color(red: 102/255, green: 190/255, blue: 0)
-                                  : Color.blue.opacity(0.13)
+                            .fill(
+                                canBuy
+                                ? Color(red: 102/255, green: 190/255, blue: 0)
+                                : Color.blue.opacity(0.13)
                             )
                             .frame(height: 54)
                             .overlay(
@@ -212,7 +225,6 @@ struct PiggyModalView: View {
         }
     }
 
-    // MARK: - Тег цены с возможностью сделать белым
     private func priceTag(price: Outfit.Price, isActive: Bool = false) -> some View {
         HStack(spacing: 4) {
             switch price {
@@ -221,11 +233,13 @@ struct PiggyModalView: View {
                     .foregroundColor(isActive ? .white : .blue)
                 Text("\(amount)")
                     .foregroundColor(isActive ? .white : .blue)
+
             case .trophies(let amount):
                 Image(systemName: "trophy.fill")
                     .foregroundColor(isActive ? .white : .blue)
                 Text("\(amount)")
                     .foregroundColor(isActive ? .white : .blue)
+
             case .free:
                 Text("Бесплатно")
                     .foregroundColor(isActive ? .white : .green)
@@ -234,7 +248,7 @@ struct PiggyModalView: View {
         .padding(.vertical, 4)
         .padding(.horizontal, 10)
     }
-    // MARK: - OutfitCard
+
     private struct OutfitCard: View {
         let outfit: Outfit
         let isSelected: Bool
@@ -244,16 +258,22 @@ struct PiggyModalView: View {
         var body: some View {
             Button(action: action) {
                 ZStack {
-                    // Фон и обводка
                     RoundedRectangle(cornerRadius: 18)
                         .fill(Color.white)
-                        .shadow(color: isSelected ? Color.green.opacity(0.09) : .clear, radius: 6, x: 0, y: 2)
+                        .shadow(
+                            color: isSelected ? Color.green.opacity(0.09) : .clear,
+                            radius: 6,
+                            x: 0,
+                            y: 2
+                        )
                         .overlay(
                             RoundedRectangle(cornerRadius: 18)
-                                .stroke(isSelected ? Color.green : Color.gray.opacity(0.15), lineWidth: isSelected ? 3 : 1)
+                                .stroke(
+                                    isSelected ? Color.green : Color.gray.opacity(0.15),
+                                    lineWidth: isSelected ? 3 : 1
+                                )
                         )
 
-                    // Картинка по центру
                     Image(outfit.imageName)
                         .resizable()
                         .scaledToFit()
@@ -262,7 +282,6 @@ struct PiggyModalView: View {
                 .frame(height: 180)
                 .frame(maxWidth: .infinity)
                 .overlay(
-                    // Карточка цены / статуса – по центру внизу
                     VStack {
                         Spacer()
                         if isOwned && isSelected {
@@ -285,11 +304,13 @@ struct PiggyModalView: View {
                         .foregroundColor(.blue)
                     Text("\(amount)")
                         .foregroundColor(.blue)
+
                 case .trophies(let amount):
                     Image(systemName: "trophy.fill")
                         .foregroundColor(.blue)
                     Text("\(amount)")
                         .foregroundColor(.blue)
+
                 case .free:
                     Text("Бесплатно")
                         .foregroundColor(.green)
@@ -317,13 +338,12 @@ struct PiggyModalView: View {
                 )
         }
     }
-    // MARK: - Preview
+}
 
-    struct PiggyModalView_Previews: PreviewProvider {
-        static var previews: some View {
-            PiggyModalView(isPresented: .constant(true))
-                .environmentObject(EconomyStore())
-                .previewLayout(.sizeThatFits)
-        }
+struct PiggyModalView_Previews: PreviewProvider {
+    static var previews: some View {
+        PiggyModalView(isPresented: .constant(true))
+            .environmentObject(EconomyStore())
+            .previewLayout(.sizeThatFits)
     }
 }

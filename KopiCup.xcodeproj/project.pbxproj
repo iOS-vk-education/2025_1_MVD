@@ -14,6 +14,8 @@
 		5E181C0F2EFACEFA000B2357 /* GoalTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E181C0E2EFACEF5000B2357 /* GoalTransaction.swift */; };
 		5E181C112EFACF1F000B2357 /* FirestorePaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E181C102EFACF1A000B2357 /* FirestorePaths.swift */; };
 		5E181C132EFACF37000B2357 /* GoalsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E181C122EFACF32000B2357 /* GoalsRepository.swift */; };
+		5E4CC1512F94C3560088526B /* PiggyProfileDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4CC1502F94C3480088526B /* PiggyProfileDTO.swift */; };
+		5E4CC1532F94C3CD0088526B /* PiggyProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4CC1522F94C3C50088526B /* PiggyProfileService.swift */; };
 		5E7E8BF32F59EA3700A5263C /* UserChallengeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7E8BF22F59EA3200A5263C /* UserChallengeState.swift */; };
 		5EC333492F5AF90E00F1D39F /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 5EC333482F5AF90E00F1D39F /* DGCharts */; };
 		BE1C7D6A2F5194D400FF7C17 /* AboutGoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1C7D692F5194D400FF7C17 /* AboutGoalView.swift */; };
@@ -105,6 +107,8 @@
 		5E181C0E2EFACEF5000B2357 /* GoalTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalTransaction.swift; sourceTree = "<group>"; };
 		5E181C102EFACF1A000B2357 /* FirestorePaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestorePaths.swift; sourceTree = "<group>"; };
 		5E181C122EFACF32000B2357 /* GoalsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsRepository.swift; sourceTree = "<group>"; };
+		5E4CC1502F94C3480088526B /* PiggyProfileDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiggyProfileDTO.swift; sourceTree = "<group>"; };
+		5E4CC1522F94C3C50088526B /* PiggyProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiggyProfileService.swift; sourceTree = "<group>"; };
 		5E7E8BF22F59EA3200A5263C /* UserChallengeState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserChallengeState.swift; sourceTree = "<group>"; };
 		BE1C7D692F5194D400FF7C17 /* AboutGoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutGoalView.swift; sourceTree = "<group>"; };
 		BE2954332F92A20A00D2DF3E /* DifficultyBoltsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DifficultyBoltsView.swift; sourceTree = "<group>"; };
@@ -250,6 +254,7 @@
 		C63DCEE42EFA15D5006E630E /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				5E4CC1502F94C3480088526B /* PiggyProfileDTO.swift */,
 				5E7E8BF22F59EA3200A5263C /* UserChallengeState.swift */,
 				5E181C0E2EFACEF5000B2357 /* GoalTransaction.swift */,
 				C63DCEE62EFA1610006E630E /* Goal.swift */,
@@ -264,6 +269,7 @@
 		C63DCEE52EFA15EB006E630E /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				5E4CC1522F94C3C50088526B /* PiggyProfileService.swift */,
 				C63DCF2A2EFA36BA006E630E /* Mock */,
 				C63DCEEE2EFA1655006E630E /* ChallengeService.swift */,
 				C63DCEF02EFA1668006E630E /* UserService.swift */,
@@ -655,6 +661,7 @@
 				BE1C7D6A2F5194D400FF7C17 /* AboutGoalView.swift in Sources */,
 				5E181C112EFACF1F000B2357 /* FirestorePaths.swift in Sources */,
 				C68060DB2ECFB2ED00154DC5 /* ChallengeCardView.swift in Sources */,
+				5E4CC1532F94C3CD0088526B /* PiggyProfileService.swift in Sources */,
 				5E181C0A2EFACC75000B2357 /* RegFormModel.swift in Sources */,
 				5E181C0B2EFACC75000B2357 /* AuthFormModel.swift in Sources */,
 				C63DCF362EFAAFD6006E630E /* AddMoneyView.swift in Sources */,
@@ -673,6 +680,7 @@
 				BEFA284B2F93BE5D00FAA581 /* PiggyModalView.swift in Sources */,
 				C63DCF1F2EFA1C5A006E630E /* LoadState.swift in Sources */,
 				C6F4C5EB2EF86236005DEBAB /* ActionButtonStyle.swift in Sources */,
+				5E4CC1512F94C3560088526B /* PiggyProfileDTO.swift in Sources */,
 				C68060C52ECEA8F300154DC5 /* AuthView.swift in Sources */,
 				C63DCF0C2EFA192D006E630E /* HeaderView.swift in Sources */,
 				5E181C132EFACF37000B2357 /* GoalsRepository.swift in Sources */,

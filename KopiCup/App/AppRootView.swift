@@ -2,6 +2,7 @@ import SwiftUI
 
 struct AppRootView: View {
     @EnvironmentObject private var userStorage: UserStorage
+    @EnvironmentObject private var economy: EconomyStore
 
     private let userService: UserService = LocalUserService()
     private let goalService = FirebaseGoalService()
@@ -19,13 +20,16 @@ struct AppRootView: View {
                     )
                 )
                 .onAppear {
-                        appActivityService.markAppOpen()
-                    }
+                    appActivityService.markAppOpen()
+                }
             } else {
                 NavigationStack {
                     AuthView(onAuthSuccess: {})
                 }
             }
+        }
+        .task(id: userStorage.uid) {
+            await economy.bootstrapForCurrentUser()
         }
     }
 }

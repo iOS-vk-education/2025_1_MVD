@@ -14,10 +14,7 @@ struct HomeView: View {
     @State private var activeModal: HomeModal?
     @State private var goalSnapshot: Goal?
 
-    // Новый стейт для окна деталей челленджа
     @State private var showChallengeDetails: Bool = false
-
-    // Новый стейт для модалки по кнопке со свиньёй
     @State private var showPigModal: Bool = false
 
     @EnvironmentObject private var economy: EconomyStore
@@ -43,14 +40,11 @@ struct HomeView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
 
-                    // Верхняя зелёная панель со счётчиками и подарком
                     topEconomyBar
                         .padding(.horizontal, 0)
 
-                    // Заголовок с круглой зелёной кнопкой слева и приветствием
                     VStack(alignment: .leading, spacing: 6) {
                         HStack(alignment: .center, spacing: 12) {
-                            // Кнопка с копилкой/свиньёй (текущий выбранный наряд)
                             Button {
                                 showPigModal = true
                             } label: {
@@ -58,6 +52,7 @@ struct HomeView: View {
                                     Circle()
                                         .fill(Color(red: 102/255, green: 190/255, blue: 0))
                                         .frame(width: 60, height: 60)
+
                                     Image(economy.selectedOutfitImageName)
                                         .resizable()
                                         .scaledToFit()
@@ -67,12 +62,11 @@ struct HomeView: View {
                             .buttonStyle(.plain)
                             .accessibilityLabel("Открыть копилку")
 
-                            // Тексты: приветствие и подзаголовок
                             VStack(alignment: .leading, spacing: 6) {
                                 Text("Привет, \(viewModel.userName)!")
                                     .font(.system(size: 30, weight: .bold, design: .rounded))
                                     .foregroundColor(Color(red: 102/255, green: 190/255, blue: 0))
-                                
+
                                 Text("Продолжай в том же духе!")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
@@ -82,7 +76,6 @@ struct HomeView: View {
                     .padding(.horizontal, 20)
 
                     VStack(spacing: 16) {
-
                         if let goal = viewModel.goalVM.currentGoal {
                             GoalCardView(goal: goal)
                                 .onTapGesture {
@@ -100,8 +93,6 @@ struct HomeView: View {
                         }
 
                         if viewModel.challengeVM.displayedChallenge != nil {
-                            // ВАЖНО: убираем onTapGesture с карточки челленджа,
-                            // и используем колбэки из ChallengeCardView
                             ChallengeCardView(
                                 viewModel: viewModel.challengeVM,
                                 onAccept: { showChallengeDetails = true },
@@ -113,13 +104,11 @@ struct HomeView: View {
                 }
                 .padding(.top, 12)
             }
-            // Модалка по кнопке со свиньёй
             .sheet(isPresented: $showPigModal) {
                 PiggyModalView(isPresented: $showPigModal)
                     .presentationDetents([.large])
                     .presentationDragIndicator(.hidden)
             }
-            // Первый лист — для всех модалок, КРОМЕ goalDetails
             .sheet(item: nonGoalDetailsModal) { modal in
                 switch modal {
                 case .addGoal:
@@ -143,7 +132,6 @@ struct HomeView: View {
                     }
 
                 case .challengeDetails:
-                    // Больше не используем через activeModal — управляем отдельным стейтом showChallengeDetails
                     ChallengeDetailView(
                         isPresented: .constant(true),
                         viewModel: viewModel.challengeVM
@@ -153,19 +141,18 @@ struct HomeView: View {
                     EmptyView()
                 }
             }
-            // Отдельный лист для деталей челленджа, открывается ТОЛЬКО по кнопке "Принимаю" (и "Отмечайте свои успехи сегодня")
             .sheet(isPresented: $showChallengeDetails) {
                 ChallengeDetailView(
                     isPresented: $showChallengeDetails,
                     viewModel: viewModel.challengeVM
                 )
-                .presentationDetents([.height(520)])     // уменьшенная высота
-                .presentationDragIndicator(.hidden)         // по желанию, убрать “ползунок”
+                .presentationDetents([.height(520)])
+                .presentationDragIndicator(.hidden)
             }
-            // Отдельный лист для деталей цели
             .sheet(isPresented: isGoalDetailsPresented) {
                 ZStack {
                     Color(UIColor.systemBackground).ignoresSafeArea()
+
                     Group {
                         if let goal = goalSnapshot {
                             if let seriesVM = viewModel.seriesVM {
@@ -225,8 +212,6 @@ struct HomeView: View {
         }
     }
 
-    // MARK: - Top bar with counters and gift
-
     private var topEconomyBar: some View {
         HStack(spacing: 12) {
             counterChip(systemName: "dollarsign.circle.fill", value: economy.coins)
@@ -235,7 +220,9 @@ struct HomeView: View {
             Spacer()
 
             Button {
-                let _ = economy.collectDailyGift()
+                Task {
+                    let _ = await economy.collectDailyGift()
+                }
             } label: {
                 Image(systemName: "gift.fill")
                     .foregroundColor(.white)
@@ -262,6 +249,7 @@ struct HomeView: View {
         HStack(spacing: 6) {
             Image(systemName: systemName)
                 .foregroundColor(.white)
+
             Text("\(value)")
                 .foregroundColor(.white)
                 .fontWeight(.semibold)
@@ -275,7 +263,11 @@ struct HomeView: View {
 
 private struct PresentationCornerRadiusCompat: ViewModifier {
     let radius: CGFloat
-    init(_ radius: CGFloat) { self.radius = radius }
+
+    init(_ radius: CGFloat) {
+        self.radius = radius
+    }
+
     func body(content: Content) -> some View {
         if #available(iOS 16.4, *) {
             content.presentationCornerRadius(radius)
