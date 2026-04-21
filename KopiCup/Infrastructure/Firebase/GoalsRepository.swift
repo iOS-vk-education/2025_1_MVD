@@ -63,8 +63,6 @@ final class GoalsRepository {
 
         let goalRef = FirestorePaths.goal(uid: uid, goalId: goalId)
         let txRef = FirestorePaths.transactions(uid: uid, goalId: goalId).document()
-        let daily = DailyAmountService()
-        try await daily.addToday(amount: amount)
 
         try await db.runTransaction { transaction, errorPointer in
             do {
@@ -103,5 +101,44 @@ final class GoalsRepository {
                 return nil
             }
         }
+    }
+
+    func fetchActiveGoalId() async throws -> String? {
+        let goal = try await fetchActiveGoal()
+        return goal?.id
+    }
+
+    /// Депозиты с `createdAt >= startDate` (только `type == deposit`, положительные суммы).
+    func fetchDepositsSince(goalId: String, startDate: Date) async throws -> [(date: Date, amount: Int)] {
+        guard let uid else { throw GoalsRepoError.notSignedIn }
+
+        let snapshot = try await FirestorePaths.transactions(uid: uid, goalId: goalId)
+            .whereField("createdAt", isGreaterThanOrEqualTo: Timestamp(date: startDate))
+            .order(by: "createdAt", descending: false)
+            .getDocuments()
+
+        var result: [(date: Date, amount: Int)] = []
+        result.reserveCapacity(snapshot.documents.count)
+
+        for doc in snapshot.documents {
+            let data = doc.data()
+            guard (data["type"] as? String) == "deposit" else { continue }
+
+            let amount: Int
+            if let v = data["amount"] as? Int {
+                amount = v
+            } else if let v = data["amount"] as? Int64 {
+                amount = Int(v)
+            } else if let v = data["amount"] as? NSNumber {
+                amount = v.intValue
+            } else {
+                continue
+            }
+            guard amount > 0, let ts = data["createdAt"] as? Timestamp else { continue }
+
+            result.append((ts.dateValue(), amount))
+        }
+
+        return result
     }
 }

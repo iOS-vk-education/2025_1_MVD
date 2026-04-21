@@ -106,7 +106,6 @@ struct StatsRadarChart: UIViewRepresentable {
         chart.innerWebLineWidth = 0.5
         chart.extraTopOffset = 10
         chart.extraBottomOffset = 10
-        print(values)
         return chart
     }
 

@@ -13,8 +13,6 @@ struct MainTabView: View {
             StatsView()
                 .tabItem { Label("Статистика", systemImage: "chart.bar") }
 
-            SettingsView()
-                .tabItem { Label("Настройки", systemImage: "gear") }
             ProfileView()
                 .tabItem {
                     Label("Profile", systemImage:    "person.circle")

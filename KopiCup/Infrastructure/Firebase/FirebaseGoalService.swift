@@ -117,6 +117,11 @@ final class FirebaseGoalService: GoalService {
 
                 try await dailyAmountService.addToday(amount: amount)
 
+                NotificationCenter.default.post(
+                    name: .didDeposit,
+                    object: nil,
+                    userInfo: ["amount": amount]
+                )
             } catch {
                 print("addMoney error:", error)
             }
@@ -158,6 +163,11 @@ final class FirebaseGoalService: GoalService {
                 let targetDay = DayMath.addDays(start, days: dayIndex)
                 try await dailyAmountService.add(amount: amount, for: targetDay)
 
+                NotificationCenter.default.post(
+                    name: .didDeposit,
+                    object: nil,
+                    userInfo: ["amount": amount]
+                )
             } catch {
                 print("addMoney(forDayIndex:) error:", error)
             }
