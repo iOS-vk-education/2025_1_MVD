@@ -6,7 +6,7 @@ struct AppRootView: View {
 
     private let userService: UserService = LocalUserService()
     private let goalService = FirebaseGoalService()
-    private let challengeService: ChallengeService = LocalChallengeService()
+    private let challengeService: ChallengeService = FirebaseChallengeService()
     private let appActivityService = AppActivityService()
 
     var body: some View {

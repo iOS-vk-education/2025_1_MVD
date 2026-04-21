@@ -6,72 +6,79 @@
 import SwiftUI
 import DGCharts
 
+private let kopiGreen = Color(red: 102/255, green: 190/255, blue: 0)
+
 struct StatsView: View {
     @State private var selectedChartPage: Int = 0
-    @State private var radarValues: [Double] = [0, 0, 50, 50, 50]
+    @State private var radarValues: [Double] = [0, 0, 50, 0, 0]
+    @State private var savingsSnapshot = SavingsStatsSnapshot.empty()
 
     private let statsService = StatsService()
-    private let weekTotal: Int = 2000
-    private let monthTotal: Int = 8000
-    private let avgPerDay: Int = 210
-    private let weekValues: [Double] = [130, 220, 280, 80, 200, 190, 190]
-    private let monthValues: [Double] = [4000, 5200, 4800, 6100, 7200, 8000]
-    private let monthLabels: [String] = ["Окт", "Нояб", "Дек", "Янв", "Фев", "Март"]
-
     private let chartsCarouselHeight: CGFloat = 300
 
     private var cardAppearance: CardAppearance {
         CardAppearance.default
             .with(
                 foregroundColor: .primary,
-                borderColor: .green,
-                borderWidth: 2
+                borderColor: kopiGreen,
+                borderWidth: 5
             )
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                headerSection
-                summaryCardsSection
-                chartsCarouselSection
-                summaryCharacteristics
+        VStack(spacing: 0) {
+            // Sticky green header
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Статистика")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                    Text("Отслеживайте свои накопления")
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.85))
+                }
+                Spacer()
             }
             .padding(.horizontal, 20)
-            .padding(.top, 20)
-            .padding(.bottom, 32)
+            .padding(.vertical, 14)
+            .background(
+                kopiGreen.ignoresSafeArea(edges: .top)
+            )
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    summaryCardsSection
+                    chartsCarouselSection
+                    summaryCharacteristics
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
+                .padding(.bottom, 32)
+            }
+            .background(Color(UIColor.systemGroupedBackground))
         }
-        .background(Color(UIColor.systemGroupedBackground))
         .task {
             await loadStats()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .didDeposit)) { _ in
+            Task { await loadStats() }
         }
     }
 
     private func loadStats() async {
         guard let uid = LocalUserStore.shared.activeUID else { return }
 
-        let metrics = await statsService.loadMetrics(uid: uid)
-        radarValues = metrics.radarValues
-    }
-
-    private var headerSection: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("Статистика")
-                .font(.title)
-                .fontWeight(.bold)
-                .foregroundColor(.primary)
-
-            Text("Отслеживайте свои накопления")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-        }
+        let result = await statsService.loadDashboard(uid: uid)
+        radarValues = result.metrics.radarValues
+        savingsSnapshot = result.savings
     }
 
     private var summaryCardsSection: some View {
         HStack(spacing: 12) {
-            SummaryCard(title: "Эта неделя", value: weekTotal)
-            SummaryCard(title: "Этот месяц", value: monthTotal)
-            SummaryCard(title: "Ср. / день", value: avgPerDay)
+            SummaryCard(title: "Эта неделя", value: savingsSnapshot.weekTotal)
+            SummaryCard(title: "Этот месяц", value: savingsSnapshot.monthTotal)
+            SummaryCard(title: "Ср. / день", value: savingsSnapshot.avgPerDayThisMonth)
         }
     }
 
@@ -80,13 +87,16 @@ struct StatsView: View {
             TabView(selection: $selectedChartPage) {
                 chartPage(
                     title: "Накопления за неделю",
-                    content: WeeklySavingsBarChart(values: weekValues)
+                    content: WeeklySavingsBarChart(values: savingsSnapshot.weekDailyTotals)
                 )
                 .tag(0)
 
                 chartPage(
                     title: "Динамика по месяцам",
-                    content: MonthlyDynamicsLineChart(values: monthValues, monthLabels: monthLabels)
+                    content: MonthlyDynamicsLineChart(
+                        values: savingsSnapshot.monthDynamicsValues,
+                        monthLabels: savingsSnapshot.monthDynamicsLabels
+                    )
                 )
                 .tag(1)
 
@@ -162,13 +172,14 @@ private struct SummaryCard: View {
                 .foregroundColor(.primary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(12)
-        .background(Color.white)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.green, lineWidth: 2)
+        .cardStyle(
+            CardAppearance.default
+                .with(
+                    foregroundColor: .primary,
+                    borderColor: kopiGreen,
+                    borderWidth: 5
+                )
         )
-        .cornerRadius(12)
     }
 }
 

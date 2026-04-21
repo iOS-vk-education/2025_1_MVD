@@ -11,8 +11,14 @@ struct SeriesCardView: View {
 
     private let weekDays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
 
-    private var days: [DayItem] {
-        weekDays.enumerated().map { DayItem(id: $0.offset, name: $0.element) }
+    /// Все 7 дней недели в порядке: сегодня первый, затем следующие 6.
+    /// Предыдущие дни (до сегодня) остаются слева — доступны прокруткой.
+    private var orderedDays: [DayItem] {
+        let today = viewModel.currentDayIndex
+        return (0..<7).map { offset in
+            let idx = (today + offset) % 7
+            return DayItem(id: idx, name: weekDays[idx])
+        }
     }
 
     private var isPresentedBinding: Binding<Bool> {
@@ -22,8 +28,7 @@ struct SeriesCardView: View {
         )
     }
 
-    private let cardColor: Color = .green
-
+    private let cardColor: Color = Color(red: 102/255, green: 190/255, blue: 0)
     private var todayIndex: Int { viewModel.currentDayIndex }
 
     private func dayTextColor(_ id: Int) -> Color {
@@ -49,45 +54,57 @@ struct SeriesCardView: View {
                 Text("Так держать!")
             }
             .font(.headline)
-            .foregroundColor(.green)
+            .foregroundColor(cardColor)
             .padding(.bottom, 2)
 
             HStack(alignment: .center, spacing: 12) {
+                // Трофей — фиксированный, не скролится
                 VStack(spacing: 4) {
                     Image(systemName: "trophy.fill")
-                        .foregroundColor(.green)
+                        .foregroundColor(cardColor)
                         .font(.system(size: 18, weight: .semibold))
                     Text("\(viewModel.savedDaysCount)")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.green)
+                        .foregroundColor(cardColor)
                 }
                 .frame(width: 36)
 
-                HStack(spacing: 8) {
-                    ForEach(days) { item in
-                        VStack(spacing: 4) {
-                            Text(item.name)
-                                .font(.caption2)
-                                .fontWeight(dayTextWeight(item.id))
-                                .foregroundColor(dayTextColor(item.id))
-                                .brightness(item.id == todayIndex ? -0.1 : 0)
+                // Дни недели: сегодня первый, прокрутка влево — прошлые дни
+                ScrollViewReader { proxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(orderedDays) { item in
+                                VStack(spacing: 4) {
+                                    Text(item.name)
+                                        .font(.caption2)
+                                        .fontWeight(dayTextWeight(item.id))
+                                        .foregroundColor(dayTextColor(item.id))
 
-                            Circle()
-                                .fill(dayFillColor(item.id))
-                                .frame(width: 28, height: 28)
-                                .overlay(
                                     Circle()
-                                        .stroke(dayRingColor(item.id), lineWidth: 2)
-                                        .brightness(item.id == todayIndex ? -0.1 : 0)
-                                )
-                                .onTapGesture {
-                                    if viewModel.goal == nil {
-                                        showNoGoalAlert = true
-                                    } else {
-                                        viewModel.selectedDayIndex = nil
-                                        viewModel.showAddMoneyModal = true
-                                    }
+                                        .fill(dayFillColor(item.id))
+                                        .frame(width: 28, height: 28)
+                                        .overlay(
+                                            Circle()
+                                                .stroke(dayRingColor(item.id), lineWidth: 2)
+                                        )
+                                        .onTapGesture {
+                                            if viewModel.goal == nil {
+                                                showNoGoalAlert = true
+                                            } else {
+                                                viewModel.selectedDayIndex = nil
+                                                viewModel.showAddMoneyModal = true
+                                            }
+                                        }
                                 }
+                                .id(item.id)
+                            }
+                        }
+                        .padding(.horizontal, 2)
+                    }
+                    .onAppear {
+                        // Небольшая задержка нужна, чтобы ScrollView успел отрисоваться
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                            proxy.scrollTo(todayIndex, anchor: .leading)
                         }
                     }
                 }
@@ -99,8 +116,8 @@ struct SeriesCardView: View {
         .cardStyle(
             CardAppearance.default
                 .with(
-                    foregroundColor: .green,
-                    borderColor: .green,
+                    foregroundColor: cardColor,
+                    borderColor: cardColor,
                     borderWidth: 5
                 )
         )

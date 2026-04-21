@@ -37,11 +37,11 @@ struct HomeView: View {
 
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-
-                    topEconomyBar
-                        .padding(.horizontal, 0)
+            VStack(spacing: 0) {
+                topEconomyBar
+                    .padding(.horizontal, 0)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
 
                     VStack(alignment: .leading, spacing: 6) {
                         HStack(alignment: .center, spacing: 12) {
@@ -103,7 +103,11 @@ struct HomeView: View {
                     .padding(.horizontal, 20)
                 }
                 .padding(.top, 12)
+                .padding(.bottom, 32)
             }
+            }
+            .navigationBarHidden(true)
+            // Модалка по кнопке со свиньёй
             .sheet(isPresented: $showPigModal) {
                 PiggyModalView(isPresented: $showPigModal)
                     .presentationDetents([.large])
@@ -209,6 +213,14 @@ struct HomeView: View {
         }
         .onAppear {
             viewModel.loadData()
+        }
+        .alert("Челлендж провален", isPresented: Binding(
+            get: { viewModel.challengeVM.showFailedChallengeAlert },
+            set: { viewModel.challengeVM.showFailedChallengeAlert = $0 }
+        )) {
+            Button("Попробую снова!", role: .cancel) { }
+        } message: {
+            Text("Ты пропустил день в челлендже «\(viewModel.challengeVM.failedChallengeName)». Не расстраивайся — каждый новый день это шанс начать заново!")
         }
     }
 
