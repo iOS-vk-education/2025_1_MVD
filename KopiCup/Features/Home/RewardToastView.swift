@@ -36,7 +36,7 @@ struct RewardToastView: View {
         .padding(.vertical, 12)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color.black.opacity(0.9))
+                .fill(Color.blue.opacity(0.9))
         )
         .shadow(color: .black.opacity(0.18), radius: 12, x: 0, y: 6)
         .allowsHitTesting(false)
