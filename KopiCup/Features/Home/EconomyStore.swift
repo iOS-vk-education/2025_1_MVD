@@ -22,7 +22,6 @@ final class EconomyStore: ObservableObject {
     @Published private(set) var ownedOutfitIds: Set<String> = []
     @Published private(set) var selectedOutfitId: String = "piggy_cool"
 
-    // Каталог оставляем локальным
     let catalog: [Outfit] = [
         Outfit(id: "piggy_cool",      imageName: "piggy_cool",      price: .free),
         Outfit(id: "piggy_wizard",    imageName: "piggy_wizard",    price: .coins(20)),
@@ -31,13 +30,25 @@ final class EconomyStore: ObservableObject {
     ]
 
     private let service: PiggyProfileService
+    private var notificationToken: NSObjectProtocol?
+    private var authStateHandle: AuthStateDidChangeListenerHandle?
 
     init(service: PiggyProfileService = FirebasePiggyProfileService()) {
         self.service = service
         applyDefaultState()
+        observeProfileChanges()
+        observeAuthChanges()
     }
 
-    // MARK: - Accessors
+    deinit {
+        if let notificationToken {
+            NotificationCenter.default.removeObserver(notificationToken)
+        }
+
+        if let authStateHandle {
+            Auth.auth().removeStateDidChangeListener(authStateHandle)
+        }
+    }
 
     var selectedOutfit: Outfit {
         catalog.first(where: { $0.id == selectedOutfitId }) ?? catalog[0]
@@ -55,8 +66,6 @@ final class EconomyStore: ObservableObject {
     private var currentUid: String? {
         Auth.auth().currentUser?.uid
     }
-
-    // MARK: - Bootstrap / Load
 
     func bootstrapForCurrentUser() async {
         guard let uid = currentUid else {
@@ -79,8 +88,6 @@ final class EconomyStore: ObservableObject {
             await bootstrapForCurrentUser()
         }
     }
-
-    // MARK: - Public API
 
     func setCoins(_ value: Int) async {
         coins = max(0, value)
@@ -137,20 +144,41 @@ final class EconomyStore: ObservableObject {
         await persist()
     }
 
-    // Ежедневный подарок: 1 раз в день +3 монеты
     @discardableResult
     func collectDailyGift() async -> Bool {
-        let today = DayKey.make(from: Date())
-        guard lastGiftDayKey != today else { return false }
-
-        coins += 3
-        lastGiftDayKey = today
-
-        await persist()
-        return true
+        do {
+            let didReceive = try await RewardService.shared.claimDailyGift()
+            if didReceive {
+                await bootstrapForCurrentUser()
+            }
+            return didReceive
+        } catch {
+            print("EconomyStore collectDailyGift error:", error)
+            return false
+        }
     }
 
-    // MARK: - Private
+    private func observeProfileChanges() {
+        notificationToken = NotificationCenter.default.addObserver(
+            forName: .piggyProfileDidChange,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            Task {
+                await self.bootstrapForCurrentUser()
+            }
+        }
+    }
+
+    private func observeAuthChanges() {
+        authStateHandle = Auth.auth().addStateDidChangeListener { [weak self] _, _ in
+            guard let self else { return }
+            Task { @MainActor in
+                await self.bootstrapForCurrentUser()
+            }
+        }
+    }
 
     private func persist() async {
         guard let uid = currentUid else { return }

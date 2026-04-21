@@ -16,7 +16,6 @@ final class LocalChallengeService: ChallengeService {
         store.observe { [weak self] _ in
             self?.refreshFromStore()
         }
-
     }
 
     func loadChallenges(completion: @escaping ([Challenge]) -> Void) {
@@ -25,6 +24,7 @@ final class LocalChallengeService: ChallengeService {
             Challenge(id: "2", name: "Прогулка 5км", description: "Ходи пешком", difficulty: 2),
             Challenge(id: "3", name: "Без сахара", description: "Никаких сладостей", difficulty: 3)
         ]
+
         self.challenges = list
         completion(list)
 
@@ -62,6 +62,22 @@ final class LocalChallengeService: ChallengeService {
 
         state.completedDayKeys.insert(todayKey)
         store.saveActive(state)
+
+        let completedDaysCount = state.completedDayKeys.count
+        guard completedDaysCount >= 7 else { return }
+        guard let challenge = challenges.first(where: { $0.id == state.challengeId }) else { return }
+
+        Task {
+            do {
+                _ = try await RewardService.shared.claimChallengeCompleted(
+                    challengeId: challenge.id,
+                    startDate: state.startDate,
+                    difficulty: challenge.difficulty
+                )
+            } catch {
+                print("LocalChallengeService reward error:", error)
+            }
+        }
     }
 
     // MARK: - Private

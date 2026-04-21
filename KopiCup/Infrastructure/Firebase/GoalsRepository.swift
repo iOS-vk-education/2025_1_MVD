@@ -63,13 +63,12 @@ final class GoalsRepository {
 
         let goalRef = FirestorePaths.goal(uid: uid, goalId: goalId)
         let txRef = FirestorePaths.transactions(uid: uid, goalId: goalId).document()
-        let daily = DailyAmountService()
-        try await daily.addToday(amount: amount)
 
         try await db.runTransaction { transaction, errorPointer in
             do {
                 let snap = try transaction.getDocument(goalRef)
                 let raw = snap.data()?["currentAmount"]
+
                 let current: Int
                 if let v = raw as? Int { current = v }
                 else if let v = raw as? Int64 { current = Int(v) }
@@ -78,10 +77,14 @@ final class GoalsRepository {
 
                 let delta: Int
                 switch type {
-                case "deposit":   delta = amount
-                case "withdraw":  delta = -amount
-                case "correction": delta = amount
-                default:          delta = amount
+                case "deposit":
+                    delta = amount
+                case "withdraw":
+                    delta = -amount
+                case "correction":
+                    delta = amount
+                default:
+                    delta = amount
                 }
 
                 transaction.setData([

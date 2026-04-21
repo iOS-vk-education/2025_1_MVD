@@ -21,7 +21,7 @@ struct SeriesCardView: View {
             set: { viewModel.showAddMoneyModal = $0 }
         )
     }
-    
+
     private let cardColor: Color = .green
 
     private var todayIndex: Int { viewModel.currentDayIndex }
@@ -41,7 +41,6 @@ struct SeriesCardView: View {
     private func dayRingColor(_ id: Int) -> Color {
         id == todayIndex ? cardColor : .clear
     }
-    
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {

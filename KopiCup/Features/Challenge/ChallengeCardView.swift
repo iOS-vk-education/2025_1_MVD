@@ -3,7 +3,6 @@ import SwiftUI
 struct ChallengeCardView: View {
     @ObservedObject var viewModel: ChallengeViewModel
 
-    // Родитель показывает ChallengeDetailView по этим колбэкам
     var onAccept: (() -> Void)? = nil
     var onTrackToday: (() -> Void)? = nil
 
@@ -30,7 +29,6 @@ struct ChallengeCardView: View {
                         .accessibilityLabel("Сложность: \(diff) из \(maxDifficulty)")
                     }
 
-                    // Подзаголовок/описание
                     Text(viewModel.displayedChallenge?.description ?? "")
                         .font(.subheadline)
                         .foregroundColor(viewModel.isAccepted ? Color.white.opacity(0.9) : .secondary)
@@ -39,19 +37,18 @@ struct ChallengeCardView: View {
             }
 
             if viewModel.isAccepted {
-                // Прогресс
                 HStack(spacing: 6) {
                     ForEach(0..<7, id: \.self) { day in
                         RoundedRectangle(cornerRadius: 4)
                             .fill(
                                 viewModel.progressColors.indices.contains(day)
                                 ? viewModel.progressColors[day]
-                                : Color.gray.opacity(0.6)                             )
+                                : Color.gray.opacity(0.6)
+                            )
                             .frame(height: 8)
                     }
                 }
 
-                // “Отмечайте свои успехи сегодня”
                 Button(action: { onTrackToday?() }) {
                     HStack(spacing: 10) {
                         Image(systemName: "checkmark.circle")

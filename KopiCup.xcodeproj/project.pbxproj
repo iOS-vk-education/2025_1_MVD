@@ -18,6 +18,9 @@
 		5E4CC1532F94C3CD0088526B /* PiggyProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4CC1522F94C3C50088526B /* PiggyProfileService.swift */; };
 		5E7E8BF32F59EA3700A5263C /* UserChallengeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7E8BF22F59EA3200A5263C /* UserChallengeState.swift */; };
 		5EC333492F5AF90E00F1D39F /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 5EC333482F5AF90E00F1D39F /* DGCharts */; };
+		5ECA730B2F96368700866729 /* RewardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ECA730A2F96368100866729 /* RewardService.swift */; };
+		5ECA730D2F963E7800866729 /* RewardToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ECA730C2F963E6A00866729 /* RewardToastView.swift */; };
+		5ECA730F2F9742A400866729 /* RewardBannerCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ECA730E2F97429600866729 /* RewardBannerCenter.swift */; };
 		BE1C7D6A2F5194D400FF7C17 /* AboutGoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1C7D692F5194D400FF7C17 /* AboutGoalView.swift */; };
 		BE2954342F92A20A00D2DF3E /* DifficultyBoltsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2954332F92A20A00D2DF3E /* DifficultyBoltsView.swift */; };
 		BEAD190A2F5080F700CB8650 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEAD19092F5080F700CB8650 /* GoogleService-Info.plist */; };
@@ -110,6 +113,9 @@
 		5E4CC1502F94C3480088526B /* PiggyProfileDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiggyProfileDTO.swift; sourceTree = "<group>"; };
 		5E4CC1522F94C3C50088526B /* PiggyProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiggyProfileService.swift; sourceTree = "<group>"; };
 		5E7E8BF22F59EA3200A5263C /* UserChallengeState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserChallengeState.swift; sourceTree = "<group>"; };
+		5ECA730A2F96368100866729 /* RewardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardService.swift; sourceTree = "<group>"; };
+		5ECA730C2F963E6A00866729 /* RewardToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardToastView.swift; sourceTree = "<group>"; };
+		5ECA730E2F97429600866729 /* RewardBannerCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardBannerCenter.swift; sourceTree = "<group>"; };
 		BE1C7D692F5194D400FF7C17 /* AboutGoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutGoalView.swift; sourceTree = "<group>"; };
 		BE2954332F92A20A00D2DF3E /* DifficultyBoltsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DifficultyBoltsView.swift; sourceTree = "<group>"; };
 		BEAD19092F5080F700CB8650 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -269,6 +275,7 @@
 		C63DCEE52EFA15EB006E630E /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				5ECA730A2F96368100866729 /* RewardService.swift */,
 				5E4CC1522F94C3C50088526B /* PiggyProfileService.swift */,
 				C63DCF2A2EFA36BA006E630E /* Mock */,
 				C63DCEEE2EFA1655006E630E /* ChallengeService.swift */,
@@ -294,6 +301,8 @@
 		C63DCEF52EFA16A1006E630E /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				5ECA730E2F97429600866729 /* RewardBannerCenter.swift */,
+				5ECA730C2F963E6A00866729 /* RewardToastView.swift */,
 				C68060D02ECEB33100154DC5 /* HomeView.swift */,
 				C63DCF082EFA180C006E630E /* HomeViewModel.swift */,
 				C63DCF0B2EFA192D006E630E /* HeaderView.swift */,
@@ -632,8 +641,10 @@
 				5E05664A2EFAE5EE0071387F /* UIComponents.swift in Sources */,
 				C68060CF2ECEA9E600154DC5 /* MainTabView.swift in Sources */,
 				BEFA284D2F93CD2F00FAA581 /* EconomyStore.swift in Sources */,
+				5ECA730B2F96368700866729 /* RewardService.swift in Sources */,
 				C63DCEEF2EFA1655006E630E /* ChallengeService.swift in Sources */,
 				C6F4C5E72EF86123005DEBAB /* CardAppearance.swift in Sources */,
+				5ECA730D2F963E7800866729 /* RewardToastView.swift in Sources */,
 				C63DCF2C2EFA36E1006E630E /* MockUserService.swift in Sources */,
 				C63DCF302EFA3735006E630E /* MockChallengeService.swift in Sources */,
 				C6F4C5F12EF86CF7005DEBAB /* EmtyGoalCardView.swift in Sources */,
@@ -683,6 +694,7 @@
 				5E4CC1512F94C3560088526B /* PiggyProfileDTO.swift in Sources */,
 				C68060C52ECEA8F300154DC5 /* AuthView.swift in Sources */,
 				C63DCF0C2EFA192D006E630E /* HeaderView.swift in Sources */,
+				5ECA730F2F9742A400866729 /* RewardBannerCenter.swift in Sources */,
 				5E181C132EFACF37000B2357 /* GoalsRepository.swift in Sources */,
 				C63DCF182EFA1B74006E630E /* UserChallengeViewModel.swift in Sources */,
 			);
