@@ -3,6 +3,8 @@ import UIKit
 
 struct ProfileView: View {
     @EnvironmentObject private var appUserStorage: UserStorage
+    @EnvironmentObject private var economy: EconomyStore
+
     private let userService = LocalUserService()
     private let localUser = LocalUserService()
     
@@ -13,15 +15,8 @@ struct ProfileView: View {
     @AppStorage("profile.name") private var storedName: String = "Гость"
     @AppStorage("profile.avatar.data") private var avatarData: Data = Data()
     @State private var avatarImage: UIImage? = nil
-    
-    @State private var achievements: [AchievementItem] = [
-        .init(id: "first_topup", title: "Первое пополнение", systemImage: "star.fill", achieved: true),
-        .init(id: "seven_days", title: "7 дней подряд", systemImage: "flame.fill", achieved: true),
-        .init(id: "goal_reached", title: "Цель достигнута", systemImage: "scope", achieved: false),
-        .init(id: "savings_master", title: "Мастер накоплений", systemImage: "crown.fill", achieved: false),
-        .init(id: "thirty_days", title: "30 дней подряд", systemImage: "medal.fill", achieved: false),
-        .init(id: "lightning_start", title: "Молниеносный старт", systemImage: "bolt.fill", achieved: false),
-    ]
+
+    @StateObject private var achievementsVM = AchievementsViewModel()
     
     @State private var showEditSheet = false
     
@@ -31,7 +26,24 @@ struct ProfileView: View {
     
     @State private var showLogoutConfirm = false
     
+    private var achievements: [AchievementItem] {
+        let ids = AchievementsViewModel.ID.self
+        let isUnlocked = { (id: String) in achievementsVM.unlockedIDs.contains(id) }
+
+        // Порядок по требованию:
+        // 1) Молниеносный старт, 2) Первое пополнение, 3) 7 дней подряд,
+        // 4) Цель достигнута, 5) 30 дней подряд, 6) Лучший друг
+        return [
+            AchievementItem(id: ids.lightningStart, title: "Молниеносный старт", systemImage: "bolt.fill", achieved: isUnlocked(ids.lightningStart)),
+            AchievementItem(id: ids.firstTopup, title: "Первое пополнение", systemImage: "star.fill", achieved: isUnlocked(ids.firstTopup)),
+            AchievementItem(id: ids.sevenDays, title: "7 дней подряд", systemImage: "flame.fill", achieved: isUnlocked(ids.sevenDays)),
+            AchievementItem(id: ids.goalReached, title: "Цель достигнута", systemImage: "scope", achieved: isUnlocked(ids.goalReached)),
+            AchievementItem(id: ids.thirtyDays, title: "30 дней подряд", systemImage: "medal.fill", achieved: isUnlocked(ids.thirtyDays)),
+            AchievementItem(id: ids.bestFriend, title: "Лучший друг", systemImage: "crown.fill", achieved: isUnlocked(ids.bestFriend))
+        ]
+    }
     private var achievedCount: Int { achievements.filter { $0.achieved }.count }
+
     private var displayName: String {
         let nameFromStore = appUserStorage.name.trimmingCharacters(in: .whitespacesAndNewlines)
         if !nameFromStore.isEmpty { return nameFromStore }
@@ -77,6 +89,13 @@ struct ProfileView: View {
             if appUserStorage.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 appUserStorage.name = profile.name
             }
+
+            // Стартуем расчёт достижений
+            achievementsVM.setEconomyStore(economy)
+            achievementsVM.setUid(appUserStorage.uid)
+        }
+        .onChange(of: appUserStorage.uid) { newUid in
+            achievementsVM.setUid(newUid)
         }
         .preferredColorScheme(isDarkMode ? .dark : .light)
         .sheet(isPresented: $showEditSheet) {
@@ -555,10 +574,12 @@ struct ProfileView_Previews: PreviewProvider {
             ProfileView()
                 .previewDisplayName("Light")
                 .environmentObject(UserStorage())
+                .environmentObject(EconomyStore())
             ProfileView()
                 .preferredColorScheme(.dark)
                 .previewDisplayName("Dark")
                 .environmentObject(UserStorage())
+                .environmentObject(EconomyStore())
         }
     }
 }
@@ -630,3 +651,4 @@ private extension UIImage {
         }
     }
 }
+

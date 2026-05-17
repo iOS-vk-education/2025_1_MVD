@@ -24,6 +24,8 @@
 		BE1C7D6A2F5194D400FF7C17 /* AboutGoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1C7D692F5194D400FF7C17 /* AboutGoalView.swift */; };
 		BE2954342F92A20A00D2DF3E /* DifficultyBoltsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2954332F92A20A00D2DF3E /* DifficultyBoltsView.swift */; };
 		BEAD190A2F5080F700CB8650 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEAD19092F5080F700CB8650 /* GoogleService-Info.plist */; };
+		BEE4CA7C2FB9D19100D695CF /* AchievementsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE4CA7B2FB9CAB200D695CF /* AchievementsViewModel.swift */; };
+		BEE4CA7F2FB9D9A900D695CF /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = BEE4CA7E2FB9D9A900D695CF /* FirebaseFirestoreSwift */; };
 		BEF8A6C62F51FD4500270768 /* EditGoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF8A6C52F51FD4500270768 /* EditGoalView.swift */; };
 		BEFA284B2F93BE5D00FAA581 /* PiggyModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFA284A2F93BE5D00FAA581 /* PiggyModalView.swift */; };
 		BEFA284D2F93CD2F00FAA581 /* EconomyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFA284C2F93CD2F00FAA581 /* EconomyStore.swift */; };
@@ -119,6 +121,7 @@
 		BE1C7D692F5194D400FF7C17 /* AboutGoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutGoalView.swift; sourceTree = "<group>"; };
 		BE2954332F92A20A00D2DF3E /* DifficultyBoltsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DifficultyBoltsView.swift; sourceTree = "<group>"; };
 		BEAD19092F5080F700CB8650 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		BEE4CA7B2FB9CAB200D695CF /* AchievementsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsViewModel.swift; sourceTree = "<group>"; };
 		BEF8A6C52F51FD4500270768 /* EditGoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditGoalView.swift; sourceTree = "<group>"; };
 		BEFA284A2F93BE5D00FAA581 /* PiggyModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiggyModalView.swift; sourceTree = "<group>"; };
 		BEFA284C2F93CD2F00FAA581 /* EconomyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EconomyStore.swift; sourceTree = "<group>"; };
@@ -196,6 +199,7 @@
 				5EC333492F5AF90E00F1D39F /* DGCharts in Frameworks */,
 				C6A22CFD2EF1BAF100A2865B /* FirebaseAnalytics in Frameworks */,
 				C6A22CFF2EF1BAF100A2865B /* FirebaseAuth in Frameworks */,
+				BEE4CA7F2FB9D9A900D695CF /* FirebaseFirestoreSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,6 +220,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BEE4CA7D2FB9D9A900D695CF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		C63DCEDA2EFA14CF006E630E /* Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -268,6 +279,7 @@
 				C63DCEEA2EFA1631006E630E /* Series.swift */,
 				C63DCEEC2EFA1641006E630E /* UserChallenge.swift */,
 				C63DCF202EFA1FE7006E630E /* User.swift */,
+				BEE4CA7B2FB9CAB200D695CF /* AchievementsViewModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -404,6 +416,7 @@
 				C68060962ECE6C0500154DC5 /* KopiCup */,
 				C68060A72ECE6C0700154DC5 /* KopiCupTests */,
 				C68060B12ECE6C0700154DC5 /* KopiCupUITests */,
+				BEE4CA7D2FB9D9A900D695CF /* Frameworks */,
 				C68060952ECE6C0500154DC5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -512,6 +525,7 @@
 				C6A22D002EF1BAF100A2865B /* FirebaseDatabase */,
 				C6A22D022EF1BAF100A2865B /* FirebaseFirestore */,
 				5EC333482F5AF90E00F1D39F /* DGCharts */,
+				BEE4CA7E2FB9D9A900D695CF /* FirebaseFirestoreSwift */,
 			);
 			productName = KopiCup;
 			productReference = C68060942ECE6C0500154DC5 /* KopiCup.app */;
@@ -678,6 +692,7 @@
 				C63DCF362EFAAFD6006E630E /* AddMoneyView.swift in Sources */,
 				C63DCF322EFAAF58006E630E /* SeriesCardView.swift in Sources */,
 				5E181C0F2EFACEFA000B2357 /* GoalTransaction.swift in Sources */,
+				BEE4CA7C2FB9D19100D695CF /* AchievementsViewModel.swift in Sources */,
 				C63DCF092EFA180C006E630E /* HomeViewModel.swift in Sources */,
 				C6F4C5E92EF86166005DEBAB /* CardModifier.swift in Sources */,
 				C6F4C60A2EFA003F005DEBAB /* ChallengeDetailsView.swift in Sources */,
@@ -1040,6 +1055,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5EC333472F5AF90E00F1D39F /* XCRemoteSwiftPackageReference "Charts" */;
 			productName = DGCharts;
+		};
+		BEE4CA7E2FB9D9A900D695CF /* FirebaseFirestoreSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C6A22CFB2EF1BAF100A2865B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestoreSwift;
 		};
 		C6A22CFC2EF1BAF100A2865B /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;

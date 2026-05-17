@@ -1,4 +1,5 @@
 import SwiftUI
+import FirebaseAuth
 
 enum HomeModal: Identifiable {
     case addGoal
@@ -16,6 +17,10 @@ struct HomeView: View {
 
     @State private var showChallengeDetails: Bool = false
     @State private var showPigModal: Bool = false
+
+    // Баннеры и достижения — живут на главном экране
+    @StateObject private var rewardBannerCenter = RewardBannerCenter()
+    @StateObject private var achievementsVM = AchievementsViewModel()
 
     @EnvironmentObject private var economy: EconomyStore
 
@@ -40,191 +45,205 @@ struct HomeView: View {
     }
 
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                topEconomyBar
-                    .padding(.horizontal, 0)
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
+        ZStack(alignment: .top) {
+            NavigationView {
+                VStack(spacing: 0) {
+                    topEconomyBar
+                        .padding(.horizontal, 0)
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 16) {
 
-                        VStack(alignment: .leading, spacing: 6) {
-                            HStack(alignment: .center, spacing: 12) {
-                                Button {
-                                    showPigModal = true
-                                } label: {
-                                    ZStack {
-                                        Circle()
-                                            .fill(Color(red: 102/255, green: 190/255, blue: 0))
-                                            .frame(width: 60, height: 60)
+                            VStack(alignment: .leading, spacing: 6) {
+                                HStack(alignment: .center, spacing: 12) {
+                                    Button {
+                                        showPigModal = true
+                                    } label: {
+                                        ZStack {
+                                            Circle()
+                                                .fill(Color(red: 102/255, green: 190/255, blue: 0))
+                                                .frame(width: 60, height: 60)
 
-                                        Image(economy.selectedOutfitImageName)
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 70, height: 80)
+                                            Image(economy.selectedOutfitImageName)
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 70, height: 80)
+                                        }
+                                    }
+                                    .buttonStyle(.plain)
+                                    .accessibilityLabel("Открыть копилку")
+
+                                    VStack(alignment: .leading, spacing: 6) {
+                                        Text("Привет, \(viewModel.userName)!")
+                                            .font(.system(size: 30, weight: .bold, design: .rounded))
+                                            .foregroundColor(Color(red: 102/255, green: 190/255, blue: 0))
+
+                                        Text("Продолжай в том же духе!")
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
                                     }
                                 }
-                                .buttonStyle(.plain)
-                                .accessibilityLabel("Открыть копилку")
-
-                                VStack(alignment: .leading, spacing: 6) {
-                                    Text("Привет, \(viewModel.userName)!")
-                                        .font(.system(size: 30, weight: .bold, design: .rounded))
-                                        .foregroundColor(Color(red: 102/255, green: 190/255, blue: 0))
-
-                                    Text("Продолжай в том же духе!")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
                             }
-                        }
-                        .padding(.horizontal, 20)
+                            .padding(.horizontal, 20)
 
-                        VStack(spacing: 16) {
-                            if let goal = viewModel.goalVM.currentGoal {
-                                GoalCardView(goal: goal)
-                                    .onTapGesture {
-                                        goalSnapshot = goal
-                                        activeModal = .goalDetails
+                            VStack(spacing: 16) {
+                                if let goal = viewModel.goalVM.currentGoal {
+                                    GoalCardView(goal: goal)
+                                        .onTapGesture {
+                                            goalSnapshot = goal
+                                            activeModal = .goalDetails
+                                        }
+                                } else {
+                                    EmptyGoalCardView {
+                                        activeModal = .addGoal
                                     }
-                            } else {
-                                EmptyGoalCardView {
-                                    activeModal = .addGoal
+                                }
+
+                                if let seriesVM = viewModel.seriesVM {
+                                    SeriesCardView(viewModel: seriesVM)
+                                }
+
+                                if viewModel.challengeVM.displayedChallenge != nil {
+                                    ChallengeCardView(
+                                        viewModel: viewModel.challengeVM,
+                                        onAccept: { showChallengeDetails = true },
+                                        onTrackToday: { showChallengeDetails = true }
+                                    )
                                 }
                             }
-
-                            if let seriesVM = viewModel.seriesVM {
-                                SeriesCardView(viewModel: seriesVM)
-                            }
-
-                            if viewModel.challengeVM.displayedChallenge != nil {
-                                ChallengeCardView(
-                                    viewModel: viewModel.challengeVM,
-                                    onAccept: { showChallengeDetails = true },
-                                    onTrackToday: { showChallengeDetails = true }
-                                )
-                            }
+                            .padding(.horizontal, 20)
                         }
-                        .padding(.horizontal, 20)
+                        .padding(.top, 12)
+                        .padding(.bottom, 32)
                     }
-                    .padding(.top, 12)
-                    .padding(.bottom, 32)
                 }
-            }
-            .navigationBarHidden(true)
-            // Модалка по кнопке со свиньёй
-            .sheet(isPresented: $showPigModal) {
-                PiggyModalView(isPresented: $showPigModal)
-                    .presentationDetents([.large])
-                    .presentationDragIndicator(.hidden)
-            }
-            .sheet(item: nonGoalDetailsModal) { modal in
-                switch modal {
-                case .addGoal:
-                    GoalFormView(
-                        isPresented: .constant(true),
-                        onSave: { viewModel.goalVM.createGoal($0) }
-                    )
+                .navigationBarHidden(true)
+                // Модалка по кнопке со свиньёй
+                .sheet(isPresented: $showPigModal) {
+                    PiggyModalView(isPresented: $showPigModal)
+                        .presentationDetents([.large])
+                        .presentationDragIndicator(.hidden)
+                }
+                .sheet(item: nonGoalDetailsModal) { modal in
+                    switch modal {
+                    case .addGoal:
+                        GoalFormView(
+                            isPresented: .constant(true),
+                            onSave: { viewModel.goalVM.createGoal($0) }
+                        )
 
-                case .editGoal:
-                    Group {
-                        if let goal = viewModel.goalVM.currentGoal {
-                            EditGoalView(
-                                isPresented: .constant(true),
-                                goal: goal,
-                                onSave: { viewModel.goalVM.updateGoal($0) },
-                                onDelete: { viewModel.goalVM.deleteGoal() }
-                            )
-                        } else {
-                            EmptyView()
+                    case .editGoal:
+                        Group {
+                            if let goal = viewModel.goalVM.currentGoal {
+                                EditGoalView(
+                                    isPresented: .constant(true),
+                                    goal: goal,
+                                    onSave: { viewModel.goalVM.updateGoal($0) },
+                                    onDelete: { viewModel.goalVM.deleteGoal() }
+                                )
+                            } else {
+                                EmptyView()
+                            }
                         }
-                    }
 
-                case .challengeDetails:
+                    case .challengeDetails:
+                        ChallengeDetailView(
+                            isPresented: .constant(true),
+                            viewModel: viewModel.challengeVM
+                        )
+
+                    case .goalDetails:
+                        EmptyView()
+                    }
+                }
+                .sheet(isPresented: $showChallengeDetails) {
                     ChallengeDetailView(
-                        isPresented: .constant(true),
+                        isPresented: $showChallengeDetails,
                         viewModel: viewModel.challengeVM
                     )
-
-                case .goalDetails:
-                    EmptyView()
+                    .presentationDetents([.height(520)])
+                    .presentationDragIndicator(.hidden)
                 }
-            }
-            .sheet(isPresented: $showChallengeDetails) {
-                ChallengeDetailView(
-                    isPresented: $showChallengeDetails,
-                    viewModel: viewModel.challengeVM
-                )
-                .presentationDetents([.height(520)])
-                .presentationDragIndicator(.hidden)
-            }
-            .sheet(isPresented: isGoalDetailsPresented) {
-                ZStack {
-                    Color(UIColor.systemBackground).ignoresSafeArea()
+                .sheet(isPresented: isGoalDetailsPresented) {
+                    ZStack {
+                        Color(UIColor.systemBackground).ignoresSafeArea()
 
-                    Group {
-                        if let goal = goalSnapshot {
-                            if let seriesVM = viewModel.seriesVM {
-                                AboutGoalView(
-                                    goal: goal,
-                                    onClose: {
-                                        goalSnapshot = nil
-                                        activeModal = nil
-                                    },
-                                    seriesVM: seriesVM,
-                                    onAddMoney: {
-                                        let goalToUse = goal
-                                        goalSnapshot = nil
-                                        activeModal = nil
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                                            seriesVM.goal = goalToUse
-                                            seriesVM.selectedDayIndex = seriesVM.currentDayIndex
-                                            seriesVM.showAddMoneyModal = true
+                        Group {
+                            if let goal = goalSnapshot {
+                                if let seriesVM = viewModel.seriesVM {
+                                    AboutGoalView(
+                                        goal: goal,
+                                        onClose: {
+                                            goalSnapshot = nil
+                                            activeModal = nil
+                                        },
+                                        seriesVM: seriesVM,
+                                        onAddMoney: {
+                                            let goalToUse = goal
+                                            goalSnapshot = nil
+                                            activeModal = nil
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                                seriesVM.goal = goalToUse
+                                                seriesVM.selectedDayIndex = seriesVM.currentDayIndex
+                                                seriesVM.showAddMoneyModal = true
+                                            }
+                                        },
+                                        onEdit: {
+                                            goalSnapshot = nil
+                                            activeModal = nil
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                                activeModal = .editGoal
+                                            }
                                         }
-                                    },
-                                    onEdit: {
-                                        goalSnapshot = nil
-                                        activeModal = nil
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                                            activeModal = .editGoal
-                                        }
+                                    )
+                                } else {
+                                    VStack(spacing: 12) {
+                                        ProgressView()
+                                        Text("Готовим стрик…").foregroundColor(.secondary)
                                     }
-                                )
+                                    .padding()
+                                    .background(Color.white)
+                                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                                }
                             } else {
                                 VStack(spacing: 12) {
                                     ProgressView()
-                                    Text("Готовим стрик…").foregroundColor(.secondary)
+                                    Text("Загружаем цель…").foregroundColor(.secondary)
                                 }
                                 .padding()
                                 .background(Color.white)
                                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                             }
-                        } else {
-                            VStack(spacing: 12) {
-                                ProgressView()
-                                Text("Загружаем цель…").foregroundColor(.secondary)
-                            }
-                            .padding()
-                            .background(Color.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                         }
                     }
+                    .interactiveDismissDisabled(false)
+                    .presentationDetents([.large])
+                    .modifier(PresentationCornerRadiusCompat(16))
+                    .onDisappear { goalSnapshot = nil }
                 }
-                .interactiveDismissDisabled(false)
-                .presentationDetents([.large])
-                .modifier(PresentationCornerRadiusCompat(16))
-                .onDisappear { goalSnapshot = nil }
             }
-        }
-        .onAppear {
-            viewModel.loadData()
-        }
-        .alert("Челлендж провален", isPresented: Binding(
-            get: { viewModel.challengeVM.showFailedChallengeAlert },
-            set: { viewModel.challengeVM.showFailedChallengeAlert = $0 }
-        )) {
-            Button("Попробую снова!", role: .cancel) { }
-        } message: {
-            Text("Ты пропустил день в челлендже «\(viewModel.challengeVM.failedChallengeName)». Не расстраивайся — каждый новый день это шанс начать заново!")
+            .onAppear {
+                viewModel.loadData()
+
+                // Конфиг достижений для мгновенных баннеров на главном
+                achievementsVM.setEconomyStore(economy)
+                achievementsVM.setUid(Auth.auth().currentUser?.uid)
+            }
+            .alert("Челлендж провален", isPresented: Binding(
+                get: { viewModel.challengeVM.showFailedChallengeAlert },
+                set: { viewModel.challengeVM.showFailedChallengeAlert = $0 }
+            )) {
+                Button("Попробую снова!", role: .cancel) { }
+            } message: {
+                Text("Ты пропустил день в челлендже «\(viewModel.challengeVM.failedChallengeName)». Не расстраивайся — каждый новый день это шанс начать заново!")
+            }
+
+            // Баннер наград/достижений
+            if let data = rewardBannerCenter.currentBanner {
+                RewardToastView(data: data)
+                    .padding(.top, 8)
+                    .padding(.horizontal, 16)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
         }
     }
 
@@ -315,3 +334,4 @@ struct HomeView_Previews: PreviewProvider {
         .environmentObject(EconomyStore())
     }
 }
+

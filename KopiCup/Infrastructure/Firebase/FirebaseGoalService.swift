@@ -1,6 +1,7 @@
 import Foundation
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseFirestoreSwift
 
 final class FirebaseGoalService: GoalService {
 
@@ -10,7 +11,6 @@ final class FirebaseGoalService: GoalService {
     private var authHandle: AuthStateDidChangeListenerHandle?
     private var userListener: ListenerRegistration?
     private var goalListener: ListenerRegistration?
-    private var seriesListener: ListenerRegistration?
 
     private var currentGoalId: String?
     
@@ -31,7 +31,6 @@ final class FirebaseGoalService: GoalService {
         if let uid = Auth.auth().currentUser?.uid {
             listenUserDoc(uid: uid, handler: handler)
         } else {
-            // Сообщим вью‑модели текущее отсутствие цели (можно убрать, если не хотите моргания)
             handler(nil)
         }
 
@@ -41,7 +40,6 @@ final class FirebaseGoalService: GoalService {
             if let uid = user?.uid {
                 self.listenUserDoc(uid: uid, handler: handler)
             } else {
-                // Логаут: чистим все и отдаем nil
                 self.stopUserListening()
                 self.stopGoalListening()
                 self.currentGoalId = nil
@@ -57,19 +55,26 @@ final class FirebaseGoalService: GoalService {
             .addSnapshotListener { [weak self] snapshot, _ in
                 guard let self else { return }
 
-                guard
-                    let data = snapshot?.data(),
-                    let goalId = data["activeGoalId"] as? String
-                else {
+                guard let data = snapshot?.data() else {
                     self.stopGoalListening()
                     self.currentGoalId = nil
                     handler(nil)
+                    // Попробуем восстановить активную цель (если есть хоть одна)
+                    self.ensureActiveGoalIfPossible(uid: uid, handler: handler)
                     return
                 }
 
-                if self.currentGoalId != goalId {
-                    self.currentGoalId = goalId
-                    self.listenGoal(uid: uid, goalId: goalId, handler: handler)
+                if let goalId = data["activeGoalId"] as? String, !goalId.isEmpty {
+                    if self.currentGoalId != goalId {
+                        self.currentGoalId = goalId
+                        self.listenGoal(uid: uid, goalId: goalId, handler: handler)
+                    }
+                } else {
+                    self.stopGoalListening()
+                    self.currentGoalId = nil
+                    handler(nil)
+                    // Попробуем восстановить активную цель (если есть хоть одна)
+                    self.ensureActiveGoalIfPossible(uid: uid, handler: handler)
                 }
             }
     }
@@ -78,15 +83,51 @@ final class FirebaseGoalService: GoalService {
         stopGoalListening()
 
         goalListener = FirestorePaths.goal(uid: uid, goalId: goalId)
-            .addSnapshotListener { snapshot, _ in
+            .addSnapshotListener { snapshot, error in
                 guard let snapshot else {
+                    if let error { print("listenGoal snapshot error:", error) }
                     handler(nil)
                     return
                 }
-
-                let goal = try? snapshot.data(as: Goal.self)
-                handler(goal)
+                do {
+                    let goal = try snapshot.data(as: Goal.self)
+                    handler(goal)
+                } catch {
+                    print("decode Goal error:", error)
+                    handler(nil)
+                }
             }
+    }
+
+    private func ensureActiveGoalIfPossible(uid: String, handler: @escaping (Goal?) -> Void) {
+        Task {
+            do {
+                // Берём последнюю по updatedAt цель и делаем её активной
+                let snap = try await FirestorePaths.goals(uid: uid)
+                    .order(by: "updatedAt", descending: true)
+                    .limit(to: 1)
+                    .getDocuments()
+
+                guard let doc = snap.documents.first else {
+                    return
+                }
+
+                let goal = try doc.data(as: Goal.self)
+
+                try await FirestorePaths.userDoc(uid: uid).setData([
+                    "activeGoalId": doc.documentID,
+                    "updatedAt": FieldValue.serverTimestamp()
+                ], merge: true)
+
+                await MainActor.run {
+                    self.currentGoalId = doc.documentID
+                    self.listenGoal(uid: uid, goalId: doc.documentID, handler: handler)
+                    handler(goal)
+                }
+            } catch {
+                print("ensureActiveGoalIfPossible error:", error)
+            }
+        }
     }
 
     private func stopUserListening() {

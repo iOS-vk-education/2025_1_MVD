@@ -1,6 +1,6 @@
 import Foundation
 import FirebaseFirestore
-//import FirebaseFirestoreSwift
+import FirebaseFirestoreSwift
 
 struct Goal: Identifiable, Codable, Equatable {
     @DocumentID var id: String?
@@ -54,7 +54,7 @@ extension Goal {
         description: "",
         targetAmount: 0,
         currentAmount: 0,
-        currency: "EUR",
+        currency: "RUB",
         status: "active"
     )
 
