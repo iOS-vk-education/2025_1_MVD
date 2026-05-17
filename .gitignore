@@ -1,5 +1,2 @@
 .DS_Store
-*.xcuserstate
-build/
-.swiftpm/
-Pods/
+xcuserdata/
