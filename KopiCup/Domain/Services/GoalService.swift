@@ -13,7 +13,7 @@ protocol GoalService {
     func updateGoal(_ goal: Goal)
     func deleteGoal()
     func addMoney(_ amount: Int)
-    func addMoney(_ amount: Int, forDayIndex dayIndex: Int)
+    func addMoney(_ amount: Int, for date: Date)
     
     func observeSeries(_ handler: @escaping (Series) -> Void)
     func updateSeries(_ series: Series)

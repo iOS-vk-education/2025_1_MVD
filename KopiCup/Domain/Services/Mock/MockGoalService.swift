@@ -37,7 +37,7 @@ final class MockGoalService: GoalService {
         g.currentAmount += amount
         self.goal = g
 
-        let dayIdx = Calendar.current.component(.weekday, from: Date()) - 1
+        let dayIdx = (Calendar.current.component(.weekday, from: Date()) + 5) % 7
         var prog = series.weekProgress
         if dayIdx >= 0 && dayIdx < prog.count {
             prog[dayIdx] = true
@@ -50,12 +50,13 @@ final class MockGoalService: GoalService {
         )
     }
 
-    func addMoney(_ amount: Int, forDayIndex dayIndex: Int) {
+    func addMoney(_ amount: Int, for date: Date) {
         guard var g = goal else { return }
 
         g.currentAmount += amount
         self.goal = g
 
+        let dayIndex = (Calendar.current.component(.weekday, from: date) + 5) % 7
         var prog = series.weekProgress
         if dayIndex >= 0 && dayIndex < prog.count {
             prog[dayIndex] = true

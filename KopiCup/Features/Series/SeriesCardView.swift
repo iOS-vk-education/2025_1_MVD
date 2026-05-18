@@ -1,10 +1,5 @@
 import SwiftUI
 
-struct DayItem: Identifiable {
-    let id: Int
-    let name: String
-}
-
 struct SeriesCardView: View {
     @ObservedObject var viewModel: SeriesViewModel
     @EnvironmentObject private var l10n: L10n
@@ -13,14 +8,6 @@ struct SeriesCardView: View {
     private var weekDays: [String] {
         [l10n.t(.mon), l10n.t(.tue), l10n.t(.wed),
          l10n.t(.thu), l10n.t(.fri), l10n.t(.sat), l10n.t(.sun)]
-    }
-
-    private var orderedDays: [DayItem] {
-        let today = viewModel.currentDayIndex
-        return (0..<7).map { offset in
-            let idx = (today + offset) % 7
-            return DayItem(id: idx, name: weekDays[idx])
-        }
     }
 
     private var isPresentedBinding: Binding<Bool> {
@@ -34,11 +21,11 @@ struct SeriesCardView: View {
     private var todayIndex: Int { viewModel.currentDayIndex }
 
     private func dayTextColor(_ id: Int) -> Color {
-        id == todayIndex ? cardColor : .secondary
+        viewModel.isToday(dayIndex: id) ? cardColor : .secondary
     }
 
     private func dayTextWeight(_ id: Int) -> Font.Weight {
-        id == todayIndex ? .bold : .regular
+        viewModel.isToday(dayIndex: id) ? .bold : .regular
     }
 
     private func dayFillColor(_ id: Int) -> Color {
@@ -46,17 +33,57 @@ struct SeriesCardView: View {
     }
 
     private func dayRingColor(_ id: Int) -> Color {
-        id == todayIndex ? cardColor : .clear
+        viewModel.isToday(dayIndex: id) ? cardColor : .clear
+    }
+
+    private func dayOpacity(_ id: Int) -> Double {
+        viewModel.dateForDisplayedWeek(dayIndex: id) > Date() ? 0.45 : 1
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(l10n.t(.seriesWeeklySaved, viewModel.formatWithCurrentCurrency(viewModel.totalSavedThisWeek)))
-                Text(l10n.t(.seriesKeepGoing))
+            HStack(alignment: .top, spacing: 10) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(l10n.t(.seriesWeeklySaved, viewModel.formatWithCurrentCurrency(viewModel.totalSavedThisWeek)))
+                    Text(viewModel.weekRangeText)
+                        .font(.subheadline)
+                    Text(l10n.t(.seriesKeepGoing))
+                }
+                .font(.headline)
+                .foregroundColor(cardColor)
+
+                Spacer()
+
+                HStack(spacing: 6) {
+                    Button {
+                        viewModel.showPreviousWeek()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 14, weight: .bold))
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        viewModel.showCurrentWeek()
+                    } label: {
+                        Image(systemName: "calendar")
+                            .font(.system(size: 14, weight: .bold))
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        viewModel.showNextWeek()
+                    } label: {
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .bold))
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(!viewModel.canShowNextWeek)
+                    .opacity(viewModel.canShowNextWeek ? 1 : 0.35)
+                }
+                .foregroundColor(cardColor)
+                .frame(height: 30)
             }
-            .font(.headline)
-            .foregroundColor(cardColor)
             .padding(.bottom, 2)
 
             HStack(alignment: .center, spacing: 12) {
@@ -73,31 +100,42 @@ struct SeriesCardView: View {
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
-                            ForEach(orderedDays) { item in
+                            ForEach(0..<7, id: \.self) { dayIndex in
                                 VStack(spacing: 4) {
-                                    Text(item.name)
+                                    Text(weekDays[dayIndex])
                                         .font(.caption2)
-                                        .fontWeight(dayTextWeight(item.id))
-                                        .foregroundColor(dayTextColor(item.id))
+                                        .fontWeight(dayTextWeight(dayIndex))
+                                        .foregroundColor(dayTextColor(dayIndex))
 
                                     Circle()
-                                        .fill(dayFillColor(item.id))
+                                        .fill(dayFillColor(dayIndex))
                                         .frame(width: 28, height: 28)
                                         .overlay(
                                             Circle()
-                                                .strokeBorder(dayRingColor(item.id), lineWidth: 2)
+                                                .strokeBorder(dayRingColor(dayIndex), lineWidth: 2)
+                                        )
+                                        .overlay(
+                                            Group {
+                                                if viewModel.amountForDisplayedWeek(dayIndex: dayIndex) > 0 {
+                                                    Image(systemName: "checkmark")
+                                                        .font(.system(size: 11, weight: .bold))
+                                                        .foregroundColor(.white)
+                                                }
+                                            }
                                         )
                                         .onTapGesture {
-                                            if viewModel.goal == nil {
+                                            guard viewModel.canAddMoney(dayIndex: dayIndex) else { return }
+                                            guard viewModel.goal != nil else {
                                                 showNoGoalAlert = true
-                                            } else {
-                                                viewModel.selectedDayIndex = nil
-                                                viewModel.showAddMoneyModal = true
+                                                return
                                             }
+                                            viewModel.selectedDate = viewModel.dateForDisplayedWeek(dayIndex: dayIndex)
+                                            viewModel.showAddMoneyModal = true
                                         }
                                 }
                                 .padding(.vertical, 2)
-                                .id(item.id)
+                                .opacity(dayOpacity(dayIndex))
+                                .id(dayIndex)
                             }
                         }
                         .padding(.horizontal, 2)
@@ -131,11 +169,5 @@ struct SeriesCardView: View {
         .alert(l10n.t(.seriesNoGoal), isPresented: $showNoGoalAlert) {
             Button(l10n.t(.ok), role: .cancel) { }
         }
-    }
-}
-
-private extension Array {
-    subscript(safe index: Int) -> Element? {
-        (startIndex..<endIndex).contains(index) ? self[index] : nil
     }
 }

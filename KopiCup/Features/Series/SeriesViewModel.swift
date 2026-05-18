@@ -6,8 +6,9 @@ final class SeriesViewModel: ObservableObject {
     @Published var dailyTarget: Int = 0
     @Published var todayAddedAmount: Int = 0
     @Published var showAddMoneyModal = false
-    @Published var selectedDayIndex: Int? = nil
+    @Published var selectedDate: Date? = nil
     @Published var perDayAdded: [Int] = Array(repeating: 0, count: 7)
+    @Published var displayedWeekStart: Date
 
     // Глобальная валюта отображения
     @Published var currencyCode: String = UserDefaults.standard.string(forKey: "settings.currency.code") ?? "RUB"
@@ -17,14 +18,14 @@ final class SeriesViewModel: ObservableObject {
     private let goalService: GoalService
     private let uid: String
     private let rewardService = RewardService.shared
+    private let dailyAmountService = DailyAmountService()
+    private var allDayAmounts: [String: Int] = [:]
     private var cancellables = Set<AnyCancellable>()
     private var udObserver: NSObjectProtocol?
 
     // MARK: - Persistence
     private let ud = UserDefaults.standard
     private enum Keys {
-        static let perDayAdded = "series.perDayAdded"
-        static let weekProgress = "series.weekProgress"
         static let streakDays = "series.streakDays"
         static let lastAddedDate = "series.lastAddedDate"
     }
@@ -32,13 +33,10 @@ final class SeriesViewModel: ObservableObject {
     init(goalService: GoalService, uid: String) {
         self.goalService = goalService
         self.uid = uid
+        self.displayedWeekStart = Self.weekStart(for: Date())
 
-        loadPersistedState()
-        rollWeekIfNeeded()
-
-        if perDayAdded.indices.contains(currentDayIndex) {
-            todayAddedAmount = perDayAdded[currentDayIndex]
-        }
+        loadPersistedSeriesState()
+        refreshAmountsFromStore()
 
         // Цель приходит через HomeViewModel.goalVM.$currentGoal binding,
         // НЕ через прямой observeGoal — иначе stopAllListening() убивает
@@ -69,64 +67,49 @@ final class SeriesViewModel: ObservableObject {
     }
 
     var savedDaysCount: Int {
-        guard let progress = series?.weekProgress else { return 0 }
-        return progress.filter { $0 }.count
+        perDayAdded.filter { $0 > 0 }.count
     }
 
     var currentDayIndex: Int {
-        (Calendar.current.component(.weekday, from: Date()) + 5) % 7
+        Self.dayIndex(for: Date())
+    }
+
+    var canShowNextWeek: Bool {
+        displayedWeekStart < Self.weekStart(for: Date())
+    }
+
+    var weekRangeText: String {
+        let end = Self.addDays(6, to: displayedWeekStart)
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: currencyCode == "RUB" ? "ru_RU" : "en_US")
+        formatter.setLocalizedDateFormatFromTemplate("d MMM")
+
+        let startText = formatter.string(from: displayedWeekStart)
+        let endText = formatter.string(from: end)
+        return "\(startText) - \(endText)"
     }
 
     func addMoney(_ amountMinorUnits: Int) {
-        addMoney(amountMinorUnits, for: currentDayIndex)
+        addMoney(amountMinorUnits, for: selectedDate ?? Date())
     }
 
-    func addMoney(_ amountMinorUnits: Int, for dayIndex: Int) {
+    func addMoney(_ amountMinorUnits: Int, for date: Date) {
         guard amountMinorUnits > 0 else { return }
-        guard dayIndex == currentDayIndex else { return }
+        guard Self.isSameDay(date, Date()) else { return }
 
         let didCompleteGoal = willCompleteGoal(with: amountMinorUnits)
+        let wasWeekAlreadyComplete = weekProgress(for: Self.weekStart(for: Date())).allSatisfy { $0 }
+        let targetDate = Self.startOfDay(date)
+        let key = DayKey.make(from: targetDate)
 
-        let previousProgress = series?.weekProgress ?? Array(repeating: false, count: 7)
-        let wasWeekAlreadyComplete = previousProgress.allSatisfy { $0 }
+        goalService.addMoney(amountMinorUnits, for: targetDate)
 
-        goalService.addMoney(amountMinorUnits)
+        allDayAmounts[key, default: 0] += amountMinorUnits
+        applyAmountsToDisplayedWeek()
+        todayAddedAmount = allDayAmounts[DayKey.make(from: Date())] ?? 0
+        recomputeSeries(lastAddedDate: targetDate)
 
-        guard dayIndex >= 0, dayIndex < perDayAdded.count else { return }
-        perDayAdded[dayIndex] += amountMinorUnits
-
-        if dayIndex == currentDayIndex {
-            todayAddedAmount = perDayAdded[dayIndex]
-        }
-
-        if let s = series {
-            var newProgress = s.weekProgress
-            var newStreak = s.streakDays
-
-            if dayIndex >= 0, dayIndex < newProgress.count, newProgress[dayIndex] == false {
-                newProgress[dayIndex] = true
-                newStreak += 1
-            }
-
-            series = Series(
-                streakDays: newStreak,
-                weekProgress: newProgress,
-                lastAddedDate: Date()
-            )
-        } else {
-            var newProgress = Array(repeating: false, count: 7)
-            newProgress[dayIndex] = true
-            series = Series(
-                streakDays: 1,
-                weekProgress: newProgress,
-                lastAddedDate: Date()
-            )
-        }
-
-        savePerDayAdded()
-        saveSeriesCoreState()
-
-        let isWeekNowComplete = series?.weekProgress.allSatisfy { $0 } ?? false
+        let isWeekNowComplete = weekProgress(for: Self.weekStart(for: Date())).allSatisfy { $0 }
         let didCompleteWeek = !wasWeekAlreadyComplete && isWeekNowComplete
 
         Task {
@@ -140,7 +123,7 @@ final class SeriesViewModel: ObservableObject {
     func completeGoal() {
         let remaining = max(dailyTarget - todayAddedAmount, 0)
         guard remaining > 0 else { return }
-        addMoney(remaining, for: currentDayIndex)
+        addMoney(remaining, for: Date())
     }
 
     var canCloseGoal: Bool {
@@ -168,13 +151,44 @@ final class SeriesViewModel: ObservableObject {
     func closeFullGoal() {
         let remaining = remainingToGoal
         guard remaining > 0 else { return }
-        addMoney(remaining, for: currentDayIndex)
+        addMoney(remaining, for: Date())
+    }
+
+    func showPreviousWeek() {
+        displayedWeekStart = Self.addDays(-7, to: displayedWeekStart)
+        applyAmountsToDisplayedWeek()
+    }
+
+    func showNextWeek() {
+        guard canShowNextWeek else { return }
+        displayedWeekStart = Self.addDays(7, to: displayedWeekStart)
+        applyAmountsToDisplayedWeek()
+    }
+
+    func showCurrentWeek() {
+        displayedWeekStart = Self.weekStart(for: Date())
+        applyAmountsToDisplayedWeek()
+    }
+
+    func dateForDisplayedWeek(dayIndex: Int) -> Date {
+        Self.addDays(dayIndex, to: displayedWeekStart)
+    }
+
+    func amountForDisplayedWeek(dayIndex: Int) -> Int {
+        guard dayIndex >= 0, dayIndex < perDayAdded.count else { return 0 }
+        return perDayAdded[dayIndex]
     }
 
     func isDayCompleted(_ dayIndex: Int) -> Bool {
-        guard let progress = series?.weekProgress,
-              dayIndex >= 0, dayIndex < progress.count else { return false }
-        return progress[dayIndex]
+        amountForDisplayedWeek(dayIndex: dayIndex) > 0
+    }
+
+    func isToday(dayIndex: Int) -> Bool {
+        Self.isSameDay(dateForDisplayedWeek(dayIndex: dayIndex), Date())
+    }
+
+    func canAddMoney(dayIndex: Int) -> Bool {
+        isToday(dayIndex: dayIndex)
     }
 
     // Форматирование по текущей глобальной валюте
@@ -189,24 +203,32 @@ final class SeriesViewModel: ObservableObject {
         return formatter.string(from: NSNumber(value: value)) ?? "\(value) \(currencyCode)"
     }
 
-    private func loadPersistedState() {
-        if let arr = ud.array(forKey: key(Keys.perDayAdded)) as? [Int] {
-            if arr.count == 7 {
-                perDayAdded = arr
-            } else {
-                perDayAdded = Array(arr.prefix(7)) + Array(repeating: 0, count: max(0, 7 - arr.count))
+    private func refreshAmountsFromStore() {
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                let amounts = try await dailyAmountService.allDays()
+                await MainActor.run {
+                    self.allDayAmounts = amounts
+                    self.applyAmountsToDisplayedWeek()
+                    self.todayAddedAmount = amounts[DayKey.make(from: Date())] ?? 0
+                    self.recomputeSeries(lastAddedDate: self.latestDepositDate())
+                }
+            } catch {
+                print("SeriesViewModel daily amounts error:", error)
             }
         }
+    }
 
-        let weekProgress = (ud.array(forKey: key(Keys.weekProgress)) as? [Bool]) ?? Array(repeating: false, count: 7)
+    private func loadPersistedSeriesState() {
         let streakDays = ud.integer(forKey: key(Keys.streakDays))
         let lastTime = ud.double(forKey: key(Keys.lastAddedDate))
         let lastDate = lastTime > 0 ? Date(timeIntervalSince1970: lastTime) : Date.distantPast
 
-        if weekProgress.contains(true) || streakDays > 0 || lastTime > 0 {
+        if streakDays > 0 || lastTime > 0 {
             series = Series(
                 streakDays: streakDays,
-                weekProgress: weekProgress.count == 7 ? weekProgress : Array(weekProgress.prefix(7)) + Array(repeating: false, count: max(0, 7 - weekProgress.count)),
+                weekProgress: Array(repeating: false, count: 7),
                 lastAddedDate: lastDate
             )
         }
@@ -216,54 +238,85 @@ final class SeriesViewModel: ObservableObject {
         "user.\(uid)." + suffix
     }
 
-    private func savePerDayAdded() {
-        ud.set(perDayAdded, forKey: key(Keys.perDayAdded))
-    }
-
     private func saveSeriesCoreState() {
         guard let s = series else { return }
-        ud.set(s.weekProgress, forKey: key(Keys.weekProgress))
         ud.set(s.streakDays, forKey: key(Keys.streakDays))
         ud.set((s.lastAddedDate ?? Date.distantPast).timeIntervalSince1970, forKey: key(Keys.lastAddedDate))
     }
 
-    private func rollWeekIfNeeded() {
-        guard let s = series else { return }
-        let now = Date()
-        let last = s.lastAddedDate ?? Date.distantPast
-
-        if !isSameWeek(last, now) {
-            perDayAdded = Array(repeating: 0, count: 7)
-            todayAddedAmount = 0
-            series = Series(
-                streakDays: s.streakDays,
-                weekProgress: Array(repeating: false, count: 7),
-                lastAddedDate: now
-            )
-            savePerDayAdded()
-            saveSeriesCoreState()
+    private func applyAmountsToDisplayedWeek() {
+        perDayAdded = (0..<7).map { index in
+            let date = Self.addDays(index, to: displayedWeekStart)
+            return allDayAmounts[DayKey.make(from: date)] ?? 0
         }
     }
 
-    private func isSameWeek(_ d1: Date, _ d2: Date) -> Bool {
-        let cal = Calendar.current
-        return cal.component(.weekOfYear, from: d1) == cal.component(.weekOfYear, from: d2)
-            && cal.component(.yearForWeekOfYear, from: d1) == cal.component(.yearForWeekOfYear, from: d2)
+    private func recomputeSeries(lastAddedDate: Date?) {
+        series = Series(
+            streakDays: currentStreakDays(),
+            weekProgress: weekProgress(for: Self.weekStart(for: Date())),
+            lastAddedDate: lastAddedDate
+        )
+        saveSeriesCoreState()
     }
 
-    private func preferSeries(local: Series, remote: Series) -> Series {
-        let localDate = local.lastAddedDate ?? .distantPast
-        let remoteDate = remote.lastAddedDate ?? .distantPast
-
-        if remoteDate > localDate {
-            return remote
-        } else if remoteDate < localDate {
-            return local
-        } else {
-            let localCount = local.weekProgress.filter { $0 }.count
-            let remoteCount = remote.weekProgress.filter { $0 }.count
-            return remoteCount >= localCount ? remote : local
+    private func weekProgress(for weekStart: Date) -> [Bool] {
+        (0..<7).map { index in
+            let date = Self.addDays(index, to: weekStart)
+            return (allDayAmounts[DayKey.make(from: date)] ?? 0) > 0
         }
+    }
+
+    private func currentStreakDays() -> Int {
+        var cursor = Self.startOfDay(Date())
+
+        if (allDayAmounts[DayKey.make(from: cursor)] ?? 0) == 0 {
+            cursor = Self.addDays(-1, to: cursor)
+        }
+
+        var count = 0
+        while (allDayAmounts[DayKey.make(from: cursor)] ?? 0) > 0 {
+            count += 1
+            cursor = Self.addDays(-1, to: cursor)
+        }
+        return count
+    }
+
+    private func latestDepositDate() -> Date? {
+        let latestKey = allDayAmounts
+            .filter { $0.value > 0 }
+            .keys
+            .max()
+
+        guard let latestKey else { return nil }
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.date(from: latestKey)
+    }
+
+    private static func startOfDay(_ date: Date) -> Date {
+        Calendar.current.startOfDay(for: date)
+    }
+
+    private static func weekStart(for date: Date) -> Date {
+        var calendar = Calendar.current
+        calendar.firstWeekday = 2
+        let start = calendar.dateInterval(of: .weekOfYear, for: date)?.start ?? date
+        return calendar.startOfDay(for: start)
+    }
+
+    private static func addDays(_ days: Int, to date: Date) -> Date {
+        Calendar.current.date(byAdding: .day, value: days, to: date) ?? date
+    }
+
+    private static func dayIndex(for date: Date) -> Int {
+        (Calendar.current.component(.weekday, from: date) + 5) % 7
+    }
+
+    private static func isSameDay(_ d1: Date, _ d2: Date) -> Bool {
+        Calendar.current.isDate(d1, inSameDayAs: d2)
     }
 
     private func willCompleteGoal(with addedAmount: Int) -> Bool {
@@ -278,7 +331,8 @@ final class SeriesViewModel: ObservableObject {
     }
 
     private func makeWeekRewardKey(from date: Date) -> String {
-        let calendar = Calendar.current
+        var calendar = Calendar.current
+        calendar.firstWeekday = 2
         let week = calendar.component(.weekOfYear, from: date)
         let year = calendar.component(.yearForWeekOfYear, from: date)
         return "\(year)-W\(week)"

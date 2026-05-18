@@ -184,7 +184,7 @@ struct HomeView: View {
                                             activeModal = nil
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
                                                 seriesVM.goal = goalToUse
-                                                seriesVM.selectedDayIndex = seriesVM.currentDayIndex
+                                                seriesVM.selectedDate = Date()
                                                 seriesVM.showAddMoneyModal = true
                                             }
                                         },

@@ -49,12 +49,12 @@ struct AddMoneyView: View {
             .padding(.horizontal, 16)
             .padding(.top, 40)
             .onAppear {
-                if viewModel.selectedDayIndex == nil {
-                    viewModel.selectedDayIndex = viewModel.currentDayIndex
+                if viewModel.selectedDate == nil {
+                    viewModel.selectedDate = Date()
                 }
             }
             .onDisappear {
-                viewModel.selectedDayIndex = nil
+                viewModel.selectedDate = nil
             }
         }
         .overlay(

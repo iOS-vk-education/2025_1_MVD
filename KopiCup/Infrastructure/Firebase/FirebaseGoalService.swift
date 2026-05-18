@@ -22,7 +22,6 @@ final class FirebaseGoalService: GoalService {
     private var currentGoalId: String?
     
     private let dailyAmountService = DailyAmountService()
-    private let streakStartStore = StreakStartStore.shared
 
     deinit {
         stopAllListening()
@@ -247,7 +246,7 @@ final class FirebaseGoalService: GoalService {
         }
     }
 
-    func addMoney(_ amount: Int, forDayIndex dayIndex: Int) {
+    func addMoney(_ amount: Int, for date: Date) {
         guard let goalId = currentGoalId else { return }
 
         Task {
@@ -258,23 +257,11 @@ final class FirebaseGoalService: GoalService {
                     amount: amount
                 )
 
-                guard let uid = LocalUserStore.shared.activeUID else { return }
-
-                let start: Date
-                if let saved = await streakStartStore.get(uid: uid) {
-                    start = DayMath.startOfDay(saved)
-                } else {
-                    let today = DayMath.startOfDay(Date())
-                    start = today
-                    await streakStartStore.set(uid: uid, date: today)
-                }
-
-                let targetDay = DayMath.addDays(start, days: dayIndex)
-                try await dailyAmountService.add(amount: amount, for: targetDay)
+                try await dailyAmountService.add(amount: amount, for: date)
 
                 NotificationCenter.default.post(name: .didDeposit, object: nil)
             } catch {
-                print("addMoney(forDayIndex:) error:", error)
+                print("addMoney(for:) error:", error)
             }
         }
     }
