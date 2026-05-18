@@ -36,23 +36,7 @@ struct GoalCardView: View {
                 .font(.footnote)
                 .foregroundColor(.white.opacity(0.85))
             }
-
-            if hasPhoto, let urlString = goal.imageURL, let url = URL(string: urlString) {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 80, height: 80)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                    default:
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.white.opacity(0.2))
-                            .frame(width: 80, height: 80)
-                    }
-                }
-            }
+            largePhoto
         }
         .padding(16)
         .background(kopiGreen)
@@ -80,6 +64,38 @@ struct GoalCardView: View {
             }
         }
         .frame(height: 6)
+    }
+
+    @ViewBuilder
+    private var largePhoto: some View {
+        if hasPhoto {
+            goalImageView(fallbackSize: 20)
+                .frame(width: 80, height: 80)
+                .background(Color.white.opacity(0.2))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+        }
+    }
+
+    @ViewBuilder
+    private func goalImageView(fallbackSize: CGFloat) -> some View {
+        if let uiImage = goal.imageURL?.goalImage {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFill()
+        } else if let urlString = goal.imageURL, let url = URL(string: urlString) {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFill()
+                default:
+                    Image(systemName: "photo")
+                        .font(.system(size: fallbackSize, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.8))
+                }
+            }
+        }
     }
 
     private func formatMoney(_ minorUnits: Int) -> String {

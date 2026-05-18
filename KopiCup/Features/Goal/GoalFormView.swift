@@ -21,6 +21,8 @@ struct GoalFormView: View {
     @State private var isSaving = false
     @State private var showValidationAlert = false
     @State private var validationMessage = ""
+    @State private var showSaveError = false
+    @State private var saveErrorMessage = ""
 
     var body: some View {
         VStack(spacing: 0) {
@@ -37,6 +39,11 @@ struct GoalFormView: View {
                 message: Text(validationMessage),
                 dismissButton: .default(Text("OK"))
             )
+        }
+        .alert("Не удалось сохранить цель", isPresented: $showSaveError) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(saveErrorMessage)
         }
     }
 
@@ -282,8 +289,20 @@ struct GoalFormView: View {
         isSaving = true
         defer { isSaving = false }
 
-        let goal = buildGoal(imageURL: nil)
-        onSave(goal)
-        dismissSelf()
+        do {
+            let imageURL: String?
+            if let image {
+                imageURL = try await StorageUploader.uploadGoalImage(image)
+            } else {
+                imageURL = nil
+            }
+
+            let goal = buildGoal(imageURL: imageURL)
+            onSave(goal)
+            dismissSelf()
+        } catch {
+            saveErrorMessage = "Проверьте подключение и попробуйте снова."
+            showSaveError = true
+        }
     }
 }

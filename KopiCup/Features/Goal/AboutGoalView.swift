@@ -31,7 +31,13 @@ struct AboutGoalView: View {
                         .fill(Color.white.opacity(0.2))
                         .frame(width: 80, height: 80)
 
-                    if let urlString = goal.imageURL, let url = URL(string: urlString) {
+                    if let uiImage = goal.imageURL?.goalImage {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 72, height: 72)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    } else if let urlString = goal.imageURL, let url = URL(string: urlString) {
                         AsyncImage(url: url) { phase in
                             switch phase {
                             case .success(let image):

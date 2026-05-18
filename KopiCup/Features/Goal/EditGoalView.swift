@@ -24,6 +24,8 @@ struct EditGoalView: View {
     @State private var showDeleteConfirm = false
     @State private var showValidationAlert = false
     @State private var validationMessage = ""
+    @State private var showSaveError = false
+    @State private var saveErrorMessage = ""
 
     var body: some View {
         VStack(spacing: 0) {
@@ -50,6 +52,11 @@ struct EditGoalView: View {
                 dismissButton: .default(Text("OK"))
             )
         }
+        .alert("Не удалось сохранить цель", isPresented: $showSaveError) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(saveErrorMessage)
+        }
         .onAppear { preload() }
     }
 
@@ -65,6 +72,12 @@ struct EditGoalView: View {
 
                     if let img = pickedImage {
                         Image(uiImage: img)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 110, height: 110)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                    } else if let uiImage = goal.imageURL?.goalImage {
+                        Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFill()
                             .frame(width: 110, height: 110)
@@ -317,20 +330,32 @@ struct EditGoalView: View {
         isSaving = true
         defer { isSaving = false }
 
-        let updated = Goal(
-            id: goal.id,
-            title: title.trimmingCharacters(in: .whitespacesAndNewlines),
-            description: desc,
-            targetAmount: amountMinorUnits(),
-            currentAmount: goal.currentAmount,
-            currency: goal.currency,
-            status: goal.status,
-            deadlineDate: deadline,
-            productLink: link.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : link,
-            imageURL: goal.imageURL
-        )
+        do {
+            let imageURL: String?
+            if let pickedImage {
+                imageURL = try await StorageUploader.uploadGoalImage(pickedImage)
+            } else {
+                imageURL = goal.imageURL
+            }
 
-        onSave(updated)
-        dismissSelf()
+            let updated = Goal(
+                id: goal.id,
+                title: title.trimmingCharacters(in: .whitespacesAndNewlines),
+                description: desc,
+                targetAmount: amountMinorUnits(),
+                currentAmount: goal.currentAmount,
+                currency: goal.currency,
+                status: goal.status,
+                deadlineDate: deadline,
+                productLink: link.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : link,
+                imageURL: imageURL
+            )
+
+            onSave(updated)
+            dismissSelf()
+        } catch {
+            saveErrorMessage = "Проверьте подключение и попробуйте снова."
+            showSaveError = true
+        }
     }
 }
