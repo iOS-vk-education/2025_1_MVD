@@ -14,7 +14,7 @@ struct ChallengeCardView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Text(viewModel.displayedChallenge?.name ?? l10n.t(.challengeNone))
+                        Text(viewModel.displayedChallenge?.localizedName(for: l10n.language) ?? l10n.t(.challengeNone))
                             .font(.headline)
                             .fontWeight(.semibold)
                             .foregroundColor(viewModel.isAccepted ? .white : .primary)
@@ -30,7 +30,7 @@ struct ChallengeCardView: View {
                         .accessibilityLabel(l10n.t(.challengeDifficulty, diff, maxDifficulty))
                     }
 
-                    Text(viewModel.displayedChallenge?.description ?? "")
+                    Text(viewModel.displayedChallenge?.localizedDescription(for: l10n.language) ?? "")
                         .font(.subheadline)
                         .foregroundColor(viewModel.isAccepted ? Color.white.opacity(0.9) : .secondary)
                 }

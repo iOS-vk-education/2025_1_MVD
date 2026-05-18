@@ -199,7 +199,7 @@ struct HomeView: View {
                                 } else {
                                     VStack(spacing: 12) {
                                         ProgressView()
-                                        Text("Готовим стрик…").foregroundColor(.secondary)
+                                        Text(l10n.t(.homePreparingStreak)).foregroundColor(.secondary)
                                     }
                                     .padding()
                                     .background(Color.white)
@@ -208,7 +208,7 @@ struct HomeView: View {
                             } else {
                                 VStack(spacing: 12) {
                                     ProgressView()
-                                    Text("Загружаем цель…").foregroundColor(.secondary)
+                                    Text(l10n.t(.homeLoadingGoal)).foregroundColor(.secondary)
                                 }
                                 .padding()
                                 .background(Color.white)
@@ -283,7 +283,7 @@ struct HomeView: View {
             }
             .disabled(!economy.isGiftAvailableToday)
             .buttonStyle(.plain)
-            .accessibilityLabel("Ежедневный подарок")
+            .accessibilityLabel(l10n.t(.dailyGift))
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)

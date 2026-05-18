@@ -20,9 +20,30 @@ final class LocalChallengeService: ChallengeService {
 
     func loadChallenges(completion: @escaping ([Challenge]) -> Void) {
         let list = [
-            Challenge(id: "1", name: "Не покупать кофе", description: "Попробуй день без кофе", difficulty: 1),
-            Challenge(id: "2", name: "Прогулка 5км", description: "Ходи пешком", difficulty: 2),
-            Challenge(id: "3", name: "Без сахара", description: "Никаких сладостей", difficulty: 3)
+            Challenge(
+                id: "1",
+                name: "Не покупать кофе",
+                description: "Попробуй день без кофе",
+                nameEn: "Skip buying coffee",
+                descriptionEn: "Try a day without buying coffee",
+                difficulty: 1
+            ),
+            Challenge(
+                id: "2",
+                name: "Прогулка 5км",
+                description: "Ходи пешком",
+                nameEn: "5 km walk",
+                descriptionEn: "Walk instead of taking transport",
+                difficulty: 2
+            ),
+            Challenge(
+                id: "3",
+                name: "Без сахара",
+                description: "Никаких сладостей",
+                nameEn: "No sugar",
+                descriptionEn: "Skip sweets for the day",
+                difficulty: 3
+            )
         ]
 
         self.challenges = list

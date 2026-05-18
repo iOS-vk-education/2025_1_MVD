@@ -52,6 +52,10 @@ final class L10n: ObservableObject {
         case keepGoing = "home.keep.going"
         case noGoal = "home.alert.no_goal_title"
         case ok
+        case homePreparingStreak = "home.preparing_streak"
+        case homeLoadingGoal = "home.loading_goal"
+        case dailyGift = "home.daily_gift"
+        case errorNotSignedIn = "error.not_signed_in"
         case homeGreeting = "home.greeting"
         case openPiggy = "home.open_piggy"
         case challengeFailed = "home.challenge_failed"
@@ -74,12 +78,21 @@ final class L10n: ObservableObject {
         case statsAvgPerDay = "stats.avg_per_day"
         case statsStrengths = "stats.strengths"
         case statsWeaknesses = "stats.weaknesses"
+        case statsRadarDiscipline = "stats.radar.discipline"
+        case statsRadarPlanning = "stats.radar.planning"
+        case statsRadarFriendship = "stats.radar.friendship"
+        case statsRadarActivity = "stats.radar.activity"
+        case statsRadarMotivation = "stats.radar.motivation"
         // Profile
+        case guest = "profile.guest"
+        case editPhoto = "profile.edit_photo"
         case profileAchievements = "profile.achievements"
         case profileSettings = "profile.settings"
         case darkTheme = "profile.dark_theme"
         case currency = "profile.currency"
         case language = "profile.language"
+        case languageRussian = "profile.language.russian"
+        case languageEnglish = "profile.language.english"
         case logout = "profile.logout"
         case logoutConfirm = "profile.logout.confirm"
         case logoutReturn = "profile.logout.return"
@@ -98,6 +111,12 @@ final class L10n: ObservableObject {
         case achievGoalReached = "achiev.goal_reached"
         case achievThirtyDays = "achiev.thirty_days"
         case achievBestFriend = "achiev.best_friend"
+        case achievLightningStartMessage = "achiev.lightning_start.message"
+        case achievFirstTopupMessage = "achiev.first_topup.message"
+        case achievSevenDaysMessage = "achiev.seven_days.message"
+        case achievGoalReachedMessage = "achiev.goal_reached.message"
+        case achievThirtyDaysMessage = "achiev.thirty_days.message"
+        case achievBestFriendMessage = "achiev.best_friend.message"
         // Weekday short names
         case mon = "weekday.mon"
         case tue = "weekday.tue"
@@ -109,9 +128,30 @@ final class L10n: ObservableObject {
         // Goal card
         case goalCollected = "goal.card.collected"
         case goalTarget = "goal.card.target"
+        case emptyGoalTitle = "goal.empty.title"
+        case emptyGoalSubtitle = "goal.empty.subtitle"
         // Goal details
         case goalDetailsTitle = "goal.details.title"
         case goalDetailsImagePlaceholder = "goal.details.image_placeholder"
+        // Goal form
+        case goalFormNewTitle = "goal.form.new_title"
+        case goalFormEditTitle = "goal.form.edit_title"
+        case goalFormNamePlaceholder = "goal.form.name_placeholder"
+        case goalFormDescriptionPlaceholder = "goal.form.description_placeholder"
+        case goalFormAmountPlaceholder = "goal.form.amount_placeholder"
+        case goalFormDeadlineLabel = "goal.form.deadline_label"
+        case goalFormProductLinkPlaceholder = "goal.form.product_link_placeholder"
+        case goalFormCreate = "goal.form.create"
+        case goalFormCheckFieldsTitle = "goal.form.check_fields_title"
+        case goalFormSaveErrorTitle = "goal.form.save_error_title"
+        case goalFormSaveErrorMessage = "goal.form.save_error_message"
+        case goalFormRequiredTitle = "goal.form.required.title"
+        case goalFormRequiredAmount = "goal.form.required.amount"
+        case goalFormRequiredDate = "goal.form.required.date"
+        case goalFormRequiredMessage = "goal.form.required.message"
+        case goalDeleteTitle = "goal.delete.title"
+        case goalDeleteAction = "goal.delete.action"
+        case goalDeleteMessage = "goal.delete.message"
         // About goal sheet
         case aboutGoalProgress = "goal.about.progress"
         case aboutGoalRemaining = "goal.about.remaining"
@@ -143,6 +183,22 @@ final class L10n: ObservableObject {
         case seriesWeeklySaved = "series.weekly_saved"
         case seriesKeepGoing = "series.keep_going"
         case seriesNoGoal = "series.no_goal"
+        // Rewards
+        case rewardDailyGiftTitle = "reward.daily_gift.title"
+        case rewardDailyGiftMessage = "reward.daily_gift.message"
+        case rewardGoalCompletedTitle = "reward.goal_completed.title"
+        case rewardGoalCompletedMessage = "reward.goal_completed.message"
+        case rewardWeeklyStreakTitle = "reward.weekly_streak.title"
+        case rewardWeeklyStreakMessage = "reward.weekly_streak.message"
+        case rewardChallengeCompletedTitle = "reward.challenge_completed.title"
+        case rewardChallengeCompletedMessage = "reward.challenge_completed.message"
+        // Piggy modal
+        case piggyChooseOutfit = "piggy.choose_outfit"
+        case piggyInsufficientFundsTitle = "piggy.insufficient_funds.title"
+        case piggyInsufficientFundsMessage = "piggy.insufficient_funds.message"
+        case piggySelect = "piggy.select"
+        case piggyOwned = "piggy.owned"
+        case piggyFree = "piggy.free"
     }
 
     private let translations: [AppLanguage: [String: String]] = [
@@ -152,6 +208,10 @@ final class L10n: ObservableObject {
             "home.keep.going": "Так держать!",
             "home.alert.no_goal_title": "Сначала добавьте цель!",
             "ok": "Ок",
+            "home.preparing_streak": "Готовим стрик...",
+            "home.loading_goal": "Загружаем цель...",
+            "home.daily_gift": "Ежедневный подарок",
+            "error.not_signed_in": "Пользователь не авторизован",
             "home.greeting": "Привет, %@!",
             "home.open_piggy": "Открыть копилку",
             "home.challenge_failed": "Челлендж провален",
@@ -174,12 +234,21 @@ final class L10n: ObservableObject {
             "stats.avg_per_day": "Ср. / день",
             "stats.strengths": "Сильные стороны",
             "stats.weaknesses": "Нужно подтянуть",
+            "stats.radar.discipline": "Дисциплина",
+            "stats.radar.planning": "Планирование",
+            "stats.radar.friendship": "Дружба",
+            "stats.radar.activity": "Активность",
+            "stats.radar.motivation": "Мотивация",
             // Profile
+            "profile.guest": "Гость",
+            "profile.edit_photo": "Изменить фото",
             "profile.achievements": "Достижения",
             "profile.settings": "Настройки",
             "profile.dark_theme": "Темная тема",
             "profile.currency": "Валюта",
             "profile.language": "Язык",
+            "profile.language.russian": "Русский",
+            "profile.language.english": "English",
             "profile.logout": "Выйти из аккаунта",
             "profile.logout.confirm": "Вы действительно хотите выйти?",
             "profile.logout.return": "Вы вернётесь на экран входа.",
@@ -198,6 +267,12 @@ final class L10n: ObservableObject {
             "achiev.goal_reached": "Цель достигнута",
             "achiev.thirty_days": "30 дней подряд",
             "achiev.best_friend": "Лучший друг",
+            "achiev.lightning_start.message": "Цель добавлена. Отличное начало!",
+            "achiev.first_topup.message": "Отличное начало накоплений!",
+            "achiev.seven_days.message": "Вы пополняли копилку 7 дней подряд!",
+            "achiev.goal_reached.message": "Поздравляем! Вы собрали всю нужную сумму.",
+            "achiev.thirty_days.message": "Вы пополняли копилку 30 дней подряд!",
+            "achiev.best_friend.message": "Вы купили костюм для маскота.",
             // Weekdays
             "weekday.mon": "Пн",
             "weekday.tue": "Вт",
@@ -209,9 +284,30 @@ final class L10n: ObservableObject {
             // Goal card
             "goal.card.collected": "Собрано:",
             "goal.card.target": "Цель:",
+            "goal.empty.title": "У вас пока нет цели",
+            "goal.empty.subtitle": "Самое время ее добавить",
             // Goal details
             "goal.details.title": "Детали",
             "goal.details.image_placeholder": "Изображение появится позже",
+            // Goal form
+            "goal.form.new_title": "Новая цель",
+            "goal.form.edit_title": "Редактирование цели",
+            "goal.form.name_placeholder": "Название цели",
+            "goal.form.description_placeholder": "Описание",
+            "goal.form.amount_placeholder": "Сумма",
+            "goal.form.deadline_label": "Срок",
+            "goal.form.product_link_placeholder": "Ссылка на товар",
+            "goal.form.create": "Создать",
+            "goal.form.check_fields_title": "Проверьте поля",
+            "goal.form.save_error_title": "Не удалось сохранить цель",
+            "goal.form.save_error_message": "Проверьте подключение и попробуйте снова.",
+            "goal.form.required.title": "Название",
+            "goal.form.required.amount": "Сумма",
+            "goal.form.required.date": "Дата",
+            "goal.form.required.message": "Заполните обязательные поля: %@",
+            "goal.delete.title": "Удалить цель?",
+            "goal.delete.action": "Удалить",
+            "goal.delete.message": "Действие нельзя отменить.",
             // About goal sheet
             "goal.about.progress": "Прогресс",
             "goal.about.remaining": "Осталось",
@@ -242,7 +338,23 @@ final class L10n: ObservableObject {
             // Series card
             "series.weekly_saved": "За неделю накоплено %@",
             "series.keep_going": "Продолжай в том же духе!",
-            "series.no_goal": "Сначала создай цель"
+            "series.no_goal": "Сначала создай цель",
+            // Rewards
+            "reward.daily_gift.title": "Ежедневный подарок",
+            "reward.daily_gift.message": "+%d монеты",
+            "reward.goal_completed.title": "Цель закрыта",
+            "reward.goal_completed.message": "+%d трофея",
+            "reward.weekly_streak.title": "Недельный стрик сохранён",
+            "reward.weekly_streak.message": "+%d трофей",
+            "reward.challenge_completed.title": "Челлендж завершён",
+            "reward.challenge_completed.message": "+%d монет",
+            // Piggy modal
+            "piggy.choose_outfit": "Выберите наряд",
+            "piggy.insufficient_funds.title": "Недостаточно средств",
+            "piggy.insufficient_funds.message": "У вас недостаточно средств для покупки этого наряда.",
+            "piggy.select": "Выбрать",
+            "piggy.owned": "Получено",
+            "piggy.free": "Бесплатно"
         ],
         .en: [
             // Home
@@ -250,6 +362,10 @@ final class L10n: ObservableObject {
             "home.keep.going": "Keep it up!",
             "home.alert.no_goal_title": "Add a goal first!",
             "ok": "OK",
+            "home.preparing_streak": "Preparing streak...",
+            "home.loading_goal": "Loading goal...",
+            "home.daily_gift": "Daily gift",
+            "error.not_signed_in": "User is not signed in",
             "home.greeting": "Hi, %@!",
             "home.open_piggy": "Open piggy bank",
             "home.challenge_failed": "Challenge failed",
@@ -272,12 +388,21 @@ final class L10n: ObservableObject {
             "stats.avg_per_day": "Avg / day",
             "stats.strengths": "Strengths",
             "stats.weaknesses": "Needs work",
+            "stats.radar.discipline": "Discipline",
+            "stats.radar.planning": "Planning",
+            "stats.radar.friendship": "Friendship",
+            "stats.radar.activity": "Activity",
+            "stats.radar.motivation": "Motivation",
             // Profile
+            "profile.guest": "Guest",
+            "profile.edit_photo": "Edit photo",
             "profile.achievements": "Achievements",
             "profile.settings": "Settings",
             "profile.dark_theme": "Dark theme",
             "profile.currency": "Currency",
             "profile.language": "Language",
+            "profile.language.russian": "Russian",
+            "profile.language.english": "English",
             "profile.logout": "Sign out",
             "profile.logout.confirm": "Are you sure you want to log out?",
             "profile.logout.return": "You will return to the login screen.",
@@ -296,6 +421,12 @@ final class L10n: ObservableObject {
             "achiev.goal_reached": "Goal Reached",
             "achiev.thirty_days": "30 Days in a Row",
             "achiev.best_friend": "Best Friend",
+            "achiev.lightning_start.message": "Goal added. Great start!",
+            "achiev.first_topup.message": "A strong start to your savings!",
+            "achiev.seven_days.message": "You topped up your piggy bank 7 days in a row!",
+            "achiev.goal_reached.message": "Congratulations! You saved the full amount.",
+            "achiev.thirty_days.message": "You topped up your piggy bank 30 days in a row!",
+            "achiev.best_friend.message": "You bought an outfit for the mascot.",
             // Weekdays
             "weekday.mon": "Mon",
             "weekday.tue": "Tue",
@@ -307,9 +438,30 @@ final class L10n: ObservableObject {
             // Goal card
             "goal.card.collected": "Saved:",
             "goal.card.target": "Goal:",
+            "goal.empty.title": "You don't have a goal yet",
+            "goal.empty.subtitle": "Now is a good time to add one",
             // Goal details
             "goal.details.title": "Details",
             "goal.details.image_placeholder": "Image coming soon",
+            // Goal form
+            "goal.form.new_title": "New goal",
+            "goal.form.edit_title": "Edit goal",
+            "goal.form.name_placeholder": "Goal name",
+            "goal.form.description_placeholder": "Description",
+            "goal.form.amount_placeholder": "Amount",
+            "goal.form.deadline_label": "Deadline",
+            "goal.form.product_link_placeholder": "Product link",
+            "goal.form.create": "Create",
+            "goal.form.check_fields_title": "Check the fields",
+            "goal.form.save_error_title": "Could not save goal",
+            "goal.form.save_error_message": "Check your connection and try again.",
+            "goal.form.required.title": "Name",
+            "goal.form.required.amount": "Amount",
+            "goal.form.required.date": "Date",
+            "goal.form.required.message": "Fill in required fields: %@",
+            "goal.delete.title": "Delete goal?",
+            "goal.delete.action": "Delete",
+            "goal.delete.message": "This action can't be undone.",
             // About goal sheet
             "goal.about.progress": "Progress",
             "goal.about.remaining": "Remaining",
@@ -340,7 +492,23 @@ final class L10n: ObservableObject {
             // Series card
             "series.weekly_saved": "Saved this week: %@",
             "series.keep_going": "Keep it up!",
-            "series.no_goal": "Create a goal first"
+            "series.no_goal": "Create a goal first",
+            // Rewards
+            "reward.daily_gift.title": "Daily gift",
+            "reward.daily_gift.message": "+%d coins",
+            "reward.goal_completed.title": "Goal closed",
+            "reward.goal_completed.message": "+%d trophies",
+            "reward.weekly_streak.title": "Weekly streak saved",
+            "reward.weekly_streak.message": "+%d trophy",
+            "reward.challenge_completed.title": "Challenge completed",
+            "reward.challenge_completed.message": "+%d coins",
+            // Piggy modal
+            "piggy.choose_outfit": "Choose an outfit",
+            "piggy.insufficient_funds.title": "Not enough funds",
+            "piggy.insufficient_funds.message": "You don't have enough funds to buy this outfit.",
+            "piggy.select": "Select",
+            "piggy.owned": "Owned",
+            "piggy.free": "Free"
         ]
     ]
 }

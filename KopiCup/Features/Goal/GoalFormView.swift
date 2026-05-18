@@ -6,6 +6,7 @@ struct GoalFormView: View {
     var onSave: (Goal) -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var l10n: L10n
     @AppStorage("settings.currency.code") private var currencyCode: String = "RUB"
 
     @State private var title = ""
@@ -35,13 +36,13 @@ struct GoalFormView: View {
         }
         .alert(isPresented: $showValidationAlert) {
             Alert(
-                title: Text("Проверьте поля"),
+                title: Text(l10n.t(.goalFormCheckFieldsTitle)),
                 message: Text(validationMessage),
-                dismissButton: .default(Text("OK"))
+                dismissButton: .default(Text(l10n.t(.ok)))
             )
         }
-        .alert("Не удалось сохранить цель", isPresented: $showSaveError) {
-            Button("OK", role: .cancel) { }
+        .alert(l10n.t(.goalFormSaveErrorTitle), isPresented: $showSaveError) {
+            Button(l10n.t(.ok), role: .cancel) { }
         } message: {
             Text(saveErrorMessage)
         }
@@ -83,7 +84,7 @@ struct GoalFormView: View {
                     }
                 }
 
-                Text("Новая цель")
+                Text(l10n.t(.goalFormNewTitle))
                     .font(.system(size: 20, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                     .padding(.top, 6)
@@ -112,15 +113,15 @@ struct GoalFormView: View {
     private var content: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 16) {
-                field(text: $title, placeholder: "Название цели")
+                field(text: $title, placeholder: l10n.t(.goalFormNamePlaceholder))
 
-                field(text: $desc, placeholder: "Описание")
+                field(text: $desc, placeholder: l10n.t(.goalFormDescriptionPlaceholder))
 
                 amountField
 
                 dateField
 
-                field(text: $link, placeholder: "Ссылка на товар")
+                field(text: $link, placeholder: l10n.t(.goalFormProductLinkPlaceholder))
 
                 saveButton
                     .padding(.top, 12)
@@ -135,7 +136,7 @@ struct GoalFormView: View {
             .padding(.top, 24)
             .padding(.bottom, 20)
         }
-        .environment(\.locale, Locale(identifier: "ru_RU"))
+        .environment(\.locale, l10n.locale)
         .scrollDismissesKeyboard(.interactively)
         .safeAreaInset(edge: .bottom) {
             Color.clear.frame(height: 20)
@@ -157,7 +158,7 @@ struct GoalFormView: View {
     }
 
     private var amountField: some View {
-        TextField("Сумма", text: $amountText)
+        TextField(l10n.t(.goalFormAmountPlaceholder), text: $amountText)
             .keyboardType(.numberPad)
             .padding(.horizontal, 14)
             .padding(.vertical, 14)
@@ -180,7 +181,7 @@ struct GoalFormView: View {
 
     private var dateField: some View {
         HStack {
-            DatePicker("Срок", selection: $deadline, displayedComponents: .date)
+            DatePicker(l10n.t(.goalFormDeadlineLabel), selection: $deadline, displayedComponents: .date)
                 .labelsHidden()
             Spacer()
         }
@@ -214,7 +215,7 @@ struct GoalFormView: View {
                             if isSaving {
                                 ProgressView().tint(.white)
                             } else {
-                                Text("Создать")
+                                Text(l10n.t(.goalFormCreate))
                                     .foregroundColor(.white)
                                     .bold()
                             }
@@ -232,12 +233,12 @@ struct GoalFormView: View {
         let today = Calendar.current.startOfDay(for: Date())
 
         var missing: [String] = []
-        if trimmedTitle.isEmpty { missing.append("Название") }
-        if units <= 0 { missing.append("Сумма") }
-        if deadline < today { missing.append("Дата") }
+        if trimmedTitle.isEmpty { missing.append(l10n.t(.goalFormRequiredTitle)) }
+        if units <= 0 { missing.append(l10n.t(.goalFormRequiredAmount)) }
+        if deadline < today { missing.append(l10n.t(.goalFormRequiredDate)) }
 
         if missing.isEmpty { return nil }
-        return "Заполните обязательные поля: " + missing.joined(separator: ", ")
+        return l10n.t(.goalFormRequiredMessage, missing.joined(separator: ", "))
     }
 
     private func amountMinorUnits() -> Int {
@@ -301,7 +302,7 @@ struct GoalFormView: View {
             onSave(goal)
             dismissSelf()
         } catch {
-            saveErrorMessage = "Проверьте подключение и попробуйте снова."
+            saveErrorMessage = l10n.t(.goalFormSaveErrorMessage)
             showSaveError = true
         }
     }

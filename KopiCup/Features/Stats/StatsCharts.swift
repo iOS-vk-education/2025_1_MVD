@@ -124,10 +124,18 @@ private final class MonthAxisFormatter: NSObject, AxisValueFormatter {
 // MARK: - Сильные и слабые стороны (Radar Chart)
 
 struct StatsRadarChart: UIViewRepresentable {
-    
     var values: [Double]
+    @EnvironmentObject private var l10n: L10n
 
-    static let axisLabels = ["Дисциплина", "Планирование", "Дружба", "Активность", "Мотивация"]
+    private var axisLabels: [String] {
+        [
+            l10n.t(.statsRadarDiscipline),
+            l10n.t(.statsRadarPlanning),
+            l10n.t(.statsRadarFriendship),
+            l10n.t(.statsRadarActivity),
+            l10n.t(.statsRadarMotivation)
+        ]
+    }
 
     func makeUIView(context: Context) -> RadarChartView {
         let chart = RadarChartView()
@@ -158,7 +166,7 @@ struct StatsRadarChart: UIViewRepresentable {
         set.lineWidth = 2
         set.drawValuesEnabled = false
         chart.data = RadarChartData(dataSet: set)
-        chart.xAxis.valueFormatter = RadarAxisFormatter(labels: Self.axisLabels)
+        chart.xAxis.valueFormatter = RadarAxisFormatter(labels: axisLabels)
 
         // Обновим динамичные цвета при перерисовке
         chart.xAxis.labelTextColor = .secondaryLabel
@@ -178,10 +186,21 @@ struct SummaryItem: Identifiable {
 
 struct StrengthsSummary: View {
     var values: [Double]
+    @EnvironmentObject private var l10n: L10n
+
+    private var axisLabels: [String] {
+        [
+            l10n.t(.statsRadarDiscipline),
+            l10n.t(.statsRadarPlanning),
+            l10n.t(.statsRadarFriendship),
+            l10n.t(.statsRadarActivity),
+            l10n.t(.statsRadarMotivation)
+        ]
+    }
 
     private var topItems: [SummaryItem] {
         Array(
-            zip(StatsRadarChart.axisLabels, values)
+            zip(axisLabels, values)
                 .map { SummaryItem(title: $0.0, value: $0.1) }
                 .sorted { $0.value > $1.value }
                 .prefix(2)
@@ -209,10 +228,21 @@ struct StrengthsSummary: View {
 
 struct WeaknessesSummary: View {
     var values: [Double]
+    @EnvironmentObject private var l10n: L10n
+
+    private var axisLabels: [String] {
+        [
+            l10n.t(.statsRadarDiscipline),
+            l10n.t(.statsRadarPlanning),
+            l10n.t(.statsRadarFriendship),
+            l10n.t(.statsRadarActivity),
+            l10n.t(.statsRadarMotivation)
+        ]
+    }
 
     private var weakItems: [SummaryItem] {
         Array(
-            zip(StatsRadarChart.axisLabels, values)
+            zip(axisLabels, values)
                 .map { SummaryItem(title: $0.0, value: $0.1) }
                 .sorted { $0.value < $1.value }
                 .prefix(2)

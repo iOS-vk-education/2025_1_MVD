@@ -9,14 +9,15 @@ import SwiftUI
 
 struct EmptyGoalCardView: View {
     let onAdd: () -> Void
+    @EnvironmentObject private var l10n: L10n
     // Убираем жёсткий светло‑серый: используем динамический фон карточки
     var appearance = CardAppearance.default.with(foregroundColor: .primary)
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("У вас пока нет цели").font(.headline).fontWeight(.semibold)
-                Text("Самое время ее добавить").font(.subheadline).opacity(0.8)
+                Text(l10n.t(.emptyGoalTitle)).font(.headline).fontWeight(.semibold)
+                Text(l10n.t(.emptyGoalSubtitle)).font(.subheadline).opacity(0.8)
             }
             HStack {
                 Spacer()

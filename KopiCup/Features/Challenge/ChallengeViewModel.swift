@@ -46,7 +46,7 @@ final class ChallengeViewModel: ObservableObject {
                     if let uc = userChallenge, !self.didCheckMissedDays {
                         self.didCheckMissedDays = true
                         if self.hasMissedDay(uc) {
-                            self.failedChallengeName = uc.challenge.name
+                            self.failedChallengeName = uc.challenge.localizedName()
                             self.challengeService.declineChallenge()
                             self.activeChallenge = nil
                             self.showFailedChallengeAlert = true
@@ -83,7 +83,7 @@ final class ChallengeViewModel: ObservableObject {
     }
 
     private func finishExpiredChallenge(_ userChallenge: UserChallenge) {
-        completedChallengeName = userChallenge.challenge.name
+        completedChallengeName = userChallenge.challenge.localizedName()
         completedChallengeDays = userChallenge.completedDaysCount
         challengeService.declineChallenge()
         activeChallenge = nil

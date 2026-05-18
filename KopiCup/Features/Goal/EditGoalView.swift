@@ -9,6 +9,7 @@ struct EditGoalView: View {
     var onDelete: () -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var l10n: L10n
 
     @State private var title: String = ""
     @State private var desc: String = ""
@@ -36,24 +37,24 @@ struct EditGoalView: View {
         .sheet(isPresented: $showImagePicker) {
             ImagePickerView(sourceType: sourceType, selectedImage: $pickedImage)
         }
-        .alert("Удалить цель?", isPresented: $showDeleteConfirm) {
-            Button("Удалить", role: .destructive) {
+        .alert(l10n.t(.goalDeleteTitle), isPresented: $showDeleteConfirm) {
+            Button(l10n.t(.goalDeleteAction), role: .destructive) {
                 onDelete()
                 dismissSelf()
             }
-            Button("Отмена", role: .cancel) { }
+            Button(l10n.t(.cancel), role: .cancel) { }
         } message: {
-            Text("Действие нельзя отменить.")
+            Text(l10n.t(.goalDeleteMessage))
         }
         .alert(isPresented: $showValidationAlert) {
             Alert(
-                title: Text("Проверьте поля"),
+                title: Text(l10n.t(.goalFormCheckFieldsTitle)),
                 message: Text(validationMessage),
-                dismissButton: .default(Text("OK"))
+                dismissButton: .default(Text(l10n.t(.ok)))
             )
         }
-        .alert("Не удалось сохранить цель", isPresented: $showSaveError) {
-            Button("OK", role: .cancel) { }
+        .alert(l10n.t(.goalFormSaveErrorTitle), isPresented: $showSaveError) {
+            Button(l10n.t(.ok), role: .cancel) { }
         } message: {
             Text(saveErrorMessage)
         }
@@ -122,7 +123,7 @@ struct EditGoalView: View {
                     }
                 }
 
-                Text("Редактирование цели")
+                Text(l10n.t(.goalFormEditTitle))
                     .font(.system(size: 20, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                     .padding(.top, 6)
@@ -165,15 +166,15 @@ struct EditGoalView: View {
     private var content: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 16) {
-                field(text: $title, placeholder: "Название цели")
+                field(text: $title, placeholder: l10n.t(.goalFormNamePlaceholder))
 
-                field(text: $desc, placeholder: "Описание")
+                field(text: $desc, placeholder: l10n.t(.goalFormDescriptionPlaceholder))
 
                 amountField
 
                 dateField
 
-                field(text: $link, placeholder: "Ссылка на товар")
+                field(text: $link, placeholder: l10n.t(.goalFormProductLinkPlaceholder))
 
                 saveButton
                     .padding(.top, 12)
@@ -188,7 +189,7 @@ struct EditGoalView: View {
             .padding(.top, 24)
             .padding(.bottom, 20)
         }
-        .environment(\.locale, Locale(identifier: "ru_RU"))
+        .environment(\.locale, l10n.locale)
         .scrollDismissesKeyboard(.interactively)
         .safeAreaInset(edge: .bottom) {
             Color.clear.frame(height: 20)
@@ -210,7 +211,7 @@ struct EditGoalView: View {
     }
 
     private var amountField: some View {
-        TextField("Сумма", text: $amountText)
+        TextField(l10n.t(.goalFormAmountPlaceholder), text: $amountText)
             .keyboardType(.numberPad)
             .padding(.horizontal, 14)
             .padding(.vertical, 14)
@@ -233,7 +234,7 @@ struct EditGoalView: View {
 
     private var dateField: some View {
         HStack {
-            DatePicker("Срок", selection: $deadline, displayedComponents: .date)
+            DatePicker(l10n.t(.goalFormDeadlineLabel), selection: $deadline, displayedComponents: .date)
                 .labelsHidden()
             Spacer()
         }
@@ -267,7 +268,7 @@ struct EditGoalView: View {
                             if isSaving {
                                 ProgressView().tint(.white)
                             } else {
-                                Text("Сохранить")
+                                Text(l10n.t(.save))
                                     .foregroundColor(.white)
                                     .bold()
                             }
@@ -307,12 +308,12 @@ struct EditGoalView: View {
         let today = Calendar.current.startOfDay(for: Date())
 
         var missing: [String] = []
-        if trimmedTitle.isEmpty { missing.append("Название") }
-        if units <= 0 { missing.append("Сумма") }
-        if deadline < today { missing.append("Дата") }
+        if trimmedTitle.isEmpty { missing.append(l10n.t(.goalFormRequiredTitle)) }
+        if units <= 0 { missing.append(l10n.t(.goalFormRequiredAmount)) }
+        if deadline < today { missing.append(l10n.t(.goalFormRequiredDate)) }
 
         if missing.isEmpty { return nil }
-        return "Заполните обязательные поля: " + missing.joined(separator: ", ")
+        return l10n.t(.goalFormRequiredMessage, missing.joined(separator: ", "))
     }
 
     private func dismissSelf() {
@@ -354,7 +355,7 @@ struct EditGoalView: View {
             onSave(updated)
             dismissSelf()
         } catch {
-            saveErrorMessage = "Проверьте подключение и попробуйте снова."
+            saveErrorMessage = l10n.t(.goalFormSaveErrorMessage)
             showSaveError = true
         }
     }

@@ -7,9 +7,30 @@ final class FirebaseChallengeService: ChallengeService, @unchecked Sendable {
     private let defaults: UserDefaults
     private let migrationKeyPrefix = "challenge.migrated.v1."
     private let fallbackChallenges: [Challenge] = [
-        Challenge(id: "1", name: "Не покупать кофе", description: "Попробуй день без кофе", difficulty: 1),
-        Challenge(id: "2", name: "Прогулка 5км", description: "Ходи пешком", difficulty: 2),
-        Challenge(id: "3", name: "Без сахара", description: "Никаких сладостей", difficulty: 3)
+        Challenge(
+            id: "1",
+            name: "Не покупать кофе",
+            description: "Попробуй день без кофе",
+            nameEn: "Skip buying coffee",
+            descriptionEn: "Try a day without buying coffee",
+            difficulty: 1
+        ),
+        Challenge(
+            id: "2",
+            name: "Прогулка 5км",
+            description: "Ходи пешком",
+            nameEn: "5 km walk",
+            descriptionEn: "Walk instead of taking transport",
+            difficulty: 2
+        ),
+        Challenge(
+            id: "3",
+            name: "Без сахара",
+            description: "Никаких сладостей",
+            nameEn: "No sugar",
+            descriptionEn: "Skip sweets for the day",
+            difficulty: 3
+        )
     ]
 
     private var challenges: [Challenge] = []
@@ -196,6 +217,8 @@ final class FirebaseChallengeService: ChallengeService, @unchecked Sendable {
         let data = doc.data()
         let name = data["name"] as? String ?? data["title"] as? String
         let description = data["description"] as? String ?? data["desc"] as? String
+        let nameEn = data["nameEn"] as? String ?? data["titleEn"] as? String ?? data["name_en"] as? String ?? data["title_en"] as? String
+        let descriptionEn = data["descriptionEn"] as? String ?? data["descEn"] as? String ?? data["description_en"] as? String ?? data["desc_en"] as? String
         let rawDifficulty = data["difficulty"]
 
         guard let name, let description else { return nil }
@@ -213,6 +236,8 @@ final class FirebaseChallengeService: ChallengeService, @unchecked Sendable {
             id: doc.documentID,
             name: name,
             description: description,
+            nameEn: nameEn,
+            descriptionEn: descriptionEn,
             difficulty: max(1, difficulty)
         )
     }

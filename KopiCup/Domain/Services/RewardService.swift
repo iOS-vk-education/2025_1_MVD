@@ -15,7 +15,7 @@ final class RewardService {
         var errorDescription: String? {
             switch self {
             case .notSignedIn:
-                return "Пользователь не авторизован"
+                return L10n.shared.t(.errorNotSignedIn)
             }
         }
     }
@@ -84,8 +84,8 @@ final class RewardService {
         if didApply {
             await postRewardPopup(
                 type: .dailyGift,
-                title: "Ежедневный подарок",
-                message: "+\(RewardValues.dailyGiftCoins) монеты"
+                title: L10n.shared.t(.rewardDailyGiftTitle),
+                message: L10n.shared.t(.rewardDailyGiftMessage, RewardValues.dailyGiftCoins)
             )
         }
 
@@ -113,8 +113,8 @@ final class RewardService {
         if didApply {
             await postRewardPopup(
                 type: .goalCompleted,
-                title: "Цель закрыта",
-                message: "+\(RewardValues.goalCompletedTrophies) трофея"
+                title: L10n.shared.t(.rewardGoalCompletedTitle),
+                message: L10n.shared.t(.rewardGoalCompletedMessage, RewardValues.goalCompletedTrophies)
             )
         }
 
@@ -142,8 +142,8 @@ final class RewardService {
         if didApply {
             await postRewardPopup(
                 type: .weeklyStreak,
-                title: "Недельный стрик сохранён",
-                message: "+\(RewardValues.weeklyStreakTrophies) трофей"
+                title: L10n.shared.t(.rewardWeeklyStreakTitle),
+                message: L10n.shared.t(.rewardWeeklyStreakMessage, RewardValues.weeklyStreakTrophies)
             )
         }
 
@@ -179,8 +179,8 @@ final class RewardService {
         if didApply {
             await postRewardPopup(
                 type: .challengeCompleted,
-                title: "Челлендж завершён",
-                message: "+\(coins) монет"
+                title: L10n.shared.t(.rewardChallengeCompletedTitle),
+                message: L10n.shared.t(.rewardChallengeCompletedMessage, coins)
             )
         }
 

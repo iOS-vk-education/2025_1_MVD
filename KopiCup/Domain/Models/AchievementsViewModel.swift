@@ -214,17 +214,17 @@ final class AchievementsViewModel: ObservableObject {
     private func achievementPopupText(for id: String) -> (title: String, message: String)? {
         switch id {
         case ID.lightningStart:
-            return ("Молниеносный старт", "Цель добавлена. Отличное начало!")
+            return (L10n.shared.t(.achievLightningStart), L10n.shared.t(.achievLightningStartMessage))
         case ID.firstTopup:
-            return ("Первое пополнение", "Отличное начало накоплений!")
+            return (L10n.shared.t(.achievFirstTopup), L10n.shared.t(.achievFirstTopupMessage))
         case ID.sevenDays:
-            return ("7 дней подряд", "Вы пополняли копилку 7 дней подряд!")
+            return (L10n.shared.t(.achievSevenDays), L10n.shared.t(.achievSevenDaysMessage))
         case ID.goalReached:
-            return ("Цель достигнута", "Поздравляем! Вы собрали всю нужную сумму.")
+            return (L10n.shared.t(.achievGoalReached), L10n.shared.t(.achievGoalReachedMessage))
         case ID.thirtyDays:
-            return ("30 дней подряд", "Вы пополняли копилку 30 дней подряд!")
+            return (L10n.shared.t(.achievThirtyDays), L10n.shared.t(.achievThirtyDaysMessage))
         case ID.bestFriend:
-            return ("Лучший друг", "Вы купили костюм для маскота.")
+            return (L10n.shared.t(.achievBestFriend), L10n.shared.t(.achievBestFriendMessage))
         default:
             return nil
         }
@@ -277,4 +277,3 @@ private final class AchievementsStore {
         "achievements.v1.\(uid ?? "local").\(id)"
     }
 }
-

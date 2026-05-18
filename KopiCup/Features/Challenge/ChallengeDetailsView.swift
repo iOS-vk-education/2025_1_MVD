@@ -186,7 +186,7 @@ struct ChallengeDetailView: View {
                 .font(.system(size: 36))
                 .foregroundColor(.white)
 
-            Text(challenge?.name ?? l10n.t(.challengeFallbackName))
+            Text(challenge?.localizedName(for: l10n.language) ?? l10n.t(.challengeFallbackName))
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
@@ -201,7 +201,7 @@ struct ChallengeDetailView: View {
             }
             .padding(.top, 2)
 
-            Text(challenge?.description ?? "")
+            Text(challenge?.localizedDescription(for: l10n.language) ?? "")
                 .font(.subheadline)
                 .multilineTextAlignment(.center)
                 .foregroundColor(.white.opacity(0.85))

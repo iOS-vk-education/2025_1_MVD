@@ -81,7 +81,7 @@ final class SeriesViewModel: ObservableObject {
     var weekRangeText: String {
         let end = Self.addDays(6, to: displayedWeekStart)
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: currencyCode == "RUB" ? "ru_RU" : "en_US")
+        formatter.locale = currentLocale
         formatter.setLocalizedDateFormatFromTemplate("d MMM")
 
         let startText = formatter.string(from: displayedWeekStart)
@@ -197,10 +197,20 @@ final class SeriesViewModel: ObservableObject {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.currencyCode = currencyCode
-        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.locale = currentLocale
         formatter.maximumFractionDigits = 2
         formatter.minimumFractionDigits = 2
         return formatter.string(from: NSNumber(value: value)) ?? "\(value) \(currencyCode)"
+    }
+
+    private var currentLocale: Locale {
+        let languageCode = UserDefaults.standard.string(forKey: "settings.language.code") ?? "ru"
+        switch AppLanguage(rawValue: languageCode) ?? .ru {
+        case .ru:
+            return Locale(identifier: "ru_RU")
+        case .en:
+            return Locale(identifier: "en_US")
+        }
     }
 
     private func refreshAmountsFromStore() {

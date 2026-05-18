@@ -9,11 +9,11 @@ import SwiftUI
 
 struct HeaderView: View {
     let name: String
+    @EnvironmentObject private var l10n: L10n
 
     var body: some View {
-        Text("Чудесный день, чтобы начать копить!")
+        Text(l10n.t(.keepGoing))
             .font(.title3)
             .padding(.horizontal)
     }
 }
-

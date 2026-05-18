@@ -3,6 +3,7 @@ import SwiftUI
 struct PiggyModalView: View {
     @Binding var isPresented: Bool
     @EnvironmentObject private var economy: EconomyStore
+    @EnvironmentObject private var l10n: L10n
     @State private var selectedOutfitId: String
     @State private var showAlert = false
 
@@ -23,7 +24,7 @@ struct PiggyModalView: View {
                     .padding(.top, 6)
                     .padding(.bottom, 0)
 
-                Text("Выберите наряд")
+                Text(l10n.t(.piggyChooseOutfit))
                     .font(.system(size: 22, weight: .bold, design: .rounded))
                     .padding(.top, 0)
                     .padding(.bottom, 4)
@@ -46,12 +47,12 @@ struct PiggyModalView: View {
         .onAppear {
             selectedOutfitId = economy.selectedOutfitId
         }
-        .alert("Недостаточно средств", isPresented: $showAlert) {
-            Button("OK", role: .cancel) {
+        .alert(l10n.t(.piggyInsufficientFundsTitle), isPresented: $showAlert) {
+            Button(l10n.t(.ok), role: .cancel) {
                 showAlert = false
             }
         } message: {
-            Text("У вас недостаточно средств для покупки этого наряда.")
+            Text(l10n.t(.piggyInsufficientFundsMessage))
         }
     }
 
@@ -82,7 +83,7 @@ struct PiggyModalView: View {
             }
             .disabled(!economy.isGiftAvailableToday)
             .buttonStyle(.plain)
-            .accessibilityLabel("Ежедневный подарок")
+            .accessibilityLabel(l10n.t(.dailyGift))
 
             Button {
                 isPresented = false
@@ -173,7 +174,7 @@ struct PiggyModalView: View {
                             )
                             .frame(height: 54)
                             .overlay(
-                                Text(isActive ? "Выбрать" : "Получено")
+                                Text(isActive ? l10n.t(.piggySelect) : l10n.t(.piggyOwned))
                                     .foregroundColor(isActive ? .white : .gray)
                                     .bold()
                                     .font(.system(size: 18))
@@ -242,7 +243,7 @@ struct PiggyModalView: View {
                     .foregroundColor(isActive ? .white : .blue)
 
             case .free:
-                Text("Бесплатно")
+                Text(l10n.t(.piggyFree))
                     .foregroundColor(isActive ? .white : .green)
             }
         }
@@ -255,6 +256,7 @@ struct PiggyModalView: View {
         let isSelected: Bool
         let isOwned: Bool
         let action: () -> Void
+        @EnvironmentObject private var l10n: L10n
 
         var body: some View {
             Button(action: action) {
@@ -314,7 +316,7 @@ struct PiggyModalView: View {
                         .foregroundColor(.blue)
 
                 case .free:
-                    Text("Бесплатно")
+                    Text(l10n.t(.piggyFree))
                         .foregroundColor(.green)
                 }
             }
@@ -328,7 +330,7 @@ struct PiggyModalView: View {
         }
 
         private var statusBadge: some View {
-            Label("Получено", systemImage: "checkmark.seal.fill")
+            Label(l10n.t(.piggyOwned), systemImage: "checkmark.seal.fill")
                 .labelStyle(.titleAndIcon)
                 .font(.system(size: 13, weight: .bold))
                 .foregroundColor(.white)

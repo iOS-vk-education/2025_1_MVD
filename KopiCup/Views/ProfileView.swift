@@ -50,7 +50,7 @@ struct ProfileView: View {
         if !nameFromStore.isEmpty { return nameFromStore }
         let fromAppStorage = storedName.trimmingCharacters(in: .whitespacesAndNewlines)
         if !fromAppStorage.isEmpty { return fromAppStorage }
-        return "Гость"
+        return l10n.t(.guest)
     }
     
     var body: some View {
@@ -181,7 +181,7 @@ struct ProfileView: View {
             }
             
             VStack(alignment: .leading, spacing: 2) {
-                Text(displayName.isEmpty ? "Анна Дегтярева" : displayName)
+                Text(displayName.isEmpty ? l10n.t(.guest) : displayName)
                     .font(.system(size: 20, weight: .semibold, design: .rounded))
                     .foregroundColor(.primary)
                 Text("\(l10n.t(.savingSince)) \(sinceText)")
@@ -201,7 +201,7 @@ struct ProfileView: View {
                         .padding(10)
                         .background(Color.blue.opacity(0.1))
                         .clipShape(Circle())
-                        .accessibilityLabel("Изменить фото")
+                        .accessibilityLabel(l10n.t(.editPhoto))
                 }
                 .buttonStyle(.plain)
                 
@@ -308,8 +308,8 @@ struct ProfileView: View {
                 title: l10n.t(.language),
                 valueText: languageDisplayName(languageCode)
             ) {
-                Button("Русский") { languageCode = "ru" }
-                Button("English") { languageCode = "en" }
+                Button(l10n.t(.languageRussian)) { languageCode = "ru" }
+                Button(l10n.t(.languageEnglish)) { languageCode = "en" }
             }
 
             Button(role: .destructive) {
@@ -356,8 +356,8 @@ struct ProfileView: View {
     
     private func languageDisplayName(_ code: String) -> String {
         switch code {
-        case "ru": return "Русский"
-        case "en": return "English"
+        case "ru": return l10n.t(.languageRussian)
+        case "en": return l10n.t(.languageEnglish)
         default:   return code
         }
     }
@@ -678,4 +678,3 @@ private extension UIImage {
         }
     }
 }
-
