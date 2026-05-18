@@ -57,10 +57,15 @@ final class StatsService {
     private let challengeStore = LocalChallengeStore.shared
     private let goalsRepository = GoalsRepository()
     private let piggyService: PiggyProfileService
+    private let outfitCatalogService: PiggyOutfitCatalogService
     private let calendar = Calendar.current
 
-    init(piggyService: PiggyProfileService = FirebasePiggyProfileService()) {
+    init(
+        piggyService: PiggyProfileService = FirebasePiggyProfileService(),
+        outfitCatalogService: PiggyOutfitCatalogService = FirebasePiggyOutfitCatalogService()
+    ) {
         self.piggyService = piggyService
+        self.outfitCatalogService = outfitCatalogService
     }
 
     func loadDashboard(uid: String) async -> (metrics: StatsMetrics, savings: SavingsStatsSnapshot) {
@@ -130,8 +135,10 @@ final class StatsService {
     private func outfitFriendshipContribution(uid: String) async -> Double {
         guard Auth.auth().currentUser?.uid == uid else { return 25 }
         do {
-            let profile = try await piggyService.fetchProfile(uid: uid)
-            let totalOutfits = 4   // piggy_cool + wizard + ballerina + queen
+            async let profileResult = piggyService.fetchProfile(uid: uid)
+            async let catalogResult = outfitCatalogService.fetchCatalog()
+            let (profile, catalog) = try await (profileResult, catalogResult)
+            let totalOutfits = max(catalog.count, 1)
             let owned = min(profile.ownedOutfitIds.count, totalOutfits)
             return (Double(owned) / Double(totalOutfits)) * 100.0
         } catch {

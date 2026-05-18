@@ -1,0 +1,38 @@
+[
+  {
+    "documentId": "piggy_cool",
+    "id": "piggy_cool",
+    "imageName": "piggy_cool",
+    "priceType": "free",
+    "priceAmount": null,
+    "sortOrder": 0,
+    "isEnabled": true
+  },
+  {
+    "documentId": "piggy_wizard",
+    "id": "piggy_wizard",
+    "imageName": "piggy_wizard",
+    "priceType": "coins",
+    "priceAmount": 20,
+    "sortOrder": 1,
+    "isEnabled": true
+  },
+  {
+    "documentId": "piggy_ballerina",
+    "id": "piggy_ballerina",
+    "imageName": "piggy_ballerina",
+    "priceType": "coins",
+    "priceAmount": 30,
+    "sortOrder": 2,
+    "isEnabled": true
+  },
+  {
+    "documentId": "piggy_queen",
+    "id": "piggy_queen",
+    "imageName": "piggy_queen",
+    "priceType": "trophies",
+    "priceAmount": 3,
+    "sortOrder": 3,
+    "isEnabled": true
+  }
+]

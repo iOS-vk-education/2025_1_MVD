@@ -43,13 +43,13 @@ final class FirebasePiggyProfileService: PiggyProfileService {
     }
 
     private func normalized(_ profile: PiggyProfileDTO) -> PiggyProfileDTO {
-        let owned = Array(Set(profile.ownedOutfitIds + ["piggy_cool"])).sorted()
+        let owned = Array(Set(profile.ownedOutfitIds + [Outfit.defaultOutfitId])).sorted()
 
         let selected: String
         if owned.contains(profile.selectedOutfitId) {
             selected = profile.selectedOutfitId
         } else {
-            selected = "piggy_cool"
+            selected = Outfit.defaultOutfitId
         }
 
         return PiggyProfileDTO(

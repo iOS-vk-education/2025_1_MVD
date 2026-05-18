@@ -11,7 +11,7 @@ struct PiggyProfileDTO: Codable {
         coins: 0,
         trophies: 0,
         lastGiftDayKey: nil,
-        ownedOutfitIds: ["piggy_cool"],
-        selectedOutfitId: "piggy_cool"
+        ownedOutfitIds: [Outfit.defaultOutfitId],
+        selectedOutfitId: Outfit.defaultOutfitId
     )
 }

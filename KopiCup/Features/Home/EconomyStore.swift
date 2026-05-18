@@ -1,18 +1,6 @@
 import SwiftUI
 import FirebaseAuth
 
-struct Outfit: Identifiable, Equatable, Codable {
-    let id: String
-    let imageName: String
-    let price: Price
-
-    enum Price: Codable, Equatable {
-        case free
-        case coins(Int)
-        case trophies(Int)
-    }
-}
-
 @MainActor
 final class EconomyStore: ObservableObject {
     @Published private(set) var coins: Int = 0
@@ -20,21 +8,21 @@ final class EconomyStore: ObservableObject {
     @Published private(set) var lastGiftDayKey: String?
 
     @Published private(set) var ownedOutfitIds: Set<String> = []
-    @Published private(set) var selectedOutfitId: String = "piggy_cool"
-
-    let catalog: [Outfit] = [
-        Outfit(id: "piggy_cool",      imageName: "piggy_cool",      price: .free),
-        Outfit(id: "piggy_wizard",    imageName: "piggy_wizard",    price: .coins(20)),
-        Outfit(id: "piggy_ballerina", imageName: "piggy_ballerina", price: .coins(30)),
-        Outfit(id: "piggy_queen",     imageName: "piggy_queen",     price: .trophies(3))
-    ]
+    @Published private(set) var selectedOutfitId: String = Outfit.defaultOutfitId
+    @Published private(set) var catalog: [Outfit] = Outfit.defaultCatalog
 
     private let service: PiggyProfileService
+    private let catalogService: PiggyOutfitCatalogService
+    private var didLoadRemoteCatalog = false
     private var notificationToken: NSObjectProtocol?
     private var authStateHandle: AuthStateDidChangeListenerHandle?
 
-    init(service: PiggyProfileService = FirebasePiggyProfileService()) {
+    init(
+        service: PiggyProfileService = FirebasePiggyProfileService(),
+        catalogService: PiggyOutfitCatalogService = FirebasePiggyOutfitCatalogService()
+    ) {
         self.service = service
+        self.catalogService = catalogService
         applyDefaultState()
         observeProfileChanges()
         observeAuthChanges()
@@ -51,7 +39,7 @@ final class EconomyStore: ObservableObject {
     }
 
     var selectedOutfit: Outfit {
-        catalog.first(where: { $0.id == selectedOutfitId }) ?? catalog[0]
+        catalog.first(where: { $0.id == selectedOutfitId }) ?? catalog.first ?? Outfit.defaultCatalog[0]
     }
 
     var selectedOutfitImageName: String {
@@ -68,6 +56,8 @@ final class EconomyStore: ObservableObject {
     }
 
     func bootstrapForCurrentUser() async {
+        await refreshCatalog()
+
         guard let uid = currentUid else {
             resetToDefaults()
             return
@@ -81,6 +71,19 @@ final class EconomyStore: ObservableObject {
             print("EconomyStore bootstrap error:", error)
             resetToDefaults()
         }
+    }
+
+    func refreshCatalog() async {
+        do {
+            let remoteCatalog = try await catalogService.fetchCatalog()
+            didLoadRemoteCatalog = true
+            catalog = remoteCatalog
+        } catch {
+            didLoadRemoteCatalog = false
+            catalog = Outfit.defaultCatalog
+        }
+
+        normalizeLocalState()
     }
 
     func onActiveUserChanged() {
@@ -211,14 +214,18 @@ final class EconomyStore: ObservableObject {
     }
 
     private func normalizeLocalState() {
-        ownedOutfitIds.insert("piggy_cool")
+        if catalog.isEmpty && !didLoadRemoteCatalog {
+            catalog = Outfit.defaultCatalog
+        }
+
+        ownedOutfitIds.insert(Outfit.defaultOutfitId)
 
         if !catalog.contains(where: { $0.id == selectedOutfitId }) {
-            selectedOutfitId = "piggy_cool"
+            selectedOutfitId = Outfit.defaultOutfitId
         }
 
         if !ownedOutfitIds.contains(selectedOutfitId) {
-            selectedOutfitId = "piggy_cool"
+            selectedOutfitId = Outfit.defaultOutfitId
         }
 
         coins = max(0, coins)
@@ -233,7 +240,7 @@ final class EconomyStore: ObservableObject {
         coins = 0
         trophies = 0
         lastGiftDayKey = nil
-        ownedOutfitIds = ["piggy_cool"]
-        selectedOutfitId = "piggy_cool"
+        ownedOutfitIds = [Outfit.defaultOutfitId]
+        selectedOutfitId = Outfit.defaultOutfitId
     }
 }

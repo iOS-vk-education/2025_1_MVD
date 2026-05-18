@@ -21,6 +21,10 @@ enum FirestorePaths {
         Firestore.firestore().collection("challenges")
     }
 
+    static func piggyOutfitsCatalog() -> CollectionReference {
+        Firestore.firestore().collection("piggy_outfits")
+    }
+
     static func challengeState(uid: String) -> CollectionReference {
         userDoc(uid: uid).collection("challenge_state")
     }

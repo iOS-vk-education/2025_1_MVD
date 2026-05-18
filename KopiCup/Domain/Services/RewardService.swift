@@ -212,12 +212,12 @@ final class RewardService {
 
                 let currentCoins = Self.intValue(profileData["coins"])
                 let currentTrophies = Self.intValue(profileData["trophies"])
-                let currentOwnedOutfitIds = Self.stringArrayValue(profileData["ownedOutfitIds"], defaultValue: ["piggy_cool"])
-                let currentSelectedOutfitId = Self.stringValue(profileData["selectedOutfitId"], defaultValue: "piggy_cool")
+                let currentOwnedOutfitIds = Self.stringArrayValue(profileData["ownedOutfitIds"], defaultValue: [Outfit.defaultOutfitId])
+                let currentSelectedOutfitId = Self.stringValue(profileData["selectedOutfitId"], defaultValue: Outfit.defaultOutfitId)
                 let currentLastGiftDayKey = profileData["lastGiftDayKey"] as? String
 
-                let normalizedOwned = Array(Set(currentOwnedOutfitIds + ["piggy_cool"])).sorted()
-                let normalizedSelected = normalizedOwned.contains(currentSelectedOutfitId) ? currentSelectedOutfitId : "piggy_cool"
+                let normalizedOwned = Array(Set(currentOwnedOutfitIds + [Outfit.defaultOutfitId])).sorted()
+                let normalizedSelected = normalizedOwned.contains(currentSelectedOutfitId) ? currentSelectedOutfitId : Outfit.defaultOutfitId
 
                 var updatedProfile: [String: Any] = [
                     "coins": max(0, currentCoins + coinsDelta),
