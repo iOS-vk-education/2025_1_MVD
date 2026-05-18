@@ -56,6 +56,8 @@ final class L10n: ObservableObject {
         case openPiggy = "home.open_piggy"
         case challengeFailed = "home.challenge_failed"
         case challengeFailedMsg = "home.challenge_failed_msg"
+        case challengeCompleted = "home.challenge_completed"
+        case challengeCompletedMsg = "home.challenge_completed_msg"
         case tryAgain = "home.try_again"
         // Tab bar
         case tabHome = "tab.home"
@@ -154,6 +156,8 @@ final class L10n: ObservableObject {
             "home.open_piggy": "Открыть копилку",
             "home.challenge_failed": "Челлендж провален",
             "home.challenge_failed_msg": "Ты пропустил день в челлендже «%@». Не расстраивайся — каждый новый день это шанс начать заново!",
+            "home.challenge_completed": "Челлендж завершён",
+            "home.challenge_completed_msg": "Поздравляем! Челлендж «%@» завершён. Вы продержались %d дн.",
             "home.try_again": "Попробую снова!",
             // Tab bar
             "tab.home": "Главная",
@@ -250,6 +254,8 @@ final class L10n: ObservableObject {
             "home.open_piggy": "Open piggy bank",
             "home.challenge_failed": "Challenge failed",
             "home.challenge_failed_msg": "You missed a day in the \"%@\" challenge. Don't worry — every new day is a chance to start fresh!",
+            "home.challenge_completed": "Challenge completed",
+            "home.challenge_completed_msg": "Congratulations! The \"%@\" challenge is over. You kept going for %d days.",
             "home.try_again": "I'll try again!",
             // Tab bar
             "tab.home": "Home",

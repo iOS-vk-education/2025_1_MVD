@@ -12,8 +12,11 @@ final class ChallengeViewModel: ObservableObject {
     @Published var displayedChallenge: Challenge?
     @Published var showDetailModal = false
     @Published var showFailedChallengeAlert = false
+    @Published var showCompletedChallengeAlert = false
 
     var failedChallengeName: String = ""
+    var completedChallengeName: String = ""
+    var completedChallengeDays: Int = 0
 
     private let challengeService: ChallengeService
     private var availableChallenges: [Challenge] = []
@@ -34,6 +37,11 @@ final class ChallengeViewModel: ObservableObject {
             self.challengeService.observeUserChallenge { [weak self] userChallenge in
                 DispatchQueue.main.async {
                     guard let self else { return }
+
+                    if let uc = userChallenge, uc.isExpired {
+                        self.finishExpiredChallenge(uc)
+                        return
+                    }
 
                     if let uc = userChallenge, !self.didCheckMissedDays {
                         self.didCheckMissedDays = true
@@ -60,12 +68,28 @@ final class ChallengeViewModel: ObservableObject {
     }
 
     private func hasMissedDay(_ userChallenge: UserChallenge) -> Bool {
-        let todayDayIndex = userChallenge.currentDayIndex
-        guard todayDayIndex > 0 else { return false }
-        for i in 0..<todayDayIndex {
+        guard
+            let startIndex = userChallenge.startWeekDayIndex,
+            let todayIndex = userChallenge.currentWeekDayIndex,
+            todayIndex > startIndex
+        else {
+            return false
+        }
+
+        for i in startIndex..<todayIndex {
             if !userChallenge.progress[i] { return true }
         }
         return false
+    }
+
+    private func finishExpiredChallenge(_ userChallenge: UserChallenge) {
+        completedChallengeName = userChallenge.challenge.name
+        completedChallengeDays = userChallenge.completedDaysCount
+        challengeService.declineChallenge()
+        activeChallenge = nil
+        showCompletedChallengeAlert = true
+        let completedId = userChallenge.challenge.id
+        displayedChallenge = availableChallenges.first(where: { $0.id != completedId }) ?? availableChallenges.first
     }
     
     var isAccepted: Bool { activeChallenge != nil }
@@ -100,4 +124,3 @@ final class ChallengeViewModel: ObservableObject {
         return uc.progress.map { $0 ? Color.green : Color.gray.opacity(0.6) }
     }
 }
-

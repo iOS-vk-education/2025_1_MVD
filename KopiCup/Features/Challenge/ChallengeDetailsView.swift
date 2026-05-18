@@ -23,29 +23,26 @@ struct ChallengeDetailView: View {
         return Swift.max(0, Swift.min(value, maxDifficulty))
     }
 
-    // Период 7 дней начиная с сегодняшнего дня в формате d.MM - d.MM
+    // Период текущей календарной недели: пн - вс
     private var periodText: String {
         let fmt = DateFormatter()
         fmt.dateFormat = "d.MM"
-        let today = Calendar.current.startOfDay(for: Date())
-        let end = Calendar.current.date(byAdding: .day, value: 6, to: today) ?? today
-        return "\(fmt.string(from: today)) - \(fmt.string(from: end))"
+        let interval = UserChallenge.challengeWeekInterval(for: Date())
+        let start = interval?.start ?? Calendar.current.startOfDay(for: Date())
+        let endExclusive = interval?.end ?? Calendar.current.date(byAdding: .day, value: 7, to: start) ?? start
+        let end = Calendar.current.date(byAdding: .day, value: -1, to: endExclusive) ?? endExclusive
+        return "\(fmt.string(from: start)) - \(fmt.string(from: end))"
     }
 
-    // Индекс текущего дня.
-    // Если челлендж активен — считаем относительно startDate.
-    // Если челлендж ещё не принят — подсвечиваем первый день (0).
+    // Индекс сегодняшнего дня в текущей неделе: пн = 0 ... вс = 6.
     private var currentDayIndex: Int? {
-        if let uc = viewModel.activeChallenge {
-            let cal = Calendar.current
-            let s = cal.startOfDay(for: uc.startDate)
-            let e = cal.startOfDay(for: Date())
-            let diff = cal.dateComponents([.day], from: s, to: e).day ?? 0
-            guard (0...6).contains(diff) else { return nil }
-            return diff
-        } else {
-            return 0
-        }
+        guard let week = UserChallenge.challengeWeekInterval(for: Date()) else { return nil }
+        var calendar = Calendar.current
+        calendar.firstWeekday = 2
+        let today = calendar.startOfDay(for: Date())
+        let diff = calendar.dateComponents([.day], from: week.start, to: today).day ?? 0
+        guard (0...6).contains(diff) else { return nil }
+        return diff
     }
 
     private var isTodayAlreadyMarked: Bool {

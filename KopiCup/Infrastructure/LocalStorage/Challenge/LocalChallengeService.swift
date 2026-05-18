@@ -54,8 +54,7 @@ final class LocalChallengeService: ChallengeService {
     func markDayComplete() {
         guard var state = store.loadActive() else { return }
 
-        let dayIndex = daysBetween(start: state.startDate, end: Date())
-        guard (0...6).contains(dayIndex) else { return }
+        guard isDateInChallengeWeek(Date(), startedAt: state.startDate) else { return }
 
         let todayKey = DayKey.make(from: Date())
         guard !state.completedDayKeys.contains(todayKey) else { return }
@@ -94,7 +93,8 @@ final class LocalChallengeService: ChallengeService {
         guard let challenge = challenges.first(where: { $0.id == state.challengeId }) else { return nil }
 
         let progress = (0..<7).map { offset -> Bool in
-            let date = Calendar.current.date(byAdding: .day, value: offset, to: state.startDate) ?? state.startDate
+            let weekStart = UserChallenge.challengeWeekInterval(for: state.startDate)?.start ?? state.startDate
+            let date = Calendar.current.date(byAdding: .day, value: offset, to: weekStart) ?? weekStart
             let key = DayKey.make(from: date)
             return state.completedDayKeys.contains(key)
         }
@@ -102,10 +102,9 @@ final class LocalChallengeService: ChallengeService {
         return UserChallenge(challenge: challenge, startDate: state.startDate, progress: progress)
     }
 
-    private func daysBetween(start: Date, end: Date) -> Int {
-        let cal = Calendar.current
-        let s = cal.startOfDay(for: start)
-        let e = cal.startOfDay(for: end)
-        return cal.dateComponents([.day], from: s, to: e).day ?? 0
+    private func isDateInChallengeWeek(_ date: Date, startedAt startDate: Date) -> Bool {
+        guard let week = UserChallenge.challengeWeekInterval(for: startDate) else { return false }
+        let day = Calendar.current.startOfDay(for: date)
+        return day >= Calendar.current.startOfDay(for: startDate) && day >= week.start && day < week.end
     }
 }

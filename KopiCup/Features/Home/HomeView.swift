@@ -237,6 +237,18 @@ struct HomeView: View {
             } message: {
                 Text(l10n.t(.challengeFailedMsg, viewModel.challengeVM.failedChallengeName))
             }
+            .alert(l10n.t(.challengeCompleted), isPresented: Binding(
+                get: { viewModel.challengeVM.showCompletedChallengeAlert },
+                set: { viewModel.challengeVM.showCompletedChallengeAlert = $0 }
+            )) {
+                Button(l10n.t(.ok), role: .cancel) { }
+            } message: {
+                Text(l10n.t(
+                    .challengeCompletedMsg,
+                    viewModel.challengeVM.completedChallengeName,
+                    viewModel.challengeVM.completedChallengeDays
+                ))
+            }
 
             // Баннер наград/достижений
             if let data = rewardBannerCenter.currentBanner {
@@ -335,4 +347,3 @@ struct HomeView_Previews: PreviewProvider {
         .environmentObject(EconomyStore())
     }
 }
-

@@ -85,7 +85,7 @@ struct SeriesCardView: View {
                                         .frame(width: 28, height: 28)
                                         .overlay(
                                             Circle()
-                                                .stroke(dayRingColor(item.id), lineWidth: 2)
+                                                .strokeBorder(dayRingColor(item.id), lineWidth: 2)
                                         )
                                         .onTapGesture {
                                             if viewModel.goal == nil {
@@ -96,10 +96,12 @@ struct SeriesCardView: View {
                                             }
                                         }
                                 }
+                                .padding(.vertical, 2)
                                 .id(item.id)
                             }
                         }
                         .padding(.horizontal, 2)
+                        .padding(.vertical, 2)
                     }
                     .onAppear {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {

@@ -31,8 +31,8 @@ class MockChallengeService: ChallengeService {
     
     func markDayComplete() {
         guard var uc = userChallenge else { return }
-        if uc.currentDayIndex < 7 {
-            uc.progress[uc.currentDayIndex] = true
+        if let index = uc.currentWeekDayIndex {
+            uc.progress[index] = true
             self.userChallenge = uc
         }
     }
