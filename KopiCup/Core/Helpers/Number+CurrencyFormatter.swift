@@ -42,7 +42,13 @@ struct CurrencyFormatter {
     private static func currencySymbol(for code: String) -> String? {
         Locale.availableIdentifiers
             .map(Locale.init(identifier:))
-            .first { $0.currencyCode == code }?
+            .first { locale in
+                if #available(iOS 16, *) {
+                    return locale.currency?.identifier == code
+                } else {
+                    return locale.currencyCode == code
+                }
+            }?
             .currencySymbol
     }
 }

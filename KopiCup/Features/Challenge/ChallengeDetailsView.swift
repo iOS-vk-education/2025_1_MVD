@@ -10,6 +10,7 @@ import SwiftUI
 struct ChallengeDetailView: View {
     @Binding var isPresented: Bool
     @ObservedObject var viewModel: ChallengeViewModel
+    @EnvironmentObject private var l10n: L10n
     @State private var showDeclineAlert = false
     @State private var highlightTick = false
 
@@ -69,7 +70,7 @@ struct ChallengeDetailView: View {
                     // Контентная карточка (без minHeight, чтобы не раздувать белый фон)
                     VStack(alignment: .leading, spacing: 12) {
                         // Заголовок секции периода — по центру
-                        Text("Период челленджа")
+                        Text(l10n.t(.challengeDetailPeriod))
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -99,7 +100,7 @@ struct ChallengeDetailView: View {
 
                         // Прогресс
                         VStack(spacing: 8) {
-                            Text("Прогресс")
+                            Text(l10n.t(.challengeDetailProgress))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -127,7 +128,7 @@ struct ChallengeDetailView: View {
                             viewModel.markToday()
                             isPresented = false
                         }) {
-                            Text(isTodayAlreadyMarked ? "Отмечено сегодня" : "Отметить сегодня")
+                            Text(isTodayAlreadyMarked ? l10n.t(.challengeDetailMarkedToday) : l10n.t(.challengeDetailMarkToday))
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
@@ -140,7 +141,7 @@ struct ChallengeDetailView: View {
 
                         // Кнопка "Отказаться от челленджа"
                         Button(action: { showDeclineAlert = true }) {
-                            Text("✗ Отказаться от челленджа")
+                            Text(l10n.t(.challengeDetailDecline))
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
@@ -173,12 +174,12 @@ struct ChallengeDetailView: View {
             }
         }
         .onAppear { highlightTick.toggle() }
-        .alert("Вы уверены, что хотите отказаться от челленджа?", isPresented: $showDeclineAlert) {
-            Button("Отказаться", role: .destructive) {
+        .alert(l10n.t(.challengeDetailDeclineConfirm), isPresented: $showDeclineAlert) {
+            Button(l10n.t(.challengeDetailDeclineAction), role: .destructive) {
                 viewModel.declineActiveChallenge()
                 isPresented = false
             }
-            Button("Отмена", role: .cancel) { }
+            Button(l10n.t(.cancel), role: .cancel) { }
         }
     }
 
@@ -188,7 +189,7 @@ struct ChallengeDetailView: View {
                 .font(.system(size: 36))
                 .foregroundColor(.white)
 
-            Text(challenge?.name ?? "Челлендж")
+            Text(challenge?.name ?? l10n.t(.challengeFallbackName))
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.white)

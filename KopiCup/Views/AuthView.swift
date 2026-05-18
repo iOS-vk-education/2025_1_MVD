@@ -82,6 +82,7 @@ struct AuthView: View {
             }
             .sheet(isPresented: $showResetPassword) {
                 ResetPasswordView()
+                    .preferredColorScheme(.light)
             }
             .fullScreenCover(isPresented: $isRegViewPresented) {
                 RegView(onRegSuccess: {
@@ -89,8 +90,11 @@ struct AuthView: View {
                     dismiss()
                 })
                 .environmentObject(userStorage)
+                .preferredColorScheme(.light)
             }
             .navigationBarBackButtonHidden(true)
+            // Экраны входа/регистрации всегда в светлой теме — текст не сливается с полями
+            .preferredColorScheme(.light)
         }
     }
 

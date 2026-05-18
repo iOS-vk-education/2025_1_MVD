@@ -17,8 +17,6 @@ enum GoalsRepoError: Error, LocalizedError {
 }
 
 final class GoalsRepository {
-    private let db = Firestore.firestore()
-
     private var uid: String? { Auth.auth().currentUser?.uid }
 
     func createGoal(_ goal: Goal, setAsActive: Bool = true) async throws -> String {
@@ -28,7 +26,11 @@ final class GoalsRepository {
         var newGoal = goal
         newGoal.id = docRef.documentID
 
-        try docRef.setData(from: newGoal, merge: true)
+        // Ожидаем подтверждения записи goal-документа (хотя бы локального кеша)
+        // перед тем, как выставить activeGoalId. Без await была гонка:
+        // activeGoalId мог быть прочитан snapshot-листенером раньше, чем
+        // goal-документ появлялся в кеше → handler(nil) → цель пропадала.
+        try await docRef.setData(from: newGoal)
 
         if setAsActive {
             try await FirestorePaths.userDoc(uid: uid).setData([
@@ -64,46 +66,36 @@ final class GoalsRepository {
         let goalRef = FirestorePaths.goal(uid: uid, goalId: goalId)
         let txRef = FirestorePaths.transactions(uid: uid, goalId: goalId).document()
 
-        try await db.runTransaction { transaction, errorPointer in
-            do {
-                let snap = try transaction.getDocument(goalRef)
-                let raw = snap.data()?["currentAmount"]
+        let delta: Int
+        switch type {
+        case "deposit":    delta = amount
+        case "withdraw":   delta = -amount
+        default:           delta = amount
+        }
 
-                let current: Int
-                if let v = raw as? Int { current = v }
-                else if let v = raw as? Int64 { current = Int(v) }
-                else if let v = raw as? NSNumber { current = v.intValue }
-                else { current = 0 }
+        // Record the transaction document.
+        try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
+            txRef.setData([
+                "type": type,
+                "amount": amount,
+                "note": note as Any,
+                "challengeId": challengeId as Any,
+                "createdAt": FieldValue.serverTimestamp()
+            ]) { error in
+                if let error { cont.resume(throwing: error) } else { cont.resume() }
+            }
+        }
 
-                let delta: Int
-                switch type {
-                case "deposit":
-                    delta = amount
-                case "withdraw":
-                    delta = -amount
-                case "correction":
-                    delta = amount
-                default:
-                    delta = amount
-                }
-
-                transaction.setData([
-                    "type": type,
-                    "amount": amount,
-                    "note": note as Any,
-                    "challengeId": challengeId as Any,
-                    "createdAt": FieldValue.serverTimestamp()
-                ], forDocument: txRef, merge: true)
-
-                transaction.updateData([
-                    "currentAmount": current + delta,
-                    "updatedAt": FieldValue.serverTimestamp()
-                ], forDocument: goalRef)
-
-                return nil
-            } catch {
-                errorPointer?.pointee = error as NSError
-                return nil
+        // Atomically increment the goal balance.
+        // FieldValue.increment writes to the local Firestore cache immediately
+        // (as a pending write), which fires the snapshot listener right away —
+        // so the UI updates instantly without a server round-trip.
+        try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
+            goalRef.updateData([
+                "currentAmount": FieldValue.increment(Int64(delta)),
+                "updatedAt": FieldValue.serverTimestamp()
+            ]) { error in
+                if let error { cont.resume(throwing: error) } else { cont.resume() }
             }
         }
     }
@@ -111,6 +103,14 @@ final class GoalsRepository {
     func fetchActiveGoalId() async throws -> String? {
         let goal = try await fetchActiveGoal()
         return goal?.id
+    }
+
+    /// Возвращает ID всех целей пользователя (не только активной).
+    /// Используется в StatsService для агрегации транзакций по всем целям.
+    func fetchAllGoalIds() async throws -> [String] {
+        guard let uid else { throw GoalsRepoError.notSignedIn }
+        let snap = try await FirestorePaths.goals(uid: uid).getDocuments()
+        return snap.documents.map { $0.documentID }
     }
 
     /// Депозиты с `createdAt >= startDate` (только `type == deposit`, положительные суммы).

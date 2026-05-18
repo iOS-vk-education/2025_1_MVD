@@ -40,12 +40,9 @@ final class SeriesViewModel: ObservableObject {
             todayAddedAmount = perDayAdded[currentDayIndex]
         }
 
-        // Слушаем активную цель (но больше не подменяем валюту из goal.currency)
-        goalService.observeGoal { [weak self] goal in
-            DispatchQueue.main.async {
-                self?.goal = goal
-            }
-        }
+        // Цель приходит через HomeViewModel.goalVM.$currentGoal binding,
+        // НЕ через прямой observeGoal — иначе stopAllListening() убивает
+        // листенеры GoalViewModel и currentGoal зависает в nil.
 
         // Реагируем на смену глобальной валюты в профиле
         udObserver = NotificationCenter.default.addObserver(

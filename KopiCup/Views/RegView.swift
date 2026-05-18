@@ -229,19 +229,21 @@ struct RegView: View {
         Auth.auth().createUser(
             withEmail: form.email.trimmingCharacters(in: .whitespaces),
             password: form.password
-        ) { _, error in
-            form.isLoading = false
+        ) { [form] _, error in
+            Task { @MainActor in
+                form.isLoading = false
 
-            if let error = error {
-                form.errorMessage = convertFirebaseError(error)
-                showFirebaseError = true
-            } else {
-                if let creationDate = Auth.auth().currentUser?.metadata.creationDate {
-                    userStorage.registrationDate = creationDate
+                if let error {
+                    form.errorMessage = convertFirebaseError(error)
+                    showFirebaseError = true
+                } else {
+                    if let creationDate = Auth.auth().currentUser?.metadata.creationDate {
+                        userStorage.registrationDate = creationDate
+                    }
+
+                    onRegSuccess()
+                    dismiss()
                 }
-
-                onRegSuccess()
-                dismiss()
             }
         }
     }

@@ -1,5 +1,7 @@
 import Foundation
 import Combine
+import FirebaseAuth
+import FirebaseFirestore
 
 @MainActor
 final class AchievementsViewModel: ObservableObject {
@@ -96,6 +98,11 @@ final class AchievementsViewModel: ObservableObject {
         if let economy = economyStore {
             handleOwnedOutfits(economy.ownedOutfitIds)
         }
+
+        // Подтягиваем достижения, разблокированные на других устройствах
+        if let uid {
+            Task { await mergeRemoteAchievements(uid: uid) }
+        }
     }
 
     // MARK: - Handlers
@@ -150,7 +157,7 @@ final class AchievementsViewModel: ObservableObject {
 
     private func unlock(_ id: String) {
         // Если uid ещё не известен — буферизуем, чтобы не писать в "local"
-        guard currentUid != nil else {
+        guard let uid = currentUid else {
             pendingUnlocks.insert(id)
             return
         }
@@ -161,6 +168,40 @@ final class AchievementsViewModel: ObservableObject {
 
         if isFirstTime {
             didUnlockFirstTime(id)
+            // Синхронизируем в Firestore для cross-device доступа
+            syncAchievementToFirestore(id: id, uid: uid)
+        }
+    }
+
+    private func syncAchievementToFirestore(id: String, uid: String) {
+        Task {
+            guard Auth.auth().currentUser?.uid == uid else { return }
+            do {
+                try await FirestorePaths.userDoc(uid: uid).setData([
+                    "unlockedAchievements": FieldValue.arrayUnion([id])
+                ], merge: true)
+            } catch {
+                print("AchievementsViewModel: Firestore sync error:", error)
+            }
+        }
+    }
+
+    /// Подтягивает достижения с других устройств без показа баннера.
+    private func mergeRemoteAchievements(uid: String) async {
+        guard Auth.auth().currentUser?.uid == uid else { return }
+        do {
+            let snap = try await FirestorePaths.userDoc(uid: uid).getDocument()
+            let remoteIds = (snap.data()?["unlockedAchievements"] as? [String]) ?? []
+            var changed = false
+            for id in remoteIds where ID.all.contains(id) {
+                if !store.isUnlocked(id) {
+                    store.unlock(id)
+                    changed = true
+                }
+            }
+            if changed { refreshUnlockedFromStore() }
+        } catch {
+            print("AchievementsViewModel: remote fetch error:", error)
         }
     }
 

@@ -8,6 +8,7 @@ struct AboutGoalView: View {
     let onEdit: () -> Void
 
     @AppStorage("settings.currency.code") private var currencyCode: String = "RUB"
+    @EnvironmentObject private var l10n: L10n
 
     var body: some View {
         VStack(spacing: 0) {
@@ -112,7 +113,7 @@ struct AboutGoalView: View {
         VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text("Прогресс")
+                    Text(l10n.t(.aboutGoalProgress))
                         .font(.system(size: 15, weight: .semibold, design: .rounded))
                         .foregroundColor(.primary)
                     Spacer()
@@ -140,11 +141,11 @@ struct AboutGoalView: View {
 
             HStack(spacing: 12) {
                 infoPill(
-                    title: "Осталось",
+                    title: l10n.t(.aboutGoalRemaining),
                     value: formatMoney(max(goal.targetAmount - goal.currentAmount, 0))
                 )
                 infoPill(
-                    title: "Дата цели",
+                    title: l10n.t(.aboutGoalDeadline),
                     value: deadlineText
                 )
             }
@@ -152,7 +153,7 @@ struct AboutGoalView: View {
             Button(action: openProductLink) {
                 HStack(spacing: 8) {
                     Image(systemName: "link")
-                    Text("Посмотреть товар")
+                    Text(l10n.t(.aboutGoalViewProduct))
                         .fontWeight(.semibold)
                 }
                 .foregroundColor(.blue)
@@ -186,7 +187,7 @@ struct AboutGoalView: View {
                         .fill(Color(red: 102/255, green: 190/255, blue: 0))
                         .frame(height: 52)
                         .overlay(
-                            Text("Пополнить копилку")
+                            Text(l10n.t(.aboutGoalTopUp))
                                 .foregroundColor(.white)
                                 .bold()
                         )
@@ -245,7 +246,7 @@ struct AboutGoalView: View {
     private var deadlineText: String {
         guard let date = goal.deadlineDate else { return "—" }
         let fmt = DateFormatter()
-        fmt.locale = Locale(identifier: "ru_RU")
+        fmt.locale = l10n.locale
         fmt.dateFormat = "yyyy-MM-dd"
         return fmt.string(from: date)
     }

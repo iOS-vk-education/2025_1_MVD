@@ -14,6 +14,8 @@ struct StatsView: View {
     @State private var savingsSnapshot = SavingsStatsSnapshot.empty()
 
     @AppStorage("settings.currency.code") private var currencyCode: String = "RUB"
+    @Environment(\.scenePhase) private var scenePhase
+    @EnvironmentObject private var l10n: L10n
 
     private let statsService = StatsService()
     private let chartsCarouselHeight: CGFloat = 300
@@ -32,11 +34,11 @@ struct StatsView: View {
             // Sticky green header
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Статистика")
+                    Text(l10n.t(.statsTitle))
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
-                    Text("Отслеживайте свои накопления")
+                    Text(l10n.t(.statsSubtitle))
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.85))
                 }
@@ -66,6 +68,12 @@ struct StatsView: View {
         .onReceive(NotificationCenter.default.publisher(for: .didDeposit)) { _ in
             Task { await loadStats() }
         }
+        // Обновляем при выходе из фона — цифры не протухают при переходе через полночь
+        .onChange(of: scenePhase) { phase in
+            if phase == .active {
+                Task { await loadStats() }
+            }
+        }
     }
 
     private func loadStats() async {
@@ -78,9 +86,9 @@ struct StatsView: View {
 
     private var summaryCardsSection: some View {
         HStack(spacing: 12) {
-            SummaryCard(title: "Эта неделя", value: savingsSnapshot.weekTotal, currencyCode: currencyCode)
-            SummaryCard(title: "Этот месяц", value: savingsSnapshot.monthTotal, currencyCode: currencyCode)
-            SummaryCard(title: "Ср. / день", value: savingsSnapshot.avgPerDayThisMonth, currencyCode: currencyCode)
+            SummaryCard(title: l10n.t(.statsThisWeek), value: savingsSnapshot.weekTotal, currencyCode: currencyCode)
+            SummaryCard(title: l10n.t(.statsThisMonth), value: savingsSnapshot.monthTotal, currencyCode: currencyCode)
+            SummaryCard(title: l10n.t(.statsAvgPerDay), value: savingsSnapshot.avgPerDayThisMonth, currencyCode: currencyCode)
         }
     }
 
@@ -88,13 +96,13 @@ struct StatsView: View {
         VStack(alignment: .leading, spacing: 0) {
             TabView(selection: $selectedChartPage) {
                 chartPage(
-                    title: "Накопления за неделю",
+                    title: l10n.t(.statsWeeklyChart),
                     content: WeeklySavingsBarChart(values: savingsSnapshot.weekDailyTotals)
                 )
                 .tag(0)
 
                 chartPage(
-                    title: "Динамика по месяцам",
+                    title: l10n.t(.statsMonthlyChart),
                     content: MonthlyDynamicsLineChart(
                         values: savingsSnapshot.monthDynamicsValues,
                         monthLabels: savingsSnapshot.monthDynamicsLabels
@@ -103,7 +111,7 @@ struct StatsView: View {
                 .tag(1)
 
                 chartPage(
-                    title: "Сильные и слабые стороны",
+                    title: l10n.t(.statsRadarChart),
                     content: StatsRadarChart(values: radarValues)
                 )
                 .tag(2)
@@ -120,13 +128,13 @@ struct StatsView: View {
 
     private var summaryCharacteristics: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("Сильные стороны")
+            Text(l10n.t(.statsStrengths))
                 .fontWeight(.bold)
 
             StrengthsSummary(values: radarValues)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text("Нужно подтянуть")
+            Text(l10n.t(.statsWeaknesses))
                 .fontWeight(.bold)
 
             WeaknessesSummary(values: radarValues)

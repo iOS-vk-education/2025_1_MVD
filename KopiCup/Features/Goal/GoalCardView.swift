@@ -5,6 +5,7 @@ private let kopiGreen = Color(red: 102/255, green: 190/255, blue: 0)
 struct GoalCardView: View {
     let goal: Goal
     @AppStorage("settings.currency.code") private var currencyCode: String = "RUB"
+    @EnvironmentObject private var l10n: L10n
 
     private var hasPhoto: Bool {
         guard let url = goal.imageURL else { return false }
@@ -28,9 +29,9 @@ struct GoalCardView: View {
                     .padding(.top, 2)
 
                 HStack {
-                    Text("Собрано: \(formatMoney(goal.currentAmount))")
+                    Text("\(l10n.t(.goalCollected)) \(formatMoney(goal.currentAmount))")
                     Spacer()
-                    Text("Цель: \(formatMoney(goal.targetAmount))")
+                    Text("\(l10n.t(.goalTarget)) \(formatMoney(goal.targetAmount))")
                 }
                 .font(.footnote)
                 .foregroundColor(.white.opacity(0.85))

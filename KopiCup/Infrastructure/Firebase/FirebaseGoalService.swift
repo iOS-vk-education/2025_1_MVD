@@ -3,6 +3,13 @@ import FirebaseAuth
 import FirebaseFirestore
 import FirebaseFirestoreSwift
 
+// Broadcast: a deposit was successfully written to Firestore.
+// GoalViewModel does NOT subscribe (Firestore listener handles UI update).
+// StatsView and AchievementsViewModel subscribe to react to deposits.
+extension Notification.Name {
+    static let didDeposit = Notification.Name("KopiCup.didDeposit")
+}
+
 final class FirebaseGoalService: GoalService {
 
     private let repo = GoalsRepository()
@@ -52,30 +59,40 @@ final class FirebaseGoalService: GoalService {
         stopUserListening()
 
         userListener = FirestorePaths.userDoc(uid: uid)
-            .addSnapshotListener { [weak self] snapshot, _ in
+            .addSnapshotListener(includeMetadataChanges: false) { [weak self] snapshot, error in
                 guard let self else { return }
 
-                guard let data = snapshot?.data() else {
-                    self.stopGoalListening()
-                    self.currentGoalId = nil
-                    handler(nil)
-                    // Попробуем восстановить активную цель (если есть хоть одна)
-                    self.ensureActiveGoalIfPossible(uid: uid, handler: handler)
+                // Сетевая ошибка — не сбрасываем цель, показываем последнее состояние
+                if let error {
+                    print("listenUserDoc network error (goal kept):", error)
                     return
                 }
 
-                if let goalId = data["activeGoalId"] as? String, !goalId.isEmpty {
-                    if self.currentGoalId != goalId {
-                        self.currentGoalId = goalId
-                        self.listenGoal(uid: uid, goalId: goalId, handler: handler)
+                // Документ существует — обрабатываем данные
+                if let snapshot, snapshot.exists, let data = snapshot.data() {
+                    if let goalId = data["activeGoalId"] as? String, !goalId.isEmpty {
+                        if self.currentGoalId != goalId {
+                            self.currentGoalId = goalId
+                            self.listenGoal(uid: uid, goalId: goalId, handler: handler)
+                        }
+                    } else {
+                        // activeGoalId отсутствует — попробуем восстановить
+                        self.stopGoalListening()
+                        self.currentGoalId = nil
+                        handler(nil)
+                        self.ensureActiveGoalIfPossible(uid: uid, handler: handler)
                     }
-                } else {
+                    return
+                }
+
+                // Документа нет совсем (новый пользователь или был удалён)
+                if let snapshot, !snapshot.exists {
                     self.stopGoalListening()
                     self.currentGoalId = nil
                     handler(nil)
-                    // Попробуем восстановить активную цель (если есть хоть одна)
                     self.ensureActiveGoalIfPossible(uid: uid, handler: handler)
                 }
+                // snapshot == nil и error == nil: промежуточное состояние, ждём следующего события
             }
     }
 
@@ -83,9 +100,15 @@ final class FirebaseGoalService: GoalService {
         stopGoalListening()
 
         goalListener = FirestorePaths.goal(uid: uid, goalId: goalId)
-            .addSnapshotListener { snapshot, error in
-                guard let snapshot else {
-                    if let error { print("listenGoal snapshot error:", error) }
+            .addSnapshotListener(includeMetadataChanges: false) { snapshot, error in
+                // Сетевая ошибка — не сбрасываем цель
+                if let error {
+                    print("listenGoal network error (goal kept):", error)
+                    return
+                }
+                guard let snapshot else { return }
+                guard snapshot.exists else {
+                    // Документ цели физически удалён
                     handler(nil)
                     return
                 }
@@ -94,7 +117,6 @@ final class FirebaseGoalService: GoalService {
                     handler(goal)
                 } catch {
                     print("decode Goal error:", error)
-                    handler(nil)
                 }
             }
     }
@@ -208,11 +230,7 @@ final class FirebaseGoalService: GoalService {
 
                 try await dailyAmountService.addToday(amount: amount)
 
-                NotificationCenter.default.post(
-                    name: .didDeposit,
-                    object: nil,
-                    userInfo: ["amount": amount]
-                )
+                NotificationCenter.default.post(name: .didDeposit, object: nil)
             } catch {
                 print("addMoney error:", error)
             }
@@ -254,11 +272,7 @@ final class FirebaseGoalService: GoalService {
                 let targetDay = DayMath.addDays(start, days: dayIndex)
                 try await dailyAmountService.add(amount: amount, for: targetDay)
 
-                NotificationCenter.default.post(
-                    name: .didDeposit,
-                    object: nil,
-                    userInfo: ["amount": amount]
-                )
+                NotificationCenter.default.post(name: .didDeposit, object: nil)
             } catch {
                 print("addMoney(forDayIndex:) error:", error)
             }

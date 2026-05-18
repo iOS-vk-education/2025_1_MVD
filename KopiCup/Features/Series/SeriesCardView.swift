@@ -7,9 +7,13 @@ struct DayItem: Identifiable {
 
 struct SeriesCardView: View {
     @ObservedObject var viewModel: SeriesViewModel
+    @EnvironmentObject private var l10n: L10n
     @State private var showNoGoalAlert = false
 
-    private let weekDays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+    private var weekDays: [String] {
+        [l10n.t(.mon), l10n.t(.tue), l10n.t(.wed),
+         l10n.t(.thu), l10n.t(.fri), l10n.t(.sat), l10n.t(.sun)]
+    }
 
     private var orderedDays: [DayItem] {
         let today = viewModel.currentDayIndex
@@ -48,8 +52,8 @@ struct SeriesCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("За неделю накоплено \(viewModel.formatWithCurrentCurrency(viewModel.totalSavedThisWeek))")
-                Text("Продолжай в том же духе!")
+                Text(l10n.t(.seriesWeeklySaved, viewModel.formatWithCurrentCurrency(viewModel.totalSavedThisWeek)))
+                Text(l10n.t(.seriesKeepGoing))
             }
             .font(.headline)
             .foregroundColor(cardColor)
@@ -122,8 +126,8 @@ struct SeriesCardView: View {
                 viewModel: viewModel
             )
         }
-        .alert("Сначала создай цель", isPresented: $showNoGoalAlert) {
-            Button("Ок", role: .cancel) { }
+        .alert(l10n.t(.seriesNoGoal), isPresented: $showNoGoalAlert) {
+            Button(l10n.t(.ok), role: .cancel) { }
         }
     }
 }

@@ -4,6 +4,7 @@ import UIKit
 struct ProfileView: View {
     @EnvironmentObject private var appUserStorage: UserStorage
     @EnvironmentObject private var economy: EconomyStore
+    @EnvironmentObject private var l10n: L10n
 
     private let userService = LocalUserService()
     private let localUser = LocalUserService()
@@ -34,12 +35,12 @@ struct ProfileView: View {
         // 1) Молниеносный старт, 2) Первое пополнение, 3) 7 дней подряд,
         // 4) Цель достигнута, 5) 30 дней подряд, 6) Лучший друг
         return [
-            AchievementItem(id: ids.lightningStart, title: "Молниеносный старт", systemImage: "bolt.fill", achieved: isUnlocked(ids.lightningStart)),
-            AchievementItem(id: ids.firstTopup, title: "Первое пополнение", systemImage: "star.fill", achieved: isUnlocked(ids.firstTopup)),
-            AchievementItem(id: ids.sevenDays, title: "7 дней подряд", systemImage: "flame.fill", achieved: isUnlocked(ids.sevenDays)),
-            AchievementItem(id: ids.goalReached, title: "Цель достигнута", systemImage: "scope", achieved: isUnlocked(ids.goalReached)),
-            AchievementItem(id: ids.thirtyDays, title: "30 дней подряд", systemImage: "medal.fill", achieved: isUnlocked(ids.thirtyDays)),
-            AchievementItem(id: ids.bestFriend, title: "Лучший друг", systemImage: "crown.fill", achieved: isUnlocked(ids.bestFriend))
+            AchievementItem(id: ids.lightningStart, title: l10n.t(.achievLightningStart), systemImage: "bolt.fill", achieved: isUnlocked(ids.lightningStart)),
+            AchievementItem(id: ids.firstTopup, title: l10n.t(.achievFirstTopup), systemImage: "star.fill", achieved: isUnlocked(ids.firstTopup)),
+            AchievementItem(id: ids.sevenDays, title: l10n.t(.achievSevenDays), systemImage: "flame.fill", achieved: isUnlocked(ids.sevenDays)),
+            AchievementItem(id: ids.goalReached, title: l10n.t(.achievGoalReached), systemImage: "scope", achieved: isUnlocked(ids.goalReached)),
+            AchievementItem(id: ids.thirtyDays, title: l10n.t(.achievThirtyDays), systemImage: "medal.fill", achieved: isUnlocked(ids.thirtyDays)),
+            AchievementItem(id: ids.bestFriend, title: l10n.t(.achievBestFriend), systemImage: "crown.fill", achieved: isUnlocked(ids.bestFriend))
         ]
     }
     private var achievedCount: Int { achievements.filter { $0.achieved }.count }
@@ -97,10 +98,18 @@ struct ProfileView: View {
         .onChange(of: appUserStorage.uid) { newUid in
             achievementsVM.setUid(newUid)
         }
+        .onChange(of: currencyCode) { newCode in
+            // Сохраняем выбор валюты в Firestore — синхронизируется на все устройства аккаунта
+            appUserStorage.syncCurrencyToFirestore(code: newCode)
+        }
         .preferredColorScheme(isDarkMode ? .dark : .light)
         .sheet(isPresented: $showEditSheet) {
             EditNameSheet(
                 currentName: displayName,
+                titleText: l10n.t(.editName),
+                placeholderText: l10n.t(.yourName),
+                cancelText: l10n.t(.cancel),
+                saveText: l10n.t(.save),
                 onCancel: { showEditSheet = false },
                 onSave: { newName in
                     localUser.updateName(newName)
@@ -111,16 +120,16 @@ struct ProfileView: View {
             .presentationDetents([.height(220)])
         }
         .confirmationDialog(
-            "Вы действительно хотите выйти?",
+            l10n.t(.logoutConfirm),
             isPresented: $showLogoutConfirm,
             titleVisibility: .visible
         ) {
-            Button("Выйти", role: .destructive) {
+            Button(l10n.t(.logout), role: .destructive) {
                 performLogout()
             }
-            Button("Отмена", role: .cancel) {}
+            Button(l10n.t(.cancel), role: .cancel) {}
         } message: {
-            Text("Вы вернётесь на экран входа.")
+            Text(l10n.t(.logoutReturn))
         }
         .sheet(isPresented: $showImagePicker) {
             SystemImagePicker(
@@ -154,11 +163,11 @@ struct ProfileView: View {
             }
             .contentShape(Circle())
             .contextMenu {
-                Button("Выбрать из галереи", systemImage: "photo.on.rectangle") {
+                Button(l10n.t(.chooseFromGallery), systemImage: "photo.on.rectangle") {
                     pickerSource = .photoLibrary
                     showImagePicker = true
                 }
-                Button("Сделать фото", systemImage: "camera") {
+                Button(l10n.t(.takePhoto), systemImage: "camera") {
                     pickerSource = .camera
                     showImagePicker = true
                 }
@@ -166,7 +175,7 @@ struct ProfileView: View {
                     Button(role: .destructive) {
                         removeAvatar()
                     } label: {
-                        Label("Удалить фото", systemImage: "trash")
+                        Label(l10n.t(.deletePhoto), systemImage: "trash")
                     }
                 }
             }
@@ -175,7 +184,7 @@ struct ProfileView: View {
                 Text(displayName.isEmpty ? "Анна Дегтярева" : displayName)
                     .font(.system(size: 20, weight: .semibold, design: .rounded))
                     .foregroundColor(.primary)
-                Text("Копит с \(sinceText)")
+                Text("\(l10n.t(.savingSince)) \(sinceText)")
                     .font(.system(size: 13, weight: .regular, design: .rounded))
                     .foregroundColor(.secondary)
             }
@@ -224,7 +233,7 @@ struct ProfileView: View {
         }
 
         let formatter = Foundation.DateFormatter()
-        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.locale = l10n.locale
         formatter.dateFormat = "LLLL yyyy"
         return formatter.string(from: date)
     }
@@ -235,7 +244,7 @@ struct ProfileView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "trophy.fill")
                         .foregroundColor(.orange)
-                    Text("Достижения")
+                    Text(l10n.t(.profileAchievements))
                         .font(.system(size: 18, weight: .semibold, design: .rounded))
                 }
                 Spacer()
@@ -264,7 +273,7 @@ struct ProfileView: View {
     }
     
     private var settingsHeader: some View {
-        Text("Настройки")
+        Text(l10n.t(.profileSettings))
             .font(.system(size: 20, weight: .semibold, design: .rounded))
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, 8)
@@ -276,15 +285,15 @@ struct ProfileView: View {
             SettingsToggleRow(
                 icon: "sun.max.fill",
                 iconColor: Color.yellow,
-                title: "Темная тема",
+                title: l10n.t(.darkTheme),
                 subtitle: nil,
                 isOn: $isDarkMode
             )
-            
+
             SettingsPickerRow(
                 icon: "banknote.fill",
                 iconColor: Color.green,
-                title: "Валюта",
+                title: l10n.t(.currency),
                 valueText: currencyDisplayName(currencyCode)
             ) {
                 Button("₽ RUB") { currencyCode = "RUB" }
@@ -292,23 +301,23 @@ struct ProfileView: View {
                 Button("€ EUR") { currencyCode = "EUR" }
                 Button("¥ CNY") { currencyCode = "CNY" }
             }
-            
+
             SettingsPickerRow(
                 icon: "globe",
                 iconColor: Color.blue,
-                title: "Язык",
+                title: l10n.t(.language),
                 valueText: languageDisplayName(languageCode)
             ) {
                 Button("Русский") { languageCode = "ru" }
                 Button("English") { languageCode = "en" }
             }
-            
+
             Button(role: .destructive) {
                 showLogoutConfirm = true
             } label: {
                 HStack {
                     Spacer()
-                    Text("Выйти из аккаунта")
+                    Text(l10n.t(.logout))
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                     Spacer()
                 }
@@ -523,20 +532,36 @@ private struct SettingsPickerRow<MenuContent: View>: View {
 
 private struct EditNameSheet: View {
     @State private var name: String
+    let titleText: String
+    let placeholderText: String
+    let cancelText: String
+    let saveText: String
     let onCancel: () -> Void
     let onSave: (String) -> Void
-    
-    init(currentName: String, onCancel: @escaping () -> Void, onSave: @escaping (String) -> Void) {
+
+    init(
+        currentName: String,
+        titleText: String = "Изменить имя",
+        placeholderText: String = "Ваше имя",
+        cancelText: String = "Отмена",
+        saveText: String = "Сохранить",
+        onCancel: @escaping () -> Void,
+        onSave: @escaping (String) -> Void
+    ) {
         _name = State(initialValue: currentName)
+        self.titleText = titleText
+        self.placeholderText = placeholderText
+        self.cancelText = cancelText
+        self.saveText = saveText
         self.onCancel = onCancel
         self.onSave = onSave
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Изменить имя")
+            Text(titleText)
                 .font(.headline)
-            TextField("Ваше имя", text: $name)
+            TextField(placeholderText, text: $name)
                 .textInputAutocapitalization(.words)
                 .padding(10)
                 .background(
@@ -544,9 +569,9 @@ private struct EditNameSheet: View {
                         .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                 )
             HStack {
-                Button("Отмена", action: onCancel)
+                Button(cancelText, action: onCancel)
                 Spacer()
-                Button("Сохранить") {
+                Button(saveText) {
                     let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
                     if !trimmed.isEmpty { onSave(trimmed) }
                 }
@@ -575,11 +600,13 @@ struct ProfileView_Previews: PreviewProvider {
                 .previewDisplayName("Light")
                 .environmentObject(UserStorage())
                 .environmentObject(EconomyStore())
+                .environmentObject(L10n.shared)
             ProfileView()
                 .preferredColorScheme(.dark)
                 .previewDisplayName("Dark")
                 .environmentObject(UserStorage())
                 .environmentObject(EconomyStore())
+                .environmentObject(L10n.shared)
         }
     }
 }

@@ -6,6 +6,7 @@ struct AddMoneyView: View {
     @State private var amountText = ""
 
     @AppStorage("settings.currency.code") private var currencyCode: String = "RUB"
+    @EnvironmentObject private var l10n: L10n
 
     private let quickRow1: [Int] = [100, 300, 500, 800]
     private let quickSingle: Int = 1000
@@ -34,13 +35,13 @@ struct AddMoneyView: View {
                         .font(.system(size: 24, weight: .bold))
                 }
 
-                Text("Пополнить копилку")
+                Text(l10n.t(.addMoneyTitle))
                     .font(.system(size: 22, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
 
                 let current = viewModel.goal?.currentAmount ?? 0
                 let target = viewModel.goal?.targetAmount ?? 0
-                Text("Накоплено: \(viewModel.formatWithCurrentCurrency(current)) из \(viewModel.formatWithCurrentCurrency(target))")
+                Text(l10n.t(.addMoneySavedOf, viewModel.formatWithCurrentCurrency(current), viewModel.formatWithCurrentCurrency(target)))
                     .font(.system(size: 14, weight: .semibold, design: .rounded))
                     .foregroundColor(.white.opacity(0.9))
                     .padding(.bottom, 12)
@@ -119,7 +120,7 @@ struct AddMoneyView: View {
 
     private var placeholderText: String {
         let symbol = currencySymbol(for: currencyCode) ?? currencyCode
-        return "Введите сумму \(symbol)"
+        return l10n.t(.addMoneyPlaceholder, symbol)
     }
 
     private var quickButtonsRow: some View {
@@ -173,7 +174,7 @@ struct AddMoneyView: View {
                     viewModel.closeFullGoal()
                     isPresented = false
                 }) {
-                    Text("Закрыть цель (\(viewModel.remainingToGoalText))")
+                    Text(l10n.t(.addMoneyCloseGoal, viewModel.remainingToGoalText))
                         .font(.headline)
                         .foregroundColor(.white)
                         .padding()
@@ -188,7 +189,7 @@ struct AddMoneyView: View {
                     viewModel.completeGoal()
                     isPresented = false
                 }) {
-                    Text("Закрыть цель (\(viewModel.remainingAmountText))")
+                    Text(l10n.t(.addMoneyCloseGoal, viewModel.remainingAmountText))
                         .font(.headline)
                         .foregroundColor(.white)
                         .padding()
@@ -229,7 +230,7 @@ struct AddMoneyView: View {
                     )
                     .frame(height: 48)
                     .overlay(
-                        Text("Добавить")
+                        Text(l10n.t(.addMoneyAdd))
                             .foregroundColor(.white)
                             .bold()
                     )

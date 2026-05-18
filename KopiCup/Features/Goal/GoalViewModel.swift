@@ -1,9 +1,4 @@
 import SwiftUI
-import Combine
-
-extension Notification.Name {
-    static let didDeposit = Notification.Name("KopiCup.didDeposit")
-}
 
 final class GoalViewModel: ObservableObject {
     @Published var currentGoal: Goal?
@@ -12,36 +7,30 @@ final class GoalViewModel: ObservableObject {
     @Published var showEditModal = false
 
     private let goalService: GoalService
-    private var cancellables = Set<AnyCancellable>()
 
     init(goalService: GoalService) {
         self.goalService = goalService
 
+        // The Firestore snapshot listener in FirebaseGoalService fires immediately
+        // from the local cache when FieldValue.increment writes a pending update —
+        // so no optimistic notification is needed here.
         goalService.observeGoal { [weak self] goal in
-            DispatchQueue.main.async { self?.currentGoal = goal }
+            Task { @MainActor in self?.currentGoal = goal }
         }
-
-        NotificationCenter.default.publisher(for: .didDeposit)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] notification in
-                guard let amount = notification.userInfo?["amount"] as? Int else { return }
-                self?.currentGoal?.currentAmount += amount
-            }
-            .store(in: &cancellables)
     }
 
     func createGoal(_ goal: Goal) {
-        DispatchQueue.main.async { self.currentGoal = goal }
+        currentGoal = goal
         goalService.createGoal(goal)
     }
 
     func updateGoal(_ goal: Goal) {
-        DispatchQueue.main.async { self.currentGoal = goal }
+        currentGoal = goal
         goalService.updateGoal(goal)
     }
 
     func deleteGoal() {
-        DispatchQueue.main.async { self.currentGoal = nil }
+        currentGoal = nil
         goalService.deleteGoal()
     }
 

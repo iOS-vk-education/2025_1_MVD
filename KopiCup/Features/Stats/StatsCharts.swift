@@ -49,7 +49,10 @@ struct WeeklySavingsBarChart: UIViewRepresentable {
 }
 
 private final class WeekDayAxisFormatter: NSObject, AxisValueFormatter {
-    private let labels = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+    private var labels: [String] {
+        let l = L10n.shared
+        return [l.t(.mon), l.t(.tue), l.t(.wed), l.t(.thu), l.t(.fri), l.t(.sat), l.t(.sun)]
+    }
     func stringForValue(_ value: Double, axis: DGCharts.AxisBase?) -> String {
         let i = Int(value)
         guard i >= 0, i < labels.count else { return "" }

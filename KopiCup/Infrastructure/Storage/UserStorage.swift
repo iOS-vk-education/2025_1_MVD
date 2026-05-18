@@ -1,5 +1,6 @@
 import Foundation
 import FirebaseAuth
+import FirebaseFirestore
 
 final class UserStorage: ObservableObject {
 
@@ -26,9 +27,11 @@ final class UserStorage: ObservableObject {
             local.setActive(uid: user?.uid)
             LocalChallengeStore.shared.setActive(uid: user?.uid)
 
-            if user != nil {
+            if let user {
                 let profile = local.fetchProfile()
                 self.name = profile.name
+                // Подтягиваем валюту с сервера — она единая для аккаунта, не для устройства
+                Task { await self.syncCurrencyFromFirestore(uid: user.uid) }
             } else {
                 self.name = "Гость"
             }
@@ -54,6 +57,41 @@ final class UserStorage: ObservableObject {
     }
 
     func loginSucceeded() {
+    }
+
+    // MARK: - Currency sync
+
+    /// Читает валюту из Firestore и пишет в UserDefaults.
+    /// Вызывается при логине — перезаписывает локальное устройство настройкой аккаунта.
+    private func syncCurrencyFromFirestore(uid: String) async {
+        do {
+            let snap = try await FirestorePaths.userDoc(uid: uid).getDocument()
+            if let code = snap.data()?["currencyCode"] as? String, !code.isEmpty {
+                // ВАЖНО: @AppStorage наблюдает за UserDefaults и публикует изменения в SwiftUI.
+                // Запись обязательно с главного потока — иначе "Publishing from background thread".
+                await MainActor.run {
+                    UserDefaults.standard.set(code, forKey: "settings.currency.code")
+                }
+            }
+        } catch {
+            print("UserStorage: currency sync error:", error)
+        }
+    }
+
+    /// Записывает выбранную валюту в Firestore.
+    /// Вызывается из ProfileView при смене валюты.
+    func syncCurrencyToFirestore(code: String) {
+        guard let uid = self.uid,
+              Auth.auth().currentUser?.uid == uid else { return }
+        Task {
+            do {
+                try await FirestorePaths.userDoc(uid: uid).setData([
+                    "currencyCode": code
+                ], merge: true)
+            } catch {
+                print("UserStorage: currency write error:", error)
+            }
+        }
     }
 
     deinit {

@@ -4,6 +4,7 @@ struct GoalDetailsView: View {
     let goal: Goal
     @Binding var isPresented: Bool
     var onEdit: () -> Void
+    @EnvironmentObject private var l10n: L10n
 
     var body: some View {
         VStack {
@@ -21,7 +22,7 @@ struct GoalDetailsView: View {
                                 Image(systemName: "photo")
                                     .font(.system(size: 32))
                                     .foregroundColor(.secondary)
-                                Text("Изображение появится позже")
+                                Text(l10n.t(.goalDetailsImagePlaceholder))
                                     .font(.footnote)
                                     .foregroundColor(.secondary)
                             }
@@ -49,7 +50,7 @@ struct GoalDetailsView: View {
 
     private var header: some View {
         ZStack {
-            Text("Детали")
+            Text(l10n.t(.goalDetailsTitle))
                 .font(.title2)
                 .fontWeight(.bold)
         }

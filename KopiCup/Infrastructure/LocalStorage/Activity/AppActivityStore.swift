@@ -53,6 +53,14 @@ actor AppActivityStore {
         return db.activeDayKeysByUid[uid] ?? []
     }
 
+    func mergeKeys(uid: String, keys: Set<String>) {
+        ensureLoaded()
+        var set = db.activeDayKeysByUid[uid] ?? []
+        set.formUnion(keys)
+        db.activeDayKeysByUid[uid] = set
+        persist()
+    }
+
     func clear(uid: String) {
         ensureLoaded()
         db.activeDayKeysByUid.removeValue(forKey: uid)

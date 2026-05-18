@@ -2,7 +2,7 @@ import Foundation
 import FirebaseAuth
 import FirebaseFirestore
 
-final class FirebaseChallengeService: ChallengeService {
+final class FirebaseChallengeService: ChallengeService, @unchecked Sendable {
     private let localStore: LocalChallengeStore
     private let defaults: UserDefaults
     private let migrationKeyPrefix = "challenge.migrated.v1."
@@ -17,16 +17,54 @@ final class FirebaseChallengeService: ChallengeService {
     private var listener: ListenerRegistration?
     private var handlers: [(UserChallenge?) -> Void] = []
 
+    private var authHandle: AuthStateDidChangeListenerHandle?
+    /// UID for which the Firestore listener is currently active. Used to avoid
+    /// restarting the listener unnecessarily on repeated auth state callbacks.
+    private var listenerUid: String?
+
     init(
         localStore: LocalChallengeStore = .shared,
         defaults: UserDefaults = .standard
     ) {
         self.localStore = localStore
         self.defaults = defaults
+
+        // Restore locally-cached state so the challenge UI is never blank
+        // while the Firestore listener re-establishes after app restart.
+        self.activeState = localStore.loadActive()
+
+        // React to logout/login cycles without requiring ChallengeViewModel.init
+        // to be called again (the VM persists as @StateObject).
+        authHandle = Auth.auth().addStateDidChangeListener { [weak self] _, user in
+            guard let self else { return }
+            if let uid = user?.uid {
+                // Skip if we already have an active listener for this user.
+                guard self.listenerUid != uid else { return }
+                Task {
+                    let loaded = await self.loadChallengesCatalog()
+                    DispatchQueue.main.async {
+                        self.challenges = loaded
+                        self.startListening(uid: uid)
+                        // Re-publish so the UI reflects the restored state
+                        // with the freshly-loaded challenge catalog.
+                        self.publishCurrentState()
+                    }
+                }
+            } else {
+                // Logged out — stop Firestore listener but keep in-memory state
+                // so the challenge isn't wiped mid-session or on re-login.
+                self.listener?.remove()
+                self.listener = nil
+                self.listenerUid = nil
+            }
+        }
     }
 
     deinit {
         listener?.remove()
+        if let authHandle {
+            Auth.auth().removeStateDidChangeListener(authHandle)
+        }
     }
 
     func loadChallenges(completion: @escaping ([Challenge]) -> Void) {
@@ -182,6 +220,7 @@ final class FirebaseChallengeService: ChallengeService {
 
     private func startListening(uid: String) {
         listener?.remove()
+        listenerUid = uid
 
         listener = FirestorePaths.activeChallengeState(uid: uid)
             .addSnapshotListener { [weak self] snapshot, error in
@@ -194,6 +233,11 @@ final class FirebaseChallengeService: ChallengeService {
                 }
 
                 guard let snapshot, snapshot.exists, let data = snapshot.data() else {
+                    // If the user just logged out, the listener may fire with a
+                    // "document doesn't exist" event due to revoked credentials.
+                    // Don't wipe state in that case — the logout handler already
+                    // stopped the listener for the next auth cycle.
+                    guard Auth.auth().currentUser != nil else { return }
                     self.activeState = nil
                     self.localStore.saveActive(nil)
                     self.publishCurrentState()

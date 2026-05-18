@@ -11,11 +11,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
     
     private func setupFirestore() {
-        let db = Firestore.firestore()
-        let settings = Firestore.firestore().settings
-        settings.isPersistenceEnabled = true
-        settings.cacheSizeBytes = FirestoreCacheSizeUnlimited
-        db.settings = settings
+        let settings = FirestoreSettings()
+        // Постоянный диск-кэш — данные живут между запусками.
+        // Без этого при VPN/офлайн Firestore не возвращает кешированные данные.
+        settings.cacheSettings = PersistentCacheSettings(
+            sizeBytes: NSNumber(value: FirestoreCacheSizeUnlimited)
+        )
+        Firestore.firestore().settings = settings
     }
 }
 
@@ -33,6 +35,7 @@ struct KopiCupApp: App {
             AppRootView()
                 .environmentObject(userStorage)
                 .environmentObject(economy)
+                .environmentObject(L10n.shared)
         }
     }
 }

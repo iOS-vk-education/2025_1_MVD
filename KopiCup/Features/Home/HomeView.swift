@@ -23,6 +23,7 @@ struct HomeView: View {
     @StateObject private var achievementsVM = AchievementsViewModel()
 
     @EnvironmentObject private var economy: EconomyStore
+    @EnvironmentObject private var l10n: L10n
 
     init(viewModel: HomeViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -70,14 +71,14 @@ struct HomeView: View {
                                         }
                                     }
                                     .buttonStyle(.plain)
-                                    .accessibilityLabel("Открыть копилку")
+                                    .accessibilityLabel(l10n.t(.openPiggy))
 
                                     VStack(alignment: .leading, spacing: 6) {
-                                        Text("Привет, \(viewModel.userName)!")
+                                        Text(l10n.t(.homeGreeting, viewModel.userName))
                                             .font(.system(size: 30, weight: .bold, design: .rounded))
                                             .foregroundColor(Color(red: 102/255, green: 190/255, blue: 0))
 
-                                        Text("Продолжай в том же духе!")
+                                        Text(l10n.t(.keepGoing))
                                             .font(.subheadline)
                                             .foregroundColor(.secondary)
                                     }
@@ -228,13 +229,13 @@ struct HomeView: View {
                 achievementsVM.setEconomyStore(economy)
                 achievementsVM.setUid(Auth.auth().currentUser?.uid)
             }
-            .alert("Челлендж провален", isPresented: Binding(
+            .alert(l10n.t(.challengeFailed), isPresented: Binding(
                 get: { viewModel.challengeVM.showFailedChallengeAlert },
                 set: { viewModel.challengeVM.showFailedChallengeAlert = $0 }
             )) {
-                Button("Попробую снова!", role: .cancel) { }
+                Button(l10n.t(.tryAgain), role: .cancel) { }
             } message: {
-                Text("Ты пропустил день в челлендже «\(viewModel.challengeVM.failedChallengeName)». Не расстраивайся — каждый новый день это шанс начать заново!")
+                Text(l10n.t(.challengeFailedMsg, viewModel.challengeVM.failedChallengeName))
             }
 
             // Баннер наград/достижений

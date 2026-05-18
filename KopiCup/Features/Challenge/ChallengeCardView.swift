@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ChallengeCardView: View {
     @ObservedObject var viewModel: ChallengeViewModel
+    @EnvironmentObject private var l10n: L10n
 
     var onAccept: (() -> Void)? = nil
     var onTrackToday: (() -> Void)? = nil
@@ -13,7 +14,7 @@ struct ChallengeCardView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Text(viewModel.displayedChallenge?.name ?? "Нет челленджа")
+                        Text(viewModel.displayedChallenge?.name ?? l10n.t(.challengeNone))
                             .font(.headline)
                             .fontWeight(.semibold)
                             .foregroundColor(viewModel.isAccepted ? .white : .primary)
@@ -26,7 +27,7 @@ struct ChallengeCardView: View {
                                     .foregroundColor((viewModel.isAccepted ? Color.white : Color.blue).opacity(i < diff ? 1.0 : 0.35))
                             }
                         }
-                        .accessibilityLabel("Сложность: \(diff) из \(maxDifficulty)")
+                        .accessibilityLabel(l10n.t(.challengeDifficulty, diff, maxDifficulty))
                     }
 
                     Text(viewModel.displayedChallenge?.description ?? "")
@@ -53,7 +54,7 @@ struct ChallengeCardView: View {
                     HStack(spacing: 10) {
                         Image(systemName: "checkmark.circle")
                             .font(.headline)
-                        Text("Отмечайте свои успехи сегодня")
+                        Text(l10n.t(.challengeTrackToday))
                             .font(.subheadline)
                             .fontWeight(.semibold)
                     }
@@ -74,14 +75,14 @@ struct ChallengeCardView: View {
                 .padding(.top, 2)
             } else {
                 HStack(spacing: 12) {
-                    Button("Принимаю") {
+                    Button(l10n.t(.challengeAccept)) {
                         onAccept?()
                     }
                     .buttonStyle(ActionButtonStyle(variant: .primary))
 
                     Button(action: { withAnimation { viewModel.nextChallenge() } }) {
                         HStack(spacing: 4) {
-                            Text("Другой")
+                            Text(l10n.t(.challengeNext))
                             Image(systemName: "arrow.clockwise")
                         }
                     }
