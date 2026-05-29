@@ -23,26 +23,21 @@ struct ChallengeDetailView: View {
         return Swift.max(0, Swift.min(value, maxDifficulty))
     }
 
-    // Период текущей календарной недели: пн - вс
+    // Период 7 дней начиная с даты принятия челленджа (или с сегодня, если ещё не принят).
     private var periodText: String {
         let fmt = DateFormatter()
         fmt.dateFormat = "d.MM"
-        let interval = UserChallenge.challengeWeekInterval(for: Date())
-        let start = interval?.start ?? Calendar.current.startOfDay(for: Date())
-        let endExclusive = interval?.end ?? Calendar.current.date(byAdding: .day, value: 7, to: start) ?? start
-        let end = Calendar.current.date(byAdding: .day, value: -1, to: endExclusive) ?? endExclusive
+        let start = viewModel.activeChallenge?.startDate ?? Calendar.current.startOfDay(for: Date())
+        let end = Calendar.current.date(byAdding: .day, value: 6, to: start) ?? start
         return "\(fmt.string(from: start)) - \(fmt.string(from: end))"
     }
 
-    // Индекс сегодняшнего дня в текущей неделе: пн = 0 ... вс = 6.
+    // Порядковый индекс сегодняшнего дня в челлендже (0 = день принятия, 1 = следующий, …).
+    // nil — если челлендж истёк (>6 дней).
     private var currentDayIndex: Int? {
-        guard let week = UserChallenge.challengeWeekInterval(for: Date()) else { return nil }
-        var calendar = Calendar.current
-        calendar.firstWeekday = 2
-        let today = calendar.startOfDay(for: Date())
-        let diff = calendar.dateComponents([.day], from: week.start, to: today).day ?? 0
-        guard (0...6).contains(diff) else { return nil }
-        return diff
+        guard let uc = viewModel.activeChallenge else { return 0 }
+        let idx = uc.currentDayIndex
+        return (0...6).contains(idx) ? idx : nil
     }
 
     private var isTodayAlreadyMarked: Bool {

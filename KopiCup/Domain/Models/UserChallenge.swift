@@ -11,52 +11,29 @@ struct UserChallenge: Equatable {
     let challenge: Challenge
     var startDate: Date
     var progress: [Bool]
-    
+
+    /// Days elapsed since startDate (0 = challenge day 1, 1 = challenge day 2, …).
+    /// Can exceed 6 if the challenge has expired.
     var currentDayIndex: Int {
-        let days = Calendar.current.dateComponents([.day], from: startDate, to: Date()).day ?? 0
+        let s = Calendar.current.startOfDay(for: startDate)
+        let t = Calendar.current.startOfDay(for: Date())
+        let days = Calendar.current.dateComponents([.day], from: s, to: t).day ?? 0
         return max(days, 0)
     }
 
+    /// True when more than 6 days have passed since startDate.
     var isExpired: Bool {
-        guard let week = Self.challengeWeekInterval(for: startDate) else {
-            return currentDayIndex > 6
-        }
-        return Date() >= week.end
+        currentDayIndex > 6
     }
 
     var completedDaysCount: Int {
         progress.filter { $0 }.count
     }
 
-    var startWeekDayIndex: Int? {
-        weekDayIndex(for: startDate)
-    }
-
-    var currentWeekDayIndex: Int? {
-        weekDayIndex(for: Date())
-    }
-    
+    /// Whether today's sequential slot in the challenge is already marked.
     var isTodayCompleted: Bool {
-        guard let index = currentWeekDayIndex, progress.indices.contains(index) else { return false }
+        let index = currentDayIndex
+        guard index < 7 else { return false }
         return progress[index]
-    }
-
-    static func challengeWeekInterval(for date: Date) -> DateInterval? {
-        challengeCalendar.dateInterval(of: .weekOfYear, for: date)
-    }
-
-    private func weekDayIndex(for date: Date) -> Int? {
-        guard let week = Self.challengeWeekInterval(for: startDate) else { return nil }
-        let calendar = Self.challengeCalendar
-        let day = calendar.startOfDay(for: date)
-        guard day >= week.start, day < week.end else { return nil }
-        let index = calendar.dateComponents([.day], from: week.start, to: day).day ?? 0
-        return (0...6).contains(index) ? index : nil
-    }
-
-    private static var challengeCalendar: Calendar {
-        var calendar = Calendar.current
-        calendar.firstWeekday = 2
-        return calendar
     }
 }

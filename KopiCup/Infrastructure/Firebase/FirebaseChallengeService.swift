@@ -171,7 +171,8 @@ final class FirebaseChallengeService: ChallengeService, @unchecked Sendable {
 
     func markDayComplete() {
         guard let state = activeState else { return }
-        guard isDateInChallengeWeek(Date(), startedAt: state.startDate) else { return }
+        let dayIndex = DayKey.daysBetween(state.startDate, Date())
+        guard (0...6).contains(dayIndex) else { return }
 
         let todayKey = DayKey.make(from: Date())
         guard !state.completedDayKeys.contains(todayKey) else { return }
@@ -336,19 +337,14 @@ final class FirebaseChallengeService: ChallengeService, @unchecked Sendable {
         guard let state else { return nil }
         guard let challenge = challenges.first(where: { $0.id == state.challengeId }) else { return nil }
 
+        // progress[0] = startDate, progress[1] = startDate+1, …, progress[6] = startDate+6.
+        // Independent of calendar week — day 0 is always the day the challenge was accepted.
         let progress = (0..<7).map { offset -> Bool in
-            let weekStart = UserChallenge.challengeWeekInterval(for: state.startDate)?.start ?? state.startDate
-            let date = Calendar.current.date(byAdding: .day, value: offset, to: weekStart) ?? weekStart
+            let date = Calendar.current.date(byAdding: .day, value: offset, to: state.startDate) ?? state.startDate
             let key = DayKey.make(from: date)
             return state.completedDayKeys.contains(key)
         }
 
         return UserChallenge(challenge: challenge, startDate: state.startDate, progress: progress)
-    }
-
-    private func isDateInChallengeWeek(_ date: Date, startedAt startDate: Date) -> Bool {
-        guard let week = UserChallenge.challengeWeekInterval(for: startDate) else { return false }
-        let day = Calendar.current.startOfDay(for: date)
-        return day >= Calendar.current.startOfDay(for: startDate) && day >= week.start && day < week.end
     }
 }

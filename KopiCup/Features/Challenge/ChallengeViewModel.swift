@@ -68,15 +68,10 @@ final class ChallengeViewModel: ObservableObject {
     }
 
     private func hasMissedDay(_ userChallenge: UserChallenge) -> Bool {
-        guard
-            let startIndex = userChallenge.startWeekDayIndex,
-            let todayIndex = userChallenge.currentWeekDayIndex,
-            todayIndex > startIndex
-        else {
-            return false
-        }
-
-        for i in startIndex..<todayIndex {
+        let todayIndex = userChallenge.currentDayIndex
+        guard todayIndex > 0 else { return false }
+        let checkUpTo = min(todayIndex, 6)
+        for i in 0..<checkUpTo {
             if !userChallenge.progress[i] { return true }
         }
         return false
